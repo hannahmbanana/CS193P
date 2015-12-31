@@ -1,1 +1,3 @@
-![My image](https://github.com/hannahmbanana/CS193P/blob/branch_firstProject/Assignment_1_Matchismo_iOS9/Course%20Documentation/Developing%20iOS%207%20Apps_%20Assignment%201.pdf)
+![Assignment 1 Directions](https://github.com/hannahmbanana/CS193P/blob/branch_firstProject/Assignment_1_Matchismo_iOS9/Course%20Documentation/Developing%20iOS%207%20Apps_%20Assignment%201.pdf?raw=true “Assignment 1 Directions”)
+
+[embed]https://github.com/hannahmbanana/CS193P/blob/branch_firstProject/Assignment_1_Matchismo_iOS9/Course%20Documentation/Developing%20iOS%207%20Apps_%20Assignment%201.pdf[/embed]
