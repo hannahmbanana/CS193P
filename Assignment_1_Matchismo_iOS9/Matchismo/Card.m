@@ -14,6 +14,8 @@
 @synthesize chosen = _chosen;
 @synthesize matched = _matched;
 
+#pragma mark - Instance Methods
+
 - (int)match:(NSArray *)otherCards
 {
   int score = 0;

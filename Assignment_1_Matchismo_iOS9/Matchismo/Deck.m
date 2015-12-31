@@ -16,12 +16,17 @@
 
 @synthesize cards = _cards;
 
+#pragma mark - Properties
+
 // override cards getter to initialize cards array
 - (NSMutableArray *)cards
 {
   if (!_cards) _cards = [[NSMutableArray alloc] init];
   return _cards;
 }
+
+
+#pragma mark - Instance Methods
 
 - (void)addCard:(Card *)card atTop:(BOOL)atTop
 {
@@ -46,7 +51,7 @@
     randomCard = self.cards[idx];
     [self.cards removeObjectAtIndex:idx];
     
-    NSLog(@"Cards remaining in deck = %lu (flips = %lu)", (unsigned long)[self.cards count], 52 - (unsigned long)[self.cards count]);
+//    NSLog(@"Cards remaining in deck = %lu (flips = %lu)", (unsigned long)[self.cards count], 52 - (unsigned long)[self.cards count]);
   }
   
   return randomCard;

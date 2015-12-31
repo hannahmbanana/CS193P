@@ -13,6 +13,8 @@
 @synthesize suit = _suit;
 @synthesize rank = _rank;
 
+#pragma mark - Properties
+
 // override superclass' contents getter
 - (NSString *)contents
 {
@@ -43,6 +45,9 @@
     _rank = rank;
   }
 }
+
+
+#pragma mark - Class Methods
 
 + (NSArray *)rankStrings
 {

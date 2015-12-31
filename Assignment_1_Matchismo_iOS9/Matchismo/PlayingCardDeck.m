@@ -11,6 +11,8 @@
 
 @implementation PlayingCardDeck
 
+#pragma mark - Lifecycle
+
 - (instancetype)init {
   
   self = [super init];
@@ -22,7 +24,6 @@
         PlayingCard *card = [[PlayingCard alloc] init];
         card.rank = rank;
         card.suit = suit;
-        NSLog(@"%lu,%@", rank, suit);
         
         [self addCard:card]; // don't forget that we are a Deck!
       }

@@ -11,11 +11,11 @@
 		764201AC1C34C9F400F64899 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764201AB1C34C9F400F64899 /* AppDelegate.m */; };
 		764201AF1C34C9F400F64899 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764201AE1C34C9F400F64899 /* ViewController.m */; };
 		764201B41C34C9F400F64899 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764201B31C34C9F400F64899 /* Assets.xcassets */; };
-		764201B71C34C9F400F64899 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764201B51C34C9F400F64899 /* LaunchScreen.storyboard */; };
 		768CF65F1C34CC4C00E0221A /* Card.m in Sources */ = {isa = PBXBuildFile; fileRef = 768CF65E1C34CC4C00E0221A /* Card.m */; };
 		768CF6621C34D5BB00E0221A /* Deck.m in Sources */ = {isa = PBXBuildFile; fileRef = 768CF6611C34D5BB00E0221A /* Deck.m */; };
 		768CF6651C34D85F00E0221A /* PlayingCard.m in Sources */ = {isa = PBXBuildFile; fileRef = 768CF6641C34D85F00E0221A /* PlayingCard.m */; };
 		768CF6681C34DA9800E0221A /* PlayingCardDeck.m in Sources */ = {isa = PBXBuildFile; fileRef = 768CF6671C34DA9800E0221A /* PlayingCardDeck.m */; };
+		76FC16811C34EF7B00284CEB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76FC16801C34EF7B00284CEB /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +26,6 @@
 		764201AD1C34C9F400F64899 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		764201AE1C34C9F400F64899 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		764201B31C34C9F400F64899 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		764201B61C34C9F400F64899 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		764201B81C34C9F400F64899 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		768CF65D1C34CC4C00E0221A /* Card.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Card.h; sourceTree = "<group>"; };
 		768CF65E1C34CC4C00E0221A /* Card.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Card.m; sourceTree = "<group>"; };
@@ -36,6 +35,7 @@
 		768CF6641C34D85F00E0221A /* PlayingCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayingCard.m; sourceTree = "<group>"; };
 		768CF6661C34DA9800E0221A /* PlayingCardDeck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayingCardDeck.h; sourceTree = "<group>"; };
 		768CF6671C34DA9800E0221A /* PlayingCardDeck.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayingCardDeck.m; sourceTree = "<group>"; };
+		76FC16801C34EF7B00284CEB /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +72,7 @@
 				768CF65B1C34CBCC00E0221A /* View */,
 				768CF65A1C34CBC300E0221A /* Model */,
 				764201B31C34C9F400F64899 /* Assets.xcassets */,
-				764201B51C34C9F400F64899 /* LaunchScreen.storyboard */,
+				76FC16801C34EF7B00284CEB /* LaunchScreen.storyboard */,
 				764201B81C34C9F400F64899 /* Info.plist */,
 				764201A71C34C9F400F64899 /* Supporting Files */,
 			);
@@ -177,8 +177,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				764201B71C34C9F400F64899 /* LaunchScreen.storyboard in Resources */,
 				764201B41C34C9F400F64899 /* Assets.xcassets in Resources */,
+				76FC16811C34EF7B00284CEB /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,17 +200,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		764201B51C34C9F400F64899 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				764201B61C34C9F400F64899 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		764201B91C34C9F400F64899 /* Debug */ = {
@@ -303,6 +292,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HMT.Matchismo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -314,6 +304,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HMT.Matchismo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
