@@ -87,7 +87,7 @@ static const int CARD_GRID_ROW_COUNT = 5;
 - (void)viewWillLayoutSubviews
 {
   _cardGridView.frame = self.view.frame;
-  [_cardGridView layoutSubviews]; //FIXME: WHY DO I NEED THIS??? //FIXME: 2 layers of cards?
+  [_cardGridView layoutSubviews]; //FIXME: WHY DO I NEED THIS???
   
   // set frames for subviews
   [_cardGridView sizeToFit];
