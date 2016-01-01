@@ -104,8 +104,6 @@
                                forState:UIControlStateNormal];
     
     [self.cardButton setTitle:@"" forState:UIControlStateNormal];
-    
-    self.flipCount++;
   }
   
   // "flip" to show card front
