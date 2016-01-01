@@ -12,7 +12,8 @@
 
 @property (strong, nonatomic, readonly) NSArray *cardButtonArray;
 
-- (instancetype) initWithColumns:(NSUInteger)columnCount
-                            rows:(NSUInteger)rowCount;
+- (CGSize)preferredSizeForWidth:(CGFloat)width;
+
+- (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount;
 
 @end

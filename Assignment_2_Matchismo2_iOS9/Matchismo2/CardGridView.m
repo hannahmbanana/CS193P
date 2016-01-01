@@ -12,18 +12,31 @@
 {
   NSUInteger  _columnCount;
   NSUInteger  _rowCount;
-  CGFloat     _cardWidth;
-  CGFloat     _cardHeight;
-  CGFloat     _cardBuffer;
-
 }
 
 @synthesize cardButtonArray = _cardButtonArray;
 
 #pragma mark - Lifecycle
 
-- (instancetype) initWithColumns:(NSUInteger)columnCount
-                            rows:(NSUInteger)rowCount
++ (UIImage *)cardImage
+{
+  return [UIImage imageNamed:@"cardback"];
+}
+
+- (CGSize)preferredSizeForWidth:(CGFloat)width
+{
+  CGSize cardAssetSize = [[CardGridView cardImage] size];
+  
+//  CGFloat actualCardWidth = width - 2 * HORIZONTAL_INSET - (_columnCount - 1)
+  
+  // FIXME: Revisit this to ensure spaces / gaps are accounted for, otherwise the aspect ratio transformation is wrong
+  CGFloat aspectRatio = cardAssetSize.height / cardAssetSize.width;
+  CGFloat height = roundf(width * aspectRatio);
+  
+  return CGSizeMake(width, height);
+}
+
+- (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount
 {
   self = [super init];
   
@@ -40,11 +53,12 @@
       // initialize & configure the card button
       UIButton *btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
       [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-      [btn setBackgroundImage:[UIImage imageNamed:@"cardback"] forState:UIControlStateNormal];
+      [btn setBackgroundImage:[CardGridView cardImage] forState:UIControlStateNormal];
       
       // set the btn's target action pair
       // FIXME: THIS TECHNICALLY WORKS, due to the responder chain
       // BUT [self super] will return nil here
+      // FIXME: Use a delegate / find another way to eliminate this warning if you don't want a delegate
       [btn addTarget:[self superview]
               action:@selector(touchCardButton:)
     forControlEvents:UIControlEventTouchUpInside];
@@ -54,9 +68,6 @@
       [self addSubview:btn];
       
       _cardButtonArray = cardButtonArray;
-      
-      [self setNeedsLayout]; //FIXME:
-      
     }
     
   }
@@ -67,51 +78,40 @@
 
 #pragma mark - Layout
 
+// FIXME: Make insets relative
 static const float HORIZONTAL_INSET = 20;
 static const float VERTICAL_INSET = 40;
 static const float CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH = 0.2;
 
-// FIXME: auto layout
-//static const int CARD_HEIGHT = 60;
-//static const int CARD_WIDTH = 40;
-
 - (void)layoutSubviews
 {
   // determine size of cards based on size of visible screen
-  CGSize visibleScreen = self.frame.size;
-  NSLog(@"%f,%f", visibleScreen.width, visibleScreen.height);
+  CGSize boundsSize = self.bounds.size;
+  NSLog(@"%f,%f", boundsSize.width, boundsSize.height);
 
-  CGFloat availableCardWidth = (visibleScreen.width - 2 * HORIZONTAL_INSET);
-  _cardWidth = availableCardWidth / (_columnCount + (_columnCount - 1) * CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH);
-  _cardHeight = _cardWidth * 1.5;
-  _cardBuffer = CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH * _cardWidth;
+  CGFloat availableCardSpan = (boundsSize.width - 2 * HORIZONTAL_INSET);
+  CGSize cardAssetSize = [[CardGridView cardImage] size];
+  CGFloat cardAspectRatio = cardAssetSize.height / cardAssetSize.width;
+  
+  CGFloat cardWidth = availableCardSpan / (_columnCount + (_columnCount - 1) * CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH);
+  CGFloat cardHeight = roundf(cardWidth * cardAspectRatio);
+  CGFloat cardBuffer = CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH * cardWidth;
 
-  for (UIButton *button in self.cardButtonArray) {
+  for (UIButton *button in _cardButtonArray) {
+    CGRect buttonFrame = (CGRect){ CGPointZero, cardWidth, cardHeight };
     
-    NSUInteger buttonIndex = [self.cardButtonArray indexOfObject:button];
+    NSUInteger buttonIndex = [_cardButtonArray indexOfObjectIdenticalTo:button];
     NSUInteger cardColumnPosition = buttonIndex % _columnCount;
     NSUInteger cardRowPosition = buttonIndex / _columnCount;
     
-    CGFloat xPosition = HORIZONTAL_INSET + cardColumnPosition * _cardWidth +
-                        cardColumnPosition * _cardBuffer;
+    buttonFrame.origin.x = HORIZONTAL_INSET + cardColumnPosition * cardWidth
+                                            + cardColumnPosition * cardBuffer;
     
-    CGFloat yPosition = VERTICAL_INSET + cardRowPosition * _cardHeight +
-                        cardRowPosition * _cardBuffer;
+    buttonFrame.origin.y = VERTICAL_INSET + cardRowPosition * cardHeight
+                                          + cardRowPosition * cardBuffer;
     
-    button.frame = CGRectMake(xPosition, yPosition, _cardWidth, _cardHeight);
-    
+    button.frame = buttonFrame;
   }
-}
-
-// override superclass method
-- (CGSize)sizeThatFits:(CGSize)size
-{
-  CGFloat width = _columnCount * _cardWidth + (_columnCount - 1) * _cardBuffer +
-                  HORIZONTAL_INSET * 2;
-  CGFloat height = _rowCount * _cardHeight + (_rowCount - 1) * _cardBuffer +
-                   VERTICAL_INSET * 2;
-  
-  return CGSizeMake(width,height);
 }
 
 @end

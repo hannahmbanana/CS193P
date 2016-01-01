@@ -86,34 +86,28 @@ static const int CARD_GRID_ROW_COUNT = 5;
 
 - (void)viewWillLayoutSubviews
 {
-  _cardGridView.frame = self.view.frame;
-  [_cardGridView layoutSubviews]; //FIXME: WHY DO I NEED THIS???
+  CGSize boundsSize = self.view.bounds.size;
   
   // set frames for subviews
-  [_cardGridView sizeToFit];
-  NSLog(@"sizing to fit");
-  
-  CGRect cardGridViewFrame = _cardGridView.frame;
-  cardGridViewFrame.origin = CGPointZero;
-  _cardGridView.frame = cardGridViewFrame;
+  _cardGridView.frame = (CGRect){ CGPointZero, [_cardGridView preferredSizeForWidth:boundsSize.width] };
   
   CGRect scoreLabelFrame = CGRectMake(20,
-                                      self.view.bounds.size.height - 40,
-                                      self.view.bounds.size.width - 40,
+                                      boundsSize.height - 40,
+                                      boundsSize.width - 40,
                                       20);
   _scoreLabel.frame = scoreLabelFrame;
   
   CGRect gameCommentaryLabelFrame = CGRectMake(20,
                                                _cardGridView.frame.size.height,
-                                               self.view.bounds.size.width - 40,
+                                               boundsSize.width - 40,
                                                60);
   _gameCommentaryLabel.frame = gameCommentaryLabelFrame;
   
   
   [_dealButton sizeToFit];
   CGRect dealButtonFrame = _dealButton.frame;
-  dealButtonFrame.origin = CGPointMake(self.view.bounds.size.width - 60,
-                                       self.view.bounds.size.height - 44);
+  dealButtonFrame.origin = CGPointMake(boundsSize.width - 60,
+                                       boundsSize.height - 44);
   _dealButton.frame = dealButtonFrame;
 }
 
