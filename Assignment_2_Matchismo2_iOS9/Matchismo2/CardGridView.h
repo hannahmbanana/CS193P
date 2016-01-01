@@ -10,7 +10,7 @@
 
 @interface CardGridView : UIView
 
-@property (strong, nonatomic, readonly) NSArray *cardButtonArray;
+@property (nonatomic, strong, readonly) NSArray *cardButtonArray;
 
 - (CGSize)preferredSizeForWidth:(CGFloat)width;
 

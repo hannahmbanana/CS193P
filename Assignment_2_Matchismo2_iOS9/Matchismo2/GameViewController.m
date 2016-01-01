@@ -27,7 +27,6 @@ static const int CARD_GRID_ROW_COUNT = 5;
   UILabel             *_gameCommentaryLabel;
   UIButton            *_dealButton;
   UISegmentedControl  *_gameModeSegmentedControl;
-  NSInteger           _gameCardModeMaxCards;
 }
 
 @synthesize game = _game;
@@ -75,6 +74,7 @@ static const int CARD_GRID_ROW_COUNT = 5;
   // intialize & configure gameModeSegmentedControl
   _gameModeSegmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"2", @"3"]];
   _gameModeSegmentedControl.selectedSegmentIndex = 0;
+  self.game.gameCardModeMaxCards = 2;
   _gameModeSegmentedControl.tintColor = [UIColor whiteColor];
   [_gameModeSegmentedControl addTarget:self action:@selector(touchGameModeSegmentedControl:)
                       forControlEvents:UIControlEventTouchUpInside];
@@ -114,7 +114,7 @@ static const int CARD_GRID_ROW_COUNT = 5;
   [_gameModeSegmentedControl sizeToFit];
   CGRect gameModeSegmentedControlFrame = _gameModeSegmentedControl.frame;
   gameModeSegmentedControlFrame.origin =
-    CGPointMake(_dealButton.frame.origin.x - _gameModeSegmentedControl.frame.size.width - 10,
+                CGPointMake(_dealButton.frame.origin.x - _gameModeSegmentedControl.frame.size.width - 10,
                 CGRectGetMaxY(_dealButton.frame) - _gameModeSegmentedControl.frame.size.height);
   _gameModeSegmentedControl.frame = gameModeSegmentedControlFrame;
 }
@@ -137,14 +137,13 @@ static const int CARD_GRID_ROW_COUNT = 5;
 {
   NSString *maxNumCardsString = [sender titleForSegmentAtIndex:sender.selectedSegmentIndex];
   
-  _gameCardModeMaxCards = [maxNumCardsString integerValue];
+  self.game.gameCardModeMaxCards = [maxNumCardsString integerValue];
 }
 
 - (void)touchCardButton:(UIButton *)sender
 {
   // find index of button pressed
-  NSUInteger cardButtonIndex = [_cardGridView.cardButtonArray
-                                indexOfObject:sender];
+  NSUInteger cardButtonIndex = [_cardGridView.cardButtonArray indexOfObject:sender];
   
   // update game model
   [self.game choseCardAtIndex:cardButtonIndex];
