@@ -8,12 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+@class CardGridView;
+@protocol CardGridViewDelegate <NSObject>
+@required
+- (void)touchCardButton:(UIButton *)sender;
+@end
+
 @interface CardGridView : UIView
 
-@property (strong, nonatomic, readonly) NSArray *cardButtonArray;
+@property (nonatomic, strong, readonly) NSArray                   *cardButtonArray;
+@property (nonatomic, strong)           id<CardGridViewDelegate>  delegate;
 
 - (CGSize)preferredSizeForWidth:(CGFloat)width;
 
-- (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount;
+- (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount delegate:(id<CardGridViewDelegate>)delegate;
 
 @end

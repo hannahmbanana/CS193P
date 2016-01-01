@@ -11,13 +11,13 @@
 
 @interface CardMatchingGame : NSObject
 
-@property (nonatomic, readonly) NSInteger score;
-@property (nonatomic) NSInteger lastScore;
-@property (nonatomic, strong, readonly) NSMutableArray *lastMatched;
+@property (nonatomic, assign, readonly) NSInteger       score;
+@property (nonatomic, assign)           NSInteger       lastScore;
+@property (nonatomic, strong, readonly) NSMutableArray  *lastMatched;
+@property (nonatomic, assign)           NSInteger       gameCardModeMaxCards;
 
 // designated initializer
-- (instancetype)initWithCardCount:(NSUInteger)count
-                        usingDeck:(Deck *)deck NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck NS_DESIGNATED_INITIALIZER;
 
 - (void)choseCardAtIndex:(NSUInteger)index;
 

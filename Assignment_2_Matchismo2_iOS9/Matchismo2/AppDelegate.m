@@ -20,10 +20,8 @@
   
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
-  self.window.backgroundColor = [UIColor colorWithRed:15/255.0
-                                                green:110/255.0
-                                                 blue:48/255.0
-                                                alpha:1];
+  // make the background color look like green felt
+  self.window.backgroundColor = [UIColor colorWithRed:15/255.0 green:110/255.0 blue:48/255.0 alpha:1];
   
   self.window.rootViewController = [[GameViewController alloc] init];
   

@@ -36,7 +36,7 @@
   return CGSizeMake(width, height);
 }
 
-- (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount
+- (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount delegate:(id<CardGridViewDelegate>)delegate;
 {
   self = [super init];
   
@@ -44,6 +44,7 @@
     
     _columnCount = columnCount;
     _rowCount = rowCount;
+    self.delegate = delegate;
     
     NSMutableArray *cardButtonArray = [[NSMutableArray alloc] init];
     
@@ -54,14 +55,7 @@
       UIButton *btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
       [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
       [btn setBackgroundImage:[CardGridView cardImage] forState:UIControlStateNormal];
-      
-      // set the btn's target action pair
-      // FIXME: THIS TECHNICALLY WORKS, due to the responder chain
-      // BUT [self super] will return nil here
-      // FIXME: Use a delegate / find another way to eliminate this warning if you don't want a delegate
-      [btn addTarget:[self superview]
-              action:@selector(touchCardButton:)
-    forControlEvents:UIControlEventTouchUpInside];
+      [btn addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
       
       // add the button to the cardButtonArray & to the UIView
       [cardButtonArray addObject:btn];
@@ -78,7 +72,6 @@
 
 #pragma mark - Layout
 
-// FIXME: Make insets relative
 static const float HORIZONTAL_INSET = 20;
 static const float VERTICAL_INSET = 40;
 static const float CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH = 0.2;
@@ -87,7 +80,6 @@ static const float CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH = 0.2;
 {
   // determine size of cards based on size of visible screen
   CGSize boundsSize = self.bounds.size;
-  NSLog(@"%f,%f", boundsSize.width, boundsSize.height);
 
   CGFloat availableCardSpan = (boundsSize.width - 2 * HORIZONTAL_INSET);
   CGSize cardAssetSize = [[CardGridView cardImage] size];
@@ -97,21 +89,23 @@ static const float CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH = 0.2;
   CGFloat cardHeight = roundf(cardWidth * cardAspectRatio);
   CGFloat cardBuffer = CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH * cardWidth;
 
-  for (UIButton *button in _cardButtonArray) {
-    CGRect buttonFrame = (CGRect){ CGPointZero, cardWidth, cardHeight };
+  for (UIButton *button in _cardButtonArray) { CGRect buttonFrame = (CGRect){ CGPointZero, cardWidth, cardHeight };
     
     NSUInteger buttonIndex = [_cardButtonArray indexOfObjectIdenticalTo:button];
     NSUInteger cardColumnPosition = buttonIndex % _columnCount;
     NSUInteger cardRowPosition = buttonIndex / _columnCount;
     
-    buttonFrame.origin.x = HORIZONTAL_INSET + cardColumnPosition * cardWidth
-                                            + cardColumnPosition * cardBuffer;
+    buttonFrame.origin.x = HORIZONTAL_INSET + cardColumnPosition * cardWidth + cardColumnPosition * cardBuffer;
     
-    buttonFrame.origin.y = VERTICAL_INSET + cardRowPosition * cardHeight
-                                          + cardRowPosition * cardBuffer;
+    buttonFrame.origin.y = VERTICAL_INSET + cardRowPosition * cardHeight + cardRowPosition * cardBuffer;
     
     button.frame = buttonFrame;
   }
+}
+
+- (void)buttonTouched:(UIButton *)sender
+{
+  [self.delegate touchCardButton:sender];
 }
 
 @end
