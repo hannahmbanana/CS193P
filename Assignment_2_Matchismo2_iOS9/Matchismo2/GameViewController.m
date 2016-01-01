@@ -14,7 +14,7 @@
 static const int CARD_GRID_COL_COUNT = 6;
 static const int CARD_GRID_ROW_COUNT = 5;
 
-@interface GameViewController ()
+@interface GameViewController () <CardGridViewDelegate>
 
 @property (strong, nonatomic) CardMatchingGame *game;
 
@@ -40,6 +40,8 @@ static const int CARD_GRID_ROW_COUNT = 5;
   if (!_game) {
     _game = [[CardMatchingGame alloc] initWithCardCount:CARD_GRID_COL_COUNT*CARD_GRID_ROW_COUNT
                                               usingDeck:[[PlayingCardDeck alloc] init]];
+    
+    [self setGameCardModeMaxCards];
   }
   
   return _game;
@@ -74,13 +76,12 @@ static const int CARD_GRID_ROW_COUNT = 5;
   // intialize & configure gameModeSegmentedControl
   _gameModeSegmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"2", @"3"]];
   _gameModeSegmentedControl.selectedSegmentIndex = 0;
-  self.game.gameCardModeMaxCards = 2;
   _gameModeSegmentedControl.tintColor = [UIColor whiteColor];
-  [_gameModeSegmentedControl addTarget:self action:@selector(touchGameModeSegmentedControl:)
-                      forControlEvents:UIControlEventTouchUpInside];
+  [_gameModeSegmentedControl addTarget:self action:@selector(touchGameModeSegmentedControl)
+                      forControlEvents:UIControlEventValueChanged];
   
   // initialize & configure the cardGridView
-  _cardGridView = [[CardGridView alloc] initWithColumns:CARD_GRID_COL_COUNT rows:CARD_GRID_ROW_COUNT];
+  _cardGridView = [[CardGridView alloc] initWithColumns:CARD_GRID_COL_COUNT rows:CARD_GRID_ROW_COUNT delegate:self];
   
   // add subviews
   [self.view addSubview:_scoreLabel];
@@ -133,11 +134,18 @@ static const int CARD_GRID_ROW_COUNT = 5;
   [self updateUI];
 }
 
-- (void)touchGameModeSegmentedControl:(UISegmentedControl *)sender
+- (void)touchGameModeSegmentedControl
 {
-  NSString *maxNumCardsString = [sender titleForSegmentAtIndex:sender.selectedSegmentIndex];
+  [self setGameCardModeMaxCards];
+}
+
+- (void)setGameCardModeMaxCards
+{
+  NSString *title = [_gameModeSegmentedControl titleForSegmentAtIndex:_gameModeSegmentedControl.selectedSegmentIndex];
   
-  self.game.gameCardModeMaxCards = [maxNumCardsString integerValue];
+  self.game.gameCardModeMaxCards = [title integerValue];
+  
+  NSLog(@"gameMode = %d", self.game.gameCardModeMaxCards);
 }
 
 - (void)touchCardButton:(UIButton *)sender
@@ -195,12 +203,22 @@ static const int CARD_GRID_ROW_COUNT = 5;
   }
   
   // 2 cards case
-  if ([self.game.lastMatched count] > 1) {
-    
-    if (self.game.lastScore < 0) {
-      [label appendFormat:@" don't match.\n%ld point penalty.", (long)self.game.lastScore];
-    } else {
-      [label appendFormat:@" matched for %ld points!", (long)self.game.lastScore];
+  if (self.game.gameCardModeMaxCards == 2) {
+    if ([self.game.lastMatched count] > 1) {
+      if (self.game.lastScore < 0) {
+        [label appendFormat:@" don't match.\n%ld point penalty.", (long)self.game.lastScore];
+      } else {
+        [label appendFormat:@" matched for %ld points!", (long)self.game.lastScore];
+      }
+    }
+  } else {
+    if ([self.game.lastMatched count] > 2) {
+      
+      if (self.game.lastScore < 0) {
+        [label appendFormat:@" don't match.\n%ld point penalty.", (long)self.game.lastScore];
+      } else {
+        [label appendFormat:@" matched for %ld points!", (long)self.game.lastScore];
+      }
     }
   }
   
