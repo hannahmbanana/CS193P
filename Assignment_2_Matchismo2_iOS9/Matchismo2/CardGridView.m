@@ -87,7 +87,6 @@ static const float CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH = 0.2;
 {
   // determine size of cards based on size of visible screen
   CGSize boundsSize = self.bounds.size;
-  NSLog(@"%f,%f", boundsSize.width, boundsSize.height);
 
   CGFloat availableCardSpan = (boundsSize.width - 2 * HORIZONTAL_INSET);
   CGSize cardAssetSize = [[CardGridView cardImage] size];
