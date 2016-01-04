@@ -35,7 +35,13 @@
     [cardButton setBackgroundImage:[self backgroundImageForCard:card] forState:UIControlStateNormal];
     
     // update button title
-    [cardButton setTitle:[self titleForCard:card] forState:UIControlStateNormal];
+    [cardButton setTitle:card.contents forState:UIControlStateNormal];
+    
+    NSString *test = [self titleForCard:card];
+    NSLog(@"String:%@, %@",test, cardButton);
+
+    [cardButton setTitle:test forState:UIControlStateNormal];     //// FIXME: what the fuck?
+    [cardButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     
     // disable card if matched
     if (card.isMatched) {
