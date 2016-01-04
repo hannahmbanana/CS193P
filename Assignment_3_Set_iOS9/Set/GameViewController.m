@@ -18,13 +18,6 @@ static const int CARD_GRID_ROW_COUNT = 5;
 
 @implementation GameViewController
 
-@synthesize game = _game;
-@synthesize buttonGridView = _buttonGridView;
-@synthesize scoreLabel = _scoreLabel;
-@synthesize gameCommentaryLabel = _gameCommentaryLabel;
-@synthesize gameCommentaryHistory = _gameCommentaryHistory;
-@synthesize dealButton = _dealButton;
-
 #pragma mark - Class Methods
 
 + (Class)gameClass
@@ -70,13 +63,6 @@ static const int CARD_GRID_ROW_COUNT = 5;
                          rows:CARD_GRID_ROW_COUNT
                          delegate:self];
   
-  // set the btn's target action pair
-  for (UIButton *cardButton in self.buttonGridView.cardButtonArray) {
-    [cardButton addTarget:self
-                   action:@selector(touchCardButton:)
-         forControlEvents:UIControlEventTouchUpInside];
-  }
-  
   // construct scoreLabel
   self.scoreLabel = [[UILabel alloc] init];
   self.scoreLabel.text = @"Score: 0";
@@ -117,7 +103,8 @@ static const int CARD_GRID_ROW_COUNT = 5;
   CGSize boundsSize = self.view.bounds.size;
   
   // set frames for subviews
-  self.buttonGridView.frame = (CGRect){CGPointZero, [self.buttonGridView preferredSizeForWidth:boundsSize.width]};
+  self.buttonGridView.frame = (CGRect){CGPointMake(0,CGRectGetMaxY(self.navigationController.navigationBar.frame)),
+                                      [self.buttonGridView preferredSizeForWidth:boundsSize.width]};
   
   
   CGRect scoreLabelFrame = CGRectMake(20,
@@ -126,10 +113,13 @@ static const int CARD_GRID_ROW_COUNT = 5;
                                       20);
   self.scoreLabel.frame = scoreLabelFrame;
   
-  CGRect gameCommentaryLabelFrame =
-  CGRectMake(20,self.buttonGridView.frame.size.height + 20,
-             self.view.bounds.size.width - 40,60);
+  CGRect gameCommentaryLabelFrame = CGRectMake(20,
+                                               CGRectGetMaxY(self.buttonGridView.frame),
+                                               boundsSize.width - 40,
+                                               60);
+
   self.gameCommentaryLabel.frame = gameCommentaryLabelFrame;
+  self.gameCommentaryLabel.backgroundColor = [UIColor purpleColor];
   
   
   [self.dealButton sizeToFit];

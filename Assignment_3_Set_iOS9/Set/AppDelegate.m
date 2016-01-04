@@ -37,7 +37,7 @@
   // the TabBarController owns the UINavigationControllers, which own the Card & Set game view controllers
   [tabBarController addChildViewController:cardNavController itemTitle:@"CARD MATCH" itemImageText:@"♠︎ ♥︎" itemImageTextSize:24];
   [tabBarController addChildViewController:setNavController itemTitle:@"CLASSIC SET" itemImageText:@"■ ▲" itemImageTextSize:20];
-  tabBarController.selectedViewController = setNavController;
+  tabBarController.selectedViewController = cardNavController;
   
   self.window.rootViewController = tabBarController;
   [self.window makeKeyAndVisible];
