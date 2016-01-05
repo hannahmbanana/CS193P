@@ -11,6 +11,7 @@
 #import "MatchingGame.h"
 #import "Deck.h"
 
+// ABSTRACT CLASS
 @interface GameViewController : UIViewController 
 
 @property (nonatomic, strong, readwrite) MatchingGame              *game;
@@ -20,16 +21,13 @@
 @property (nonatomic, strong, readwrite) NSMutableAttributedString *gameCommentaryHistory;
 @property (nonatomic, strong, readwrite) UIButton                  *dealButton;
 
-- (void)touchDealButton;
-- (void)touchCardButton:(UIButton *)sender;
-- (UIImage *)backgroundImageForDealButton;
-
-// SUBCLASS MUST IMPLEMENT
+- (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows NS_DESIGNATED_INITIALIZER;
 - (void) updateUI;
 
-// SUBCLASS MUST IMPLEMENT
-- (Deck *)createDeck;
-
-+ (Class)gameClass;
++ (Class)gameClass;                                                     // SUBCLASS MUST IMPLEMENT
+- (Deck *)createDeck;                                                   // SUBCLASS MUST IMPLEMENT
+- (NSAttributedString *)attributedTitleForCardAtIndex:(NSUInteger)index;// SUBCLASS MUST IMPLEMENT
+- (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)index;           // SUBCLASS MUST IMPLEMENT
+- (BOOL)shadowForCardAtIndex:(NSUInteger)index;                         // SUBCLASS MUST IMPLEMENT
 
 @end

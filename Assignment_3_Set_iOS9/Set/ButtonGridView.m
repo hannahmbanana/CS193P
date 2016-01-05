@@ -15,29 +15,9 @@
   id<ButtonGridViewDelegate>  _delegate;
 }
 
-@synthesize cardButtonArray = _cardButtonArray;
+@synthesize cardButtonArray = _cardButtonArray; // FIXME?
 
 #pragma mark - Lifecycle
-
-+ (UIImage *)cardImage
-{
-  return [UIImage imageNamed:@"cardback"];
-}
-
-- (CGSize)preferredSizeForWidth:(CGFloat)width
-{
-  CGSize cardAssetSize = [[ButtonGridView cardImage] size];
-  
-  CGFloat availableCardSpan = (width - 2 * HORIZONTAL_INSET);
-  CGFloat actualCardWidth = availableCardSpan / (_columnCount + (_columnCount - 1) * CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH);
-  CGFloat cardAspectRatio = cardAssetSize.height / cardAssetSize.width;
-  CGFloat cardHeight = roundf(actualCardWidth * cardAspectRatio);
-  CGFloat cardBuffer = CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH * actualCardWidth;
-
-  CGFloat height = 2 * VERTICAL_INSET + cardHeight * _rowCount + cardBuffer * (_rowCount - 1);
-  
-  return CGSizeMake(width, height);
-}
 
 - (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount delegate:(id<ButtonGridViewDelegate>)delegate;
 {
@@ -56,7 +36,6 @@
       
       // initialize & configure the card button
       UIButton *btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-      [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
       [btn setBackgroundImage:[ButtonGridView cardImage] forState:UIControlStateNormal];
       [btn addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
       [btn setTintColor:[UIColor clearColor]];  // iOS9 seems to throw a blue tint on UIButtonTypeRoundedRect
@@ -66,17 +45,28 @@
       [self addSubview:btn];
       
       _cardButtonArray = cardButtonArray;
-      
-      self.backgroundColor = [UIColor redColor];
     }
-    
   }
-  
   return self;
 }
 
-
 #pragma mark - Layout
+
+- (CGSize)preferredSizeForWidth:(CGFloat)width
+{
+  CGSize cardAssetSize = [[ButtonGridView cardImage] size];
+  
+  CGFloat availableCardSpan = (width - 2 * HORIZONTAL_INSET);
+  CGFloat actualCardWidth = roundf(availableCardSpan / (_columnCount + (_columnCount - 1) * CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH));
+  CGFloat cardAspectRatio = cardAssetSize.height / cardAssetSize.width;
+  CGFloat cardHeight = roundf(actualCardWidth * cardAspectRatio);
+  CGFloat cardBuffer = roundf(CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH * actualCardWidth);
+  
+  CGFloat height = 2 * VERTICAL_INSET + cardHeight * _rowCount + cardBuffer * (_rowCount - 1);
+  
+  return CGSizeMake(width, height);
+}
+
 
 static const float HORIZONTAL_INSET = 20;
 static const float VERTICAL_INSET = 20;
@@ -109,11 +99,62 @@ static const float CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH = 0.2;
   }
 }
 
+#pragma mark - user actions
+
 - (void)buttonTouched:(UIButton *)sender
 {
-  [_delegate touchCardButton:sender];
+  NSUInteger cardButtonIndex = [_cardButtonArray indexOfObject:sender];
   
-  // FIXME: don't want another class modifying this view, return string, then modify here
+  // notify delegate cardButton has been touched
+  [_delegate touchCardButtonAtIndex:cardButtonIndex];
+  
+}
+
+
+#pragma mark - Instance Methods
+
+- (void)updateCards
+{
+  // for each card
+  for (UIButton *cardButton in _cardButtonArray) {
+    
+    // find index of cardButton
+    NSUInteger cardButtonIndex = [_cardButtonArray indexOfObject:cardButton];
+    
+    // update cardButton title
+    [cardButton setAttributedTitle:[_delegate attributedTitleForCardAtIndex:cardButtonIndex] forState:UIControlStateNormal];
+    cardButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    cardButton.titleLabel.numberOfLines = 3;
+    cardButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+    cardButton.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    
+    // update cardButton image
+    [cardButton setBackgroundImage:[_delegate backgroundImageForCardAtIndex:cardButtonIndex] forState:UIControlStateNormal];
+    
+    // update cardButton shadow
+    if ([_delegate shadowForCardAtIndex:cardButtonIndex]) {
+      cardButton.layer.shadowColor = [UIColor blackColor].CGColor;
+      cardButton.layer.shadowOffset = CGSizeMake(4.0,4.0);
+      cardButton.layer.shadowOpacity = 1.0;
+      cardButton.layer.shadowRadius = 0.0;
+    } else {
+      cardButton.layer.shadowOffset = CGSizeZero;
+    }
+
+    // update cardButton alpha
+    [cardButton setAlpha:[_delegate alphaForCardAtIndex:cardButtonIndex]];
+    
+    // update cardButton enabled
+    cardButton.enabled = [_delegate enableCardAtIndex:cardButtonIndex];
+  }
+}
+
+
+#pragma mark - Class Methods
+
++ (UIImage *)cardImage
+{
+  return [UIImage imageNamed:@"cardback"];
 }
 
 @end

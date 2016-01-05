@@ -9,14 +9,14 @@
 #import "GameViewController.h"
 #import "GameHistoryViewController.h"
 
-// FIXME: duplicated in subclasses?
-static const int CARD_GRID_COL_COUNT = 6;
-static const int CARD_GRID_ROW_COUNT = 5;
-
 @interface GameViewController () <ButtonGridViewDelegate>
 @end
 
 @implementation GameViewController
+{
+  NSUInteger _colCount;
+  NSUInteger _rowCount;
+}
 
 #pragma mark - Class Methods
 
@@ -31,15 +31,27 @@ static const int CARD_GRID_ROW_COUNT = 5;
 - (MatchingGame *)game
 {
   if (!_game) {
-    _game = [[[[self class] gameClass] alloc] initWithCardCount:CARD_GRID_COL_COUNT*CARD_GRID_ROW_COUNT usingDeck:[self createDeck]];
+    _game = [[[[self class] gameClass] alloc] initWithCardCount:_colCount * _rowCount usingDeck:[self createDeck]];
   }
   
   return _game;
 }
 
+// lazy instantiation for _game so that we can set it to nil when dealing
+- (NSMutableAttributedString *)gameCommentaryHistory
+{
+  if (!_gameCommentaryHistory) {
+    _gameCommentaryHistory = [[NSMutableAttributedString alloc] init];
+  }
+  
+  return _gameCommentaryHistory;
+}
+
 #pragma mark - Lifecycle
 
-- (instancetype)init
+
+
+- (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows
 {
   self = [super init];
   
@@ -48,7 +60,8 @@ static const int CARD_GRID_ROW_COUNT = 5;
                                                                               style:UIBarButtonItemStylePlain target:self
                                                                              action:@selector(touchHistoryButton)];
     
-    _gameCommentaryHistory = [[NSMutableAttributedString alloc] init];
+    _colCount = numCols;
+    _rowCount = numRows;
   }
   
   return self;
@@ -59,8 +72,8 @@ static const int CARD_GRID_ROW_COUNT = 5;
   [super viewDidLoad];
   
   self.buttonGridView = [[ButtonGridView alloc]
-                         initWithColumns:CARD_GRID_COL_COUNT
-                         rows:CARD_GRID_ROW_COUNT
+                         initWithColumns:_colCount
+                         rows:_rowCount
                          delegate:self];
   
   // construct scoreLabel
@@ -118,9 +131,7 @@ static const int CARD_GRID_ROW_COUNT = 5;
                                                boundsSize.width - 40,
                                                60);
 
-  self.gameCommentaryLabel.frame = gameCommentaryLabelFrame;
-  self.gameCommentaryLabel.backgroundColor = [UIColor purpleColor];
-  
+  self.gameCommentaryLabel.frame = gameCommentaryLabelFrame;  
   
   [self.dealButton sizeToFit];
   CGRect dealButtonFrame = self.dealButton.frame;
@@ -131,23 +142,13 @@ static const int CARD_GRID_ROW_COUNT = 5;
   [self updateUI];
 }
 
+
 #pragma mark - UIView actions
 
 - (void)touchDealButton
 {
   self.game = nil;
-  
-  // update UI
-  [self updateUI];
-}
-
-- (void)touchCardButton:(UIButton *)sender
-{
-  // find index of button pressed
-  NSUInteger cardButtonIndex = [self.buttonGridView.cardButtonArray indexOfObject:sender];
-  
-  // update game model
-  [self.game choseCardAtIndex:cardButtonIndex];
+  self.gameCommentaryHistory = nil;
   
   // update UI
   [self updateUI];
@@ -156,22 +157,64 @@ static const int CARD_GRID_ROW_COUNT = 5;
 - (void)touchHistoryButton
 {
   GameHistoryViewController *historyViewController = [[GameHistoryViewController alloc]
-                                                      initWithPlayHistoryString:self.gameCommentaryHistory];
+                                                      initWithNibName:nil
+                                                      bundle:nil
+                                                      playHistoryString:self.gameCommentaryHistory];
+  
   [self.navigationController pushViewController: historyViewController animated:YES];
 }
 
-#pragma mark - Helper Methods
 
-// SUBCLASS MUST IMPLEMENT
+#pragma mark - Instance Methods
+
 - (void) updateUI
 {
+  // updates cardButton title, background image, enabled, alpha, shadow
+  [self.buttonGridView updateCards];
+  
+  // update game score
+  self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
 }
 
-// SUBCLASS MUST IMPLEMENT
-- (Deck *)createDeck
+
+#pragma mark - ButtonGridViewDelegate Methods
+
+- (void)touchCardButtonAtIndex:(NSUInteger)cardButtonIndex
 {
-  return nil;
+  // update game model
+  [self.game choseCardAtIndex:cardButtonIndex];
+  
+  // update UI
+  [self updateUI];
 }
+
+- (BOOL)cardMatchedAtIndex:(NSUInteger)cardButtonIndex
+{
+  return [[self.game cardAtIndex:cardButtonIndex] isMatched];
+}
+
+- (BOOL)enableCardAtIndex:(NSUInteger)cardButtonIndex
+{
+  Card *card = [self.game cardAtIndex:cardButtonIndex];
+  
+  if (card.isMatched) {
+    return NO;
+  } else {
+    return YES;
+  }
+}
+
+- (CGFloat)alphaForCardAtIndex:(NSUInteger)cardButtonIndex
+{
+  if ([self enableCardAtIndex:cardButtonIndex]) {
+    return 1.0;
+  } else {
+    return 0.4;
+  }
+}
+
+
+#pragma mark - Helper Methods
 
 - (UIImage *)backgroundImageForDealButton
 {

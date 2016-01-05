@@ -12,6 +12,7 @@
 
 @implementation CardGameViewController
 
+
 #pragma mark - Class Methods
 
 + (Class)gameClass
@@ -19,45 +20,19 @@
   return [CardMatchingGame class];
 }
 
+
 #pragma mark - Instance Methods
+
+- (Deck *)createDeck
+{
+  return [[PlayingCardDeck alloc] init];
+}
 
 - (void)updateUI
 {
-  // for each card
-  for (UIButton *cardButton in self.buttonGridView.cardButtonArray) {
-    
-    // get card corresponding to UIButton
-    NSUInteger cardButtonIndex = [self.buttonGridView.cardButtonArray indexOfObject:cardButton];
-    
-    Card *card = [self.game cardAtIndex:cardButtonIndex];
-    
-    // update button image
-    [cardButton setBackgroundImage:[self backgroundImageForCard:card] forState:UIControlStateNormal];
-    
-    // update button title
-    [cardButton setTitle:card.contents forState:UIControlStateNormal];
-    
-    NSString *test = [self titleForCard:card];
-    NSLog(@"String:%@, %@",test, cardButton);
-
-    [cardButton setTitle:test forState:UIControlStateNormal];     //// FIXME: what the fuck?
-    [cardButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    
-    // disable card if matched
-    if (card.isMatched) {
-      cardButton.enabled = NO;
-      [cardButton setAlpha:0.4];
-    } else {
-      cardButton.enabled = YES;
-      [cardButton setAlpha:1.0];
-    }
-    
-  }
+  [super updateUI];
   
-  // update game score
-  self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
-  
-  // update game commentary
+  // update game commentary 
   NSMutableString *label = [NSMutableString string];
   for (Card *card in self.game.lastMatched) {
     [label appendString:card.contents];
@@ -71,30 +46,43 @@
     } else {
       [label appendFormat:@" matched for %ld points!\n\n", (long)self.game.lastScore];
     }
+  } else if ([self.game.lastMatched count]) {
+    [label appendString:@"\n\n"];
   }
   
   self.gameCommentaryLabel.text = label;
   
   [self.gameCommentaryHistory appendAttributedString:[[NSAttributedString alloc] initWithString:label]];
-  
-  
-  
+  NSLog(@"label = %@", label);  // FIXME
 }
 
-- (Deck *)createDeck
+
+#pragma mark - ButtonGridViewDelegate Methods
+
+- (NSAttributedString *)attributedTitleForCardAtIndex:(NSUInteger)cardButtonIndex
 {
-  return [[PlayingCardDeck alloc] init];
+  Card *card = [self.game cardAtIndex:cardButtonIndex];
+  
+  NSAttributedString *title;
+  NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor blackColor]};
+  
+  if (card.isChosen) {
+    title = [[NSAttributedString alloc] initWithString:card.contents attributes:attributes];
+  } else {
+    title = [[NSAttributedString alloc] initWithString:@"" attributes:attributes];
+  }
+  return title;
 }
 
-- (NSString *)titleForCard:(Card *)card
+- (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)cardButtonIndex
 {
-  return card.isChosen ? card.contents : @"";
+  Card *card = [self.game cardAtIndex:cardButtonIndex];
+  return card.isChosen ? [UIImage imageNamed:@"cardfront"] : [UIImage imageNamed:@"cardback"];
 }
 
-- (UIImage *)backgroundImageForCard:(Card *)card
+- (BOOL)shadowForCardAtIndex:(NSUInteger)index;                 // SUBCLASS MUST IMPLEMENT
 {
-  return card.isChosen ?
-  [UIImage imageNamed:@"cardfront"] : [UIImage imageNamed:@"cardback"];
+  return NO;
 }
 
 @end

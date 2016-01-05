@@ -11,14 +11,20 @@
 @class ButtonGridView;
 @protocol ButtonGridViewDelegate <NSObject>
 @required
-- (void)touchCardButton:(UIButton *)sender;
+- (void)touchCardButtonAtIndex:(NSUInteger)index;
+- (NSAttributedString *)attributedTitleForCardAtIndex:(NSUInteger)index;
+- (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)index;
+- (BOOL)shadowForCardAtIndex:(NSUInteger)index;
+- (BOOL)enableCardAtIndex:(NSUInteger)index;
+- (CGFloat)alphaForCardAtIndex:(NSUInteger)index;
 @end
 
 @interface ButtonGridView : UIView
 
-@property (nonatomic, strong, readonly) NSArray *cardButtonArray;
+@property (nonatomic, strong, readonly) NSArray *cardButtonArray;  // FIXME: make private
 
 - (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount delegate:(id<ButtonGridViewDelegate>)delegate;
 - (CGSize)preferredSizeForWidth:(CGFloat)width;
+- (void)updateCards;
 
 @end
