@@ -21,9 +21,9 @@
 
 @interface ButtonGridView : UIView
 
-@property (nonatomic, strong, readonly) NSArray *cardButtonArray;  // FIXME: make private
-
-- (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount delegate:(id<ButtonGridViewDelegate>)delegate;
+- (instancetype)initWithColumns:(NSUInteger)columnCount
+                           rows:(NSUInteger)rowCount
+                       delegate:(id<ButtonGridViewDelegate>)delegate;
 - (CGSize)preferredSizeForWidth:(CGFloat)width;
 - (void)updateCards;
 

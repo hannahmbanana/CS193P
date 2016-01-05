@@ -78,9 +78,9 @@
 
 #pragma mark - ButtonGridViewDelegate Methods
 
-- (NSAttributedString *)attributedTitleForCardAtIndex:(NSUInteger)cardButtonIndex
+- (NSAttributedString *)attributedTitleForCard:(Card *)setCard override:(BOOL)override
 {
-  SetCard *card = (SetCard *)[self.game cardAtIndex:cardButtonIndex];
+  SetCard *card = (SetCard *)setCard;
   
   // set attributes for card's color
   NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];

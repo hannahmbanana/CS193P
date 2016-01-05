@@ -18,7 +18,6 @@
 @property (nonatomic, strong, readwrite) ButtonGridView            *buttonGridView;
 @property (nonatomic, strong, readwrite) UILabel                   *scoreLabel;
 @property (nonatomic, strong, readwrite) UILabel                   *gameCommentaryLabel;
-@property (nonatomic, strong, readwrite) NSMutableAttributedString *gameCommentaryHistory;
 @property (nonatomic, strong, readwrite) UIButton                  *dealButton;
 
 - (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows NS_DESIGNATED_INITIALIZER;
@@ -26,7 +25,8 @@
 
 + (Class)gameClass;                                                     // SUBCLASS MUST IMPLEMENT
 - (Deck *)createDeck;                                                   // SUBCLASS MUST IMPLEMENT
-- (NSAttributedString *)attributedTitleForCardAtIndex:(NSUInteger)index;// SUBCLASS MUST IMPLEMENT
+- (NSAttributedString *)attributedTitleForCard:(Card *)card
+                                      override:(BOOL)shouldOverride; // SUBCLASS MUST IMPLEMENT
 - (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)index;           // SUBCLASS MUST IMPLEMENT
 - (BOOL)shadowForCardAtIndex:(NSUInteger)index;                         // SUBCLASS MUST IMPLEMENT
 

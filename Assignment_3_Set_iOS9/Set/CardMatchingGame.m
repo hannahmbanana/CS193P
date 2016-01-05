@@ -28,7 +28,7 @@ static const int MATCH_BONUS = 4;
 {
   // get card at index
   Card *card = [self.cards objectAtIndex:index];
-  
+
   // reset lastMatched & lastScore properties?
   if ( ([self.lastMatched count] > 1) && (self.lastScore > 0) ) {
     // successful match
@@ -42,14 +42,14 @@ static const int MATCH_BONUS = 4;
   
   // only allow unmatched cards to be chosen
   if (!card.isMatched) {
-    
-    // if it's already chosen, unchoose it
     if (card.isChosen) {
+      // if it's already chosen, unchoose it
+
       card.chosen = NO;
       [self.lastMatched removeObject:card];
-      
     } else {
-      
+      // else choose card
+
       // add card to the lastMatched array
       [self.lastMatched addObject:card];
       
@@ -72,10 +72,17 @@ static const int MATCH_BONUS = 4;
           }
         }
       }
+        
+      // set card to chosen (might also be matched)
       card.chosen = YES;
+      
+      // deduct cost to choose from score
       self.score -= COST_TO_CHOOSE;
     }
   }
+  
+  NSLog(@"self.lastMatched = %@", self.lastMatched);
 }
+
 
 @end

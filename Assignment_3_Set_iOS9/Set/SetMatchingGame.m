@@ -61,8 +61,8 @@ static const int MATCH_BONUS = 2;
         }
       }
       
-      NSLog(@"# CARDS = %d", numChosenCards);
-      NSLog(@"chosenCards = %@", [chosenCards description]);
+//      NSLog(@"# CARDS = %d", numChosenCards);
+//      NSLog(@"chosenCards = %@", [chosenCards description]);
       
       // if 2 cards are chosen
       if (numChosenCards == 2) {
@@ -70,7 +70,7 @@ static const int MATCH_BONUS = 2;
         // match cards against eachother
         int matchScore = [card match:[chosenCards copy]];
         
-        NSLog(@"chosenCards = %@", [chosenCards description]);
+//        NSLog(@"chosenCards = %@", [chosenCards description]);
         
         NSArray *cardSet = [chosenCards arrayByAddingObject:card];
         

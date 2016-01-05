@@ -10,26 +10,27 @@
 
 @implementation ButtonGridView
 {
+  NSMutableArray              *_cardButtonArray;
   NSUInteger                  _columnCount;
   NSUInteger                  _rowCount;
   id<ButtonGridViewDelegate>  _delegate;
 }
 
-@synthesize cardButtonArray = _cardButtonArray; // FIXME?
 
 #pragma mark - Lifecycle
 
-- (instancetype)initWithColumns:(NSUInteger)columnCount rows:(NSUInteger)rowCount delegate:(id<ButtonGridViewDelegate>)delegate;
+- (instancetype)initWithColumns:(NSUInteger)columnCount
+                           rows:(NSUInteger)rowCount
+                       delegate:(id<ButtonGridViewDelegate>)delegate;
 {
   self = [super init];
   
   if (self) {
     
+    _cardButtonArray = [[NSMutableArray alloc] init];
     _columnCount = columnCount;
     _rowCount = rowCount;
     _delegate = delegate;
-    
-    NSMutableArray *cardButtonArray = [[NSMutableArray alloc] init];
     
     // add columnCount * rowCount number of buttons to the cardButtonArray
     for (int i = 0; i < _columnCount * _rowCount; i++) {
@@ -41,10 +42,8 @@
       [btn setTintColor:[UIColor clearColor]];  // iOS9 seems to throw a blue tint on UIButtonTypeRoundedRect
       
       // add the button to the cardButtonArray & to the UIView
-      [cardButtonArray addObject:btn];
+      [_cardButtonArray addObject:btn];
       [self addSubview:btn];
-      
-      _cardButtonArray = cardButtonArray;
     }
   }
   return self;

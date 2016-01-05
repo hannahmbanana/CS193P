@@ -37,19 +37,8 @@
   return _game;
 }
 
-// lazy instantiation for _game so that we can set it to nil when dealing
-- (NSMutableAttributedString *)gameCommentaryHistory
-{
-  if (!_gameCommentaryHistory) {
-    _gameCommentaryHistory = [[NSMutableAttributedString alloc] init];
-  }
-  
-  return _gameCommentaryHistory;
-}
 
 #pragma mark - Lifecycle
-
-
 
 - (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows
 {
@@ -85,9 +74,7 @@
   // construct gameCommentaryLabel
   self.gameCommentaryLabel = [[UILabel alloc] init];
   self.gameCommentaryLabel.textAlignment = NSTextAlignmentCenter;
-  self.gameCommentaryLabel.textColor = [UIColor whiteColor];
-  self.gameCommentaryLabel.numberOfLines = 4;
-  self.gameCommentaryLabel.font = [UIFont systemFontOfSize:15];
+  self.gameCommentaryLabel.numberOfLines = 0;
   
   // construct dealButton
   self.dealButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -103,20 +90,18 @@
   [self.view addSubview:self.scoreLabel];
   [self.view addSubview:self.gameCommentaryLabel];
   [self.view addSubview:self.dealButton];
+  
+  [self updateUI];
 }
 
 - (void)viewWillLayoutSubviews
 {
-  //    // set frames for subviews
-  //    [self.buttonGridView sizeToFit];
-  //    CGRect buttonGridViewFrame = self.buttonGridView.frame;
-  //    buttonGridViewFrame.origin = CGPointMake(0,44);
-  //    self.buttonGridView.frame = buttonGridViewFrame;
+  [super viewWillLayoutSubviews];
   
   CGSize boundsSize = self.view.bounds.size;
   
   // set frames for subviews
-  self.buttonGridView.frame = (CGRect){CGPointMake(0,CGRectGetMaxY(self.navigationController.navigationBar.frame)),
+  self.buttonGridView.frame = (CGRect){CGPointMake(0, CGRectGetMaxY(self.navigationController.navigationBar.frame)),
                                       [self.buttonGridView preferredSizeForWidth:boundsSize.width]};
   
   
@@ -126,20 +111,22 @@
                                       20);
   self.scoreLabel.frame = scoreLabelFrame;
   
-  CGRect gameCommentaryLabelFrame = CGRectMake(20,
-                                               CGRectGetMaxY(self.buttonGridView.frame),
-                                               boundsSize.width - 40,
-                                               60);
-
-  self.gameCommentaryLabel.frame = gameCommentaryLabelFrame;  
+  [self.gameCommentaryLabel sizeToFit];
+  
+  CGRect gameCommentaryLabelFrame = self.gameCommentaryLabel.frame;
+  
+  // FIXME: Must remove this workaround and ensure propery text sizing for layout
+  gameCommentaryLabelFrame.size = [self.gameCommentaryLabel sizeThatFits:CGSizeMake(boundsSize.width, CGFLOAT_MAX)];
+  
+  gameCommentaryLabelFrame.origin = CGPointMake(roundf((boundsSize.width - gameCommentaryLabelFrame.size.width) / 2),
+                                                CGRectGetMaxY(self.buttonGridView.frame));
+  self.gameCommentaryLabel.frame = gameCommentaryLabelFrame;
   
   [self.dealButton sizeToFit];
   CGRect dealButtonFrame = self.dealButton.frame;
   dealButtonFrame.origin = CGPointMake(self.view.bounds.size.width - 60,
                                        self.view.bounds.size.height - 44 - 54);
   self.dealButton.frame = dealButtonFrame;
-  
-  [self updateUI];
 }
 
 
@@ -148,9 +135,7 @@
 - (void)touchDealButton
 {
   self.game = nil;
-  self.gameCommentaryHistory = nil;
   
-  // update UI
   [self updateUI];
 }
 
@@ -159,7 +144,7 @@
   GameHistoryViewController *historyViewController = [[GameHistoryViewController alloc]
                                                       initWithNibName:nil
                                                       bundle:nil
-                                                      playHistoryString:self.gameCommentaryHistory];
+                                                      playHistoryString:self.game.gameCommentaryHistory];
   
   [self.navigationController pushViewController: historyViewController animated:YES];
 }
@@ -167,7 +152,7 @@
 
 #pragma mark - Instance Methods
 
-- (void) updateUI
+- (void)updateUI
 {
   // updates cardButton title, background image, enabled, alpha, shadow
   [self.buttonGridView updateCards];
@@ -179,6 +164,13 @@
 
 #pragma mark - ButtonGridViewDelegate Methods
 
+- (NSAttributedString *)attributedTitleForCardAtIndex:(NSUInteger)cardButtonIndex;
+{
+  Card *card = [self.game cardAtIndex:cardButtonIndex];
+
+  return [self attributedTitleForCard:card override:NO];
+}
+
 - (void)touchCardButtonAtIndex:(NSUInteger)cardButtonIndex
 {
   // update game model
@@ -186,6 +178,13 @@
   
   // update UI
   [self updateUI];
+}
+
+// IMPLEMENT IN SUBCLASS
+- (NSAttributedString *)attributedTitleForCard:(Card *)card override:(BOOL)shouldOverride
+{
+  NSAssert(NO, @"This should not be reached - abstract class");
+  return nil;
 }
 
 - (BOOL)cardMatchedAtIndex:(NSUInteger)cardButtonIndex

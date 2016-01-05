@@ -15,6 +15,7 @@
 @property (nonatomic, assign, readonly) NSInteger       score;
 @property (nonatomic, assign, readonly) NSInteger       lastScore;
 @property (nonatomic, strong, readonly) NSMutableArray  *lastMatched;
+@property (nonatomic, strong, readonly) NSMutableArray  *gameCommentaryHistory;
 @property (nonatomic, strong, readonly) NSMutableArray  *cards;
 
 - (instancetype)initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck NS_DESIGNATED_INITIALIZER;
