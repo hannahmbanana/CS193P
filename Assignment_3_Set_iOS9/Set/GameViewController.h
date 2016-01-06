@@ -18,8 +18,11 @@
 @property (nonatomic, strong, readwrite) ButtonGridView            *buttonGridView;
 @property (nonatomic, strong, readwrite) UILabel                   *scoreLabel;
 @property (nonatomic, strong, readwrite) UILabel                   *gameCommentaryLabel;
+@property (nonatomic, strong, readwrite) NSMutableAttributedString *gameCommentaryHistory;
 @property (nonatomic, strong, readwrite) UIButton                  *dealButton;
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 - (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows NS_DESIGNATED_INITIALIZER;
 - (void) updateUI;
 

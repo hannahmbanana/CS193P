@@ -8,26 +8,12 @@
 
 #import "GameHistoryViewController.h"
 
-@interface GameHistoryViewController ()
-
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil
-                         bundle:(NSBundle *)nibBundleOrNil
-              playHistoryString:(NSMutableAttributedString *)historyString NS_DESIGNATED_INITIALIZER;
-
-@end
-
 @implementation GameHistoryViewController
 {
   UITextView *_textView;
 }
 
 #pragma mark - Lifecycle
-
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil { @throw nil; }
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder { @throw nil; }
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil
                          bundle:(NSBundle *)nibBundleOrNil
@@ -40,19 +26,14 @@
     _textView = [[UITextView alloc] init];
     
     if (!historyString.length) {
-      [_textView setText:@"No History Yet"];
+      [_textView setText:@"No matches / mismatches yet"];
     } else {
       [_textView setAttributedText:historyString];
-      // FIXME: yourTextField.text = [yourArray componentsJoinedByString:@"\n"];
     }
     _textView.textAlignment = NSTextAlignmentCenter;
     _textView.textColor = [UIColor whiteColor];
-    _textView.backgroundColor = [UIColor redColor];  //]colorWithRed:15/255.0 green:110/255.0 blue:48/255.0 alpha:1];
+    _textView.backgroundColor = [UIColor colorWithRed:15/255.0 green:110/255.0 blue:48/255.0 alpha:1];
 
-    
-    // FIXME: put newest at top by reversing array
-    // NSArray* reversedArray = [[startArray reverseObjectEnumerator] allObjects];
-    
   }
   
   return self;

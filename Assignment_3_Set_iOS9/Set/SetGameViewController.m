@@ -30,43 +30,54 @@
   return [[SetCardDeck alloc] init];
 }
 
-- (void)updateUI // fixme:
+- (void)updateUI
 {
   [super updateUI];
   
-  NSMutableAttributedString *label = [[NSMutableAttributedString alloc] init];
-      
-//    // update game commentary
-//    if ([self.game.lastMatched containsObject:card]) {
-//      
-//      // create a UIImage of the card
-//      NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-//      textAttachment.image = [self imageFromString:attributedCardString];
-//      NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
-//      
-//      [label appendAttributedString:attrStringWithImage];
-//    }
-//  }
-//  
-//  
-//  // update game commentary
-//  // 3 cards case
-//  if ([self.game.lastMatched count] > 2) {
-//    
-//    if (self.game.lastScore < 0) {
-//      [label appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" are NOT a set.\n%ld point penalty.\n\n", (long)self.game.lastScore]]];
-//    } else {
-//      [label appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" are a set! %ld points!\n\n", (long)self.game.lastScore]]];
-//    }
-//  }
-//  
-//  [self.gameCommentaryLabel setAttributedText:label];
-//  [self.gameCommentaryHistory appendAttributedString:label];
+  // update game commentary label
+  NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
+  
+  for (Card *card in self.game.lastMatched) {
+    
+    // create a UIImage of the card
+    NSAttributedString *attributedCardString = [self attributedTitleForCard:card override:YES];
+
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = [self imageFromString:attributedCardString];
+    NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
+    
+    [string appendAttributedString:attrStringWithImage];
+  }
+  
+  // 3 card case
+  if ([self.game.lastMatched count] > 2) {
+    
+    NSString *commentary;
+    NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor whiteColor]};
+    
+    if (self.game.lastScore < 0) {
+      commentary = [NSString stringWithFormat:@" are NOT a set (%ld point)\n\n", (long)self.game.lastScore];
+    } else {
+      commentary = [NSString stringWithFormat:@" are a set (+%ld points)!\n\n", (long)self.game.lastScore];
+    }
+    [string appendAttributedString:[[NSAttributedString alloc] initWithString:commentary attributes:attributes]];
+    
+    NSMutableAttributedString *test = [string mutableCopy];
+    [test appendAttributedString:self.gameCommentaryHistory];
+    self.gameCommentaryHistory = test;
+    
+  } else if ([self.game.lastMatched count]) {
+    [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
+  }
+  
+  self.gameCommentaryLabel.attributedText = string;
+  [self.view setNeedsLayout];
+//  NSLog(@"commentary = %@", self.gameCommentaryLabel);
 }
 
-
 - (UIImage *)imageFromString:(NSAttributedString *)string
-{  
+{
+  // FIXME: add white card background
   CGSize stringSize = [string size];
   UIGraphicsBeginImageContextWithOptions(stringSize, NO, 0);
   [string drawInRect:CGRectMake(0, 0, stringSize.width, stringSize.height)];
@@ -75,6 +86,7 @@
   
   return image;
 }
+
 
 #pragma mark - ButtonGridViewDelegate Methods
 

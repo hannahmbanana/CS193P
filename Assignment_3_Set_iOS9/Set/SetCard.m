@@ -54,6 +54,10 @@
   return [SetCard match:[otherCards arrayByAddingObject:self]];
 }
 
+- (NSString *)description
+{
+  return [NSString stringWithFormat:@"%lu-%@-%@-%@", self.number, self.shade, [self.shape description], [self.color description]];
+}
 
 #pragma mark - Class Methods
 

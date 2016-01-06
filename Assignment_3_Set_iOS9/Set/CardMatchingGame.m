@@ -81,7 +81,7 @@ static const int MATCH_BONUS = 4;
     }
   }
   
-  NSLog(@"self.lastMatched = %@", self.lastMatched);
+//  NSLog(@"self.lastMatched = %@", self.lastMatched);
 }
 
 

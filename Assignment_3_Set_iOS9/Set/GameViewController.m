@@ -37,12 +37,22 @@
   return _game;
 }
 
+// lazy instantiation for _gameCommentaryHistory so that we can set it to nil when dealing
+- (NSMutableAttributedString *)gameCommentaryHistory
+{
+  if (!_gameCommentaryHistory) {
+    _gameCommentaryHistory = [[NSMutableAttributedString alloc] init];
+  }
+  
+  return _gameCommentaryHistory;
+}
+
 
 #pragma mark - Lifecycle
 
 - (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows
 {
-  self = [super init];
+  self = [super initWithNibName:nil bundle:nil];
   
   if (self) {
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Play History"
@@ -135,6 +145,7 @@
 - (void)touchDealButton
 {
   self.game = nil;
+  self.gameCommentaryHistory = nil;
   
   [self updateUI];
 }
@@ -144,7 +155,7 @@
   GameHistoryViewController *historyViewController = [[GameHistoryViewController alloc]
                                                       initWithNibName:nil
                                                       bundle:nil
-                                                      playHistoryString:self.game.gameCommentaryHistory];
+                                                      playHistoryString:self.gameCommentaryHistory];
   
   [self.navigationController pushViewController: historyViewController animated:YES];
 }
@@ -159,6 +170,24 @@
   
   // update game score
   self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
+}
+
+// SUBCLASS MUST IMPLEMENT
+- (Deck *)createDeck;
+{
+  return nil;
+}
+
+// SUBCLASS MUST IMPLEMENT
+- (BOOL)shadowForCardAtIndex:(NSUInteger)index
+{
+  return nil;
+}
+
+// SUBCLASS MUST IMPLEMENT
+- (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)index;
+{
+  return nil;
 }
 
 
@@ -180,7 +209,7 @@
   [self updateUI];
 }
 
-// IMPLEMENT IN SUBCLASS
+// SUBCLASS MUST IMPLEMENT
 - (NSAttributedString *)attributedTitleForCard:(Card *)card override:(BOOL)shouldOverride
 {
   NSAssert(NO, @"This should not be reached - abstract class");

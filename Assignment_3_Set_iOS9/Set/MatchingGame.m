@@ -13,7 +13,6 @@
 @property (nonatomic, assign, readwrite) NSInteger      score;
 @property (nonatomic, assign, readwrite) NSInteger      lastScore;
 @property (nonatomic, strong, readwrite) NSMutableArray *lastMatched;
-@property (nonatomic, strong, readwrite) NSMutableArray *gameCommentaryHistory;
 @property (nonatomic, strong, readwrite) NSMutableArray *cards;
 @end
 
@@ -28,15 +27,6 @@
   return _cards;
 }
 
-// lazy instantiation for _game so that we can set it to nil when dealing
-- (NSMutableArray *)gameCommentaryHistory
-{
-  if (!_gameCommentaryHistory) {
-    _gameCommentaryHistory = [[NSMutableArray alloc] init];
-  }
-  
-  return _gameCommentaryHistory;
-}
 
 #pragma mark - Lifecycle
 

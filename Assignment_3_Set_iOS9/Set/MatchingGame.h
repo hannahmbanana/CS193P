@@ -18,6 +18,7 @@
 @property (nonatomic, strong, readonly) NSMutableArray  *gameCommentaryHistory;
 @property (nonatomic, strong, readonly) NSMutableArray  *cards;
 
+- (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck NS_DESIGNATED_INITIALIZER;
 
 // subclasses MUST override this
