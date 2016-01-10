@@ -21,10 +21,13 @@
 
 @interface ButtonGridView : UIView
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (instancetype)initWithColumns:(NSUInteger)columnCount
                            rows:(NSUInteger)rowCount
-                       delegate:(id<ButtonGridViewDelegate>)delegate;
+                       delegate:(id<ButtonGridViewDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+
 - (CGSize)preferredSizeForWidth:(CGFloat)width;
-- (void)updateCards;
+- (void)updateBtnCards;
 
 @end

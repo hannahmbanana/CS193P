@@ -22,75 +22,20 @@
   return [SetMatchingGame class];
 }
 
-
-#pragma mark - Instance Methods
-
-- (Deck *)createDeck
++ (Class)deckClass
 {
-  return [[SetCardDeck alloc] init];
+  return [SetCardDeck class];
 }
 
-- (void)updateUI
++ (NSUInteger)numCardsInMatch
 {
-  [super updateUI];
-  
-  // update game commentary label
-  NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
-  
-  for (Card *card in self.game.lastMatched) {
-    
-    // create a UIImage of the card
-    NSAttributedString *attributedCardString = [self attributedTitleForCard:card override:YES];
-
-    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-    textAttachment.image = [self imageFromString:attributedCardString];
-    NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
-    
-    [string appendAttributedString:attrStringWithImage];
-  }
-  
-  // 3 card case
-  if ([self.game.lastMatched count] > 2) {
-    
-    NSString *commentary;
-    NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor whiteColor]};
-    
-    if (self.game.lastScore < 0) {
-      commentary = [NSString stringWithFormat:@" are NOT a set (%ld point)\n\n", (long)self.game.lastScore];
-    } else {
-      commentary = [NSString stringWithFormat:@" are a set (+%ld points)!\n\n", (long)self.game.lastScore];
-    }
-    [string appendAttributedString:[[NSAttributedString alloc] initWithString:commentary attributes:attributes]];
-    
-    NSMutableAttributedString *test = [string mutableCopy];
-    [test appendAttributedString:self.gameCommentaryHistory];
-    self.gameCommentaryHistory = test;
-    
-  } else if ([self.game.lastMatched count]) {
-    [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
-  }
-  
-  self.gameCommentaryLabel.attributedText = string;
-  [self.view setNeedsLayout];
-//  NSLog(@"commentary = %@", self.gameCommentaryLabel);
-}
-
-- (UIImage *)imageFromString:(NSAttributedString *)string
-{
-  // FIXME: add white card background
-  CGSize stringSize = [string size];
-  UIGraphicsBeginImageContextWithOptions(stringSize, NO, 0);
-  [string drawInRect:CGRectMake(0, 0, stringSize.width, stringSize.height)];
-  UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-  UIGraphicsEndImageContext();
-  
-  return image;
+  return 3;
 }
 
 
 #pragma mark - ButtonGridViewDelegate Methods
 
-- (NSAttributedString *)attributedTitleForCard:(Card *)setCard override:(BOOL)override
+- (NSAttributedString *)attributedTitleForCard:(Card *)setCard overrideIsChosenCheck:(BOOL)override
 {
   SetCard *card = (SetCard *)setCard;
   

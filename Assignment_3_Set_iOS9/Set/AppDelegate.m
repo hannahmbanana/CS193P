@@ -31,10 +31,10 @@
   SetGameViewController *setGameViewController = [[SetGameViewController alloc] initWithColumnCount:7 rowCount:5];
   UINavigationController *setNavController = [[UINavigationController alloc] initWithRootViewController:setGameViewController];
   
-  CardGameViewController *scoreboardViewController = [[CardGameViewController alloc] initWithColumnCount:7 rowCount:5];
+  CardGameViewController *scoreboardViewController = [[CardGameViewController alloc] initWithColumnCount:0 rowCount:0];
   UINavigationController *scoreboardNavController = [[UINavigationController alloc] initWithRootViewController:scoreboardViewController];
   
-  CardGameViewController *settingsViewController = [[CardGameViewController alloc] initWithColumnCount:7 rowCount:5];
+  CardGameViewController *settingsViewController = [[CardGameViewController alloc] initWithColumnCount:0 rowCount:0];
   UINavigationController *settingsNavController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
   
   // CustomTabBarController extends UITabBarController's addChildViewController to make a custom UITabBarItem

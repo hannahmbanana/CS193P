@@ -20,60 +20,25 @@
   return [CardMatchingGame class];
 }
 
-
-#pragma mark - Instance Methods
-
-- (Deck *)createDeck
++ (Class)deckClass
 {
-  return [[PlayingCardDeck alloc] init];
+  return [PlayingCardDeck class];
 }
 
-- (void)updateUI
++ (NSUInteger)numCardsInMatch
 {
-  [super updateUI];
-  
-  // update game commentary label
-  NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
-  
-  for (Card *card in self.game.lastMatched) {
-    [string appendAttributedString:[self attributedTitleForCard:card override:YES]];
-  }
-
-  // 2 cards case
-  if ([self.game.lastMatched count] > 1) {
-
-    NSString *commentary;
-    NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor whiteColor]};
-
-    if (self.game.lastScore < 0) {
-      commentary = [NSString stringWithFormat:@" don't match %ld point penalty.\n\n", (long)self.game.lastScore];
-    } else {
-      commentary = [NSString stringWithFormat:@" matched for %ld points!\n\n", (long)self.game.lastScore];
-    }
-    [string appendAttributedString:[[NSAttributedString alloc] initWithString:commentary attributes:attributes]];
-    
-    NSMutableAttributedString *test = [string mutableCopy];
-    [test appendAttributedString:self.gameCommentaryHistory];
-    self.gameCommentaryHistory = test;
-    
-  } else if ([self.game.lastMatched count]) {
-    [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
-  }
-
-  self.gameCommentaryLabel.attributedText = string;
-  [self.view setNeedsLayout];
-//  NSLog(@"commentary = %@", self.gameCommentaryLabel);
+  return 2;
 }
 
 
 #pragma mark - ButtonGridViewDelegate Methods
 
-- (NSAttributedString *)attributedTitleForCard:(Card *)card override:(BOOL)override
+- (NSAttributedString *)attributedTitleForCard:(Card *)card overrideIsChosenCheck:(BOOL)override
 {  
   NSAttributedString *title;
   
   if (override) {
-    NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor whiteColor]};
+    NSDictionary *attributes = [[super class] attributesDictionary];
     title = [[NSAttributedString alloc] initWithString:card.contents attributes:attributes];
   } else {
     NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor blackColor]};
@@ -92,7 +57,7 @@
   return card.isChosen ? [UIImage imageNamed:@"cardfront"] : [UIImage imageNamed:@"cardback"];
 }
 
-- (BOOL)shadowForCardAtIndex:(NSUInteger)index;                 // SUBCLASS MUST IMPLEMENT
+- (BOOL)shadowForCardAtIndex:(NSUInteger)index; 
 {
   return NO;
 }

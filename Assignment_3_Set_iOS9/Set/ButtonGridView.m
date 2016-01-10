@@ -8,6 +8,15 @@
 
 #import "ButtonGridView.h"
 
+typedef struct CardLayoutInfo {
+  CGFloat  cardHeight;
+  CGFloat  cardWidth;
+  CGFloat  cardBuffer;
+  CGFloat  gridHeight;
+  CGFloat  gridWidth;
+} CardLayoutInfo;
+
+
 @implementation ButtonGridView
 {
   NSMutableArray              *_cardButtonArray;
@@ -23,10 +32,11 @@
                            rows:(NSUInteger)rowCount
                        delegate:(id<ButtonGridViewDelegate>)delegate;
 {
-  self = [super init];
+  self = [super initWithFrame:CGRectZero];
   
   if (self) {
     
+    // create and configure instance variables
     _cardButtonArray = [[NSMutableArray alloc] init];
     _columnCount = columnCount;
     _rowCount = rowCount;
@@ -53,19 +63,30 @@
 
 - (CGSize)preferredSizeForWidth:(CGFloat)width
 {
-  CGSize cardAssetSize = [[ButtonGridView cardImage] size];
+  CardLayoutInfo layoutInfo = [self layoutInfoForWidth:width];
   
-  CGFloat availableCardSpan = (width - 2 * HORIZONTAL_INSET);
-  CGFloat actualCardWidth = roundf(availableCardSpan / (_columnCount + (_columnCount - 1) * CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH));
-  CGFloat cardAspectRatio = cardAssetSize.height / cardAssetSize.width;
-  CGFloat cardHeight = roundf(actualCardWidth * cardAspectRatio);
-  CGFloat cardBuffer = roundf(CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH * actualCardWidth);
-  
-  CGFloat height = 2 * VERTICAL_INSET + cardHeight * _rowCount + cardBuffer * (_rowCount - 1);
-  
-  return CGSizeMake(width, height);
+  return CGSizeMake(layoutInfo.gridWidth, layoutInfo.gridHeight);
 }
 
+- (CardLayoutInfo)layoutInfoForWidth:(CGFloat)width
+{
+  CGSize cardAssetSize = [[ButtonGridView cardImage] size];
+  CGFloat availableCardSpan = (width - 2 * HORIZONTAL_INSET);
+  CGFloat cardWidth = roundf(availableCardSpan / (_columnCount + (_columnCount - 1) * CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH));
+  CGFloat cardAspectRatio = cardAssetSize.height / cardAssetSize.width;
+  CGFloat cardHeight = roundf(cardWidth * cardAspectRatio);
+  CGFloat cardBuffer = roundf(CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH * cardWidth);
+  CGFloat gridHeight = 2 * VERTICAL_INSET + cardHeight * _rowCount + cardBuffer * (_rowCount - 1);
+  
+  CardLayoutInfo layoutInfo;
+  layoutInfo.cardHeight = cardHeight;
+  layoutInfo.cardWidth  = cardWidth;
+  layoutInfo.cardBuffer = cardBuffer;
+  layoutInfo.gridHeight = gridHeight;
+  layoutInfo.gridWidth  = width;
+  
+  return layoutInfo;
+}
 
 static const float HORIZONTAL_INSET = 20;
 static const float VERTICAL_INSET = 20;
@@ -73,26 +94,19 @@ static const float CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH = 0.2;
 
 - (void)layoutSubviews
 {
-  // determine size of cards based on size of visible screen
-  CGSize boundsSize = self.bounds.size;
+  CardLayoutInfo layoutInfo = [self layoutInfoForWidth:self.bounds.size.width];
   
-  CGFloat availableCardSpan = (boundsSize.width - 2 * HORIZONTAL_INSET);
-  CGSize cardAssetSize = [[ButtonGridView cardImage] size];
-  CGFloat cardAspectRatio = cardAssetSize.height / cardAssetSize.width;
-  
-  CGFloat cardWidth = availableCardSpan / (_columnCount + (_columnCount - 1) * CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH);
-  CGFloat cardHeight = roundf(cardWidth * cardAspectRatio);
-  CGFloat cardBuffer = CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH * cardWidth;
-  
-  for (UIButton *button in _cardButtonArray) { CGRect buttonFrame = (CGRect){ CGPointZero, cardWidth, cardHeight };
+  // layout UIButtons in _cardButtonArray
+  for (UIButton *button in _cardButtonArray) {
     
-    NSUInteger buttonIndex = [_cardButtonArray indexOfObjectIdenticalTo:button];
+    CGRect buttonFrame = (CGRect){ CGPointZero, layoutInfo.cardWidth, layoutInfo.cardHeight };
+    
+    NSUInteger buttonIndex        = [_cardButtonArray indexOfObjectIdenticalTo:button];
     NSUInteger cardColumnPosition = buttonIndex % _columnCount;
-    NSUInteger cardRowPosition = buttonIndex / _columnCount;
+    NSUInteger cardRowPosition    = buttonIndex / _columnCount;
     
-    buttonFrame.origin.x = HORIZONTAL_INSET + cardColumnPosition * cardWidth + cardColumnPosition * cardBuffer;
-    
-    buttonFrame.origin.y = VERTICAL_INSET + cardRowPosition * cardHeight + cardRowPosition * cardBuffer;
+    buttonFrame.origin.x = HORIZONTAL_INSET + cardColumnPosition * layoutInfo.cardWidth + cardColumnPosition * layoutInfo.cardBuffer;
+    buttonFrame.origin.y = VERTICAL_INSET + cardRowPosition * layoutInfo.cardHeight + cardRowPosition * layoutInfo.cardBuffer;
     
     button.frame = buttonFrame;
   }
@@ -112,7 +126,7 @@ static const float CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH = 0.2;
 
 #pragma mark - Instance Methods
 
-- (void)updateCards
+- (void)updateBtnCards
 {
   // for each card
   for (UIButton *cardButton in _cardButtonArray) {
