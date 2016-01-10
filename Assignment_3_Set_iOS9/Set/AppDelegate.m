@@ -31,12 +31,20 @@
   SetGameViewController *setGameViewController = [[SetGameViewController alloc] initWithColumnCount:7 rowCount:5];
   UINavigationController *setNavController = [[UINavigationController alloc] initWithRootViewController:setGameViewController];
   
+  CardGameViewController *scoreboardViewController = [[CardGameViewController alloc] initWithColumnCount:7 rowCount:5];
+  UINavigationController *scoreboardNavController = [[UINavigationController alloc] initWithRootViewController:scoreboardViewController];
+  
+  CardGameViewController *settingsViewController = [[CardGameViewController alloc] initWithColumnCount:7 rowCount:5];
+  UINavigationController *settingsNavController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
+  
   // CustomTabBarController extends UITabBarController's addChildViewController to make a custom UITabBarItem
   CustomTabBarController *tabBarController = [[CustomTabBarController alloc] init];
   
   // the TabBarController owns the UINavigationControllers, which own the Card & Set game view controllers
   [tabBarController addChildViewController:cardNavController itemTitle:@"CARD MATCH" itemImageText:@"♠︎ ♥︎" itemImageTextSize:24];
-  [tabBarController addChildViewController:setNavController itemTitle:@"CLASSIC SET" itemImageText:@"■ ▲" itemImageTextSize:20];
+  [tabBarController addChildViewController:setNavController itemTitle:@"CLASSIC SET" itemImageText:@"■ ▲" itemImageTextSize:24];
+  [tabBarController addChildViewController:scoreboardNavController itemTitle:@"SCOREBOARD" itemImageText:@"| | |" itemImageTextSize:24];
+  [tabBarController addChildViewController:settingsNavController itemTitle:@"SETTINGS" itemImageText:@"+" itemImageTextSize:24];
   tabBarController.selectedViewController = setNavController;
   
   self.window.rootViewController = tabBarController;

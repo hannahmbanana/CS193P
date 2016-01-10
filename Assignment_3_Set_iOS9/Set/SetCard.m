@@ -51,7 +51,8 @@
 - (int)match:(NSArray *)otherCards
 {
   // call class method
-  return [SetCard match:[otherCards arrayByAddingObject:self]];
+  BOOL isMatch = [SetCard match:[otherCards arrayByAddingObject:self]];
+  return isMatch ? 1 : 0;
 }
 
 - (NSString *)description
@@ -61,41 +62,28 @@
 
 #pragma mark - Class Methods
 
-+ (int)match:(NSArray *)cards
++ (BOOL)match:(NSArray <SetCard *> *)cards
 {
-  BOOL match = YES;
+  NSMutableSet *shapeSet  = [NSMutableSet set];
+  NSMutableSet *colorSet  = [NSMutableSet set];
+  NSMutableSet *shadeSet  = [NSMutableSet set];
+  NSMutableSet *numberSet = [NSMutableSet set];
   
-  // points if they all match or if they all don't match
-  if ( ![SetCard cardAttributeSet:cards withProperty:@selector(shape)] )
-    match = NO;
-  if ( ![SetCard cardAttributeSet:cards withProperty:@selector(number)] )
-    match = NO;
-  if ( ![SetCard cardAttributeSet:cards withProperty:@selector(color)] )
-    match = NO;
-  if ( ![SetCard cardAttributeSet:cards withProperty:@selector(shade)] )
-    match = NO;
-  
-  return match ? 1 : 0;;
-}
-
-+ (NSUInteger)cardAttributeSet:(NSArray *)cards withProperty:(SEL)property
-{
-  NSMutableSet *shapeSet = [NSMutableSet set];
-  
-  for (SetCard *card in cards) {
-    if (property == @selector(number)) {
-      [shapeSet addObject:[NSNumber numberWithUnsignedInteger:card.number]];
-    } else {
-      [shapeSet addObject:[card performSelector:property]];
-    }
+  for (SetCard *setCard in cards) {
+    [shapeSet addObject:[setCard shape]];
+    [colorSet addObject:[setCard color]];
+    [shadeSet addObject:[setCard shade]];
+    [numberSet addObject:[NSNumber numberWithUnsignedInteger:[setCard number]]];
   }
   
-  BOOL match = YES;
+  NSArray *propertySets = @[shapeSet, colorSet, shadeSet, numberSet];
   
-  if ([shapeSet count] == 2)
-    match = NO;
+  BOOL isMatch = YES;
+  for (NSSet *set in propertySets) {
+    isMatch = isMatch && (set.count == 1 || set.count == cards.count);
+  }
   
-  return match;
+  return isMatch;
 }
 
 + (NSArray *)validShapes
@@ -110,9 +98,9 @@
 
 + (NSArray *)validColors
 {
-  return @[[UIColor colorWithRed:252.0f/255.0f green:4.0f/255.0f blue:118.0f/255.0f alpha:1.0f],
-           [UIColor colorWithRed:85.0f/255.0f green:70.0f/255.0f blue:151.0f/255.0f alpha:1.0f],
-           [UIColor colorWithRed:85.0f/255.0f green:218.0f/255.0f blue:89.0f/255.0f alpha:1.0f]];
+  return @[[UIColor colorWithRed:252.0f/255.0f green:004.0f/255.0f blue:118.0f/255.0f alpha:1.0f],
+           [UIColor colorWithRed:085.0f/255.0f green:070.0f/255.0f blue:151.0f/255.0f alpha:1.0f],
+           [UIColor colorWithRed:085.0f/255.0f green:218.0f/255.0f blue:089.0f/255.0f alpha:1.0f]];
 }
 
 + (NSArray *)validShades
