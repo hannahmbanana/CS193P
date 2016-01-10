@@ -25,19 +25,27 @@
   // make the background color look like green felt
   self.window.backgroundColor = [UIColor colorWithRed:15/255.0 green:110/255.0 blue:48/255.0 alpha:1];
   
-  CardGameViewController *cardGameViewController = [[CardGameViewController alloc] init];
+  CardGameViewController *cardGameViewController = [[CardGameViewController alloc] initWithColumnCount:6 rowCount:5];
   UINavigationController *cardNavController = [[UINavigationController alloc] initWithRootViewController:cardGameViewController];
   
-  SetGameViewController *setGameViewController = [[SetGameViewController alloc] init];
+  SetGameViewController *setGameViewController = [[SetGameViewController alloc] initWithColumnCount:7 rowCount:5];
   UINavigationController *setNavController = [[UINavigationController alloc] initWithRootViewController:setGameViewController];
+  
+  CardGameViewController *scoreboardViewController = [[CardGameViewController alloc] initWithColumnCount:0 rowCount:0];
+  UINavigationController *scoreboardNavController = [[UINavigationController alloc] initWithRootViewController:scoreboardViewController];
+  
+  CardGameViewController *settingsViewController = [[CardGameViewController alloc] initWithColumnCount:0 rowCount:0];
+  UINavigationController *settingsNavController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
   
   // CustomTabBarController extends UITabBarController's addChildViewController to make a custom UITabBarItem
   CustomTabBarController *tabBarController = [[CustomTabBarController alloc] init];
   
   // the TabBarController owns the UINavigationControllers, which own the Card & Set game view controllers
   [tabBarController addChildViewController:cardNavController itemTitle:@"CARD MATCH" itemImageText:@"♠︎ ♥︎" itemImageTextSize:24];
-  [tabBarController addChildViewController:setNavController itemTitle:@"CLASSIC SET" itemImageText:@"■ ▲" itemImageTextSize:20];
-  tabBarController.selectedViewController = cardNavController;
+  [tabBarController addChildViewController:setNavController itemTitle:@"CLASSIC SET" itemImageText:@"■ ▲" itemImageTextSize:24];
+  [tabBarController addChildViewController:scoreboardNavController itemTitle:@"SCOREBOARD" itemImageText:@"| | |" itemImageTextSize:24];
+  [tabBarController addChildViewController:settingsNavController itemTitle:@"SETTINGS" itemImageText:@"+" itemImageTextSize:24];
+  tabBarController.selectedViewController = setNavController;
   
   self.window.rootViewController = tabBarController;
   [self.window makeKeyAndVisible];

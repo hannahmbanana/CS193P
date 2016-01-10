@@ -27,6 +27,7 @@
   return _cards;
 }
 
+
 #pragma mark - Lifecycle
 
 - (instancetype)initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck

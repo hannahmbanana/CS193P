@@ -12,6 +12,7 @@
 
 @implementation CardGameViewController
 
+
 #pragma mark - Class Methods
 
 + (Class)gameClass
@@ -19,82 +20,46 @@
   return [CardMatchingGame class];
 }
 
-#pragma mark - Instance Methods
-
-- (void)updateUI
++ (Class)deckClass
 {
-  // for each card
-  for (UIButton *cardButton in self.buttonGridView.cardButtonArray) {
-    
-    // get card corresponding to UIButton
-    NSUInteger cardButtonIndex = [self.buttonGridView.cardButtonArray indexOfObject:cardButton];
-    
-    Card *card = [self.game cardAtIndex:cardButtonIndex];
-    
-    // update button image
-    [cardButton setBackgroundImage:[self backgroundImageForCard:card] forState:UIControlStateNormal];
-    
-    // update button title
-    [cardButton setTitle:card.contents forState:UIControlStateNormal];
-    
-    NSString *test = [self titleForCard:card];
-    NSLog(@"String:%@, %@",test, cardButton);
+  return [PlayingCardDeck class];
+}
 
-    [cardButton setTitle:test forState:UIControlStateNormal];     //// FIXME: what the fuck?
-    [cardButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    
-    // disable card if matched
-    if (card.isMatched) {
-      cardButton.enabled = NO;
-      [cardButton setAlpha:0.4];
++ (NSUInteger)numCardsInMatch
+{
+  return 2;
+}
+
+
+#pragma mark - ButtonGridViewDelegate Methods
+
+- (NSAttributedString *)attributedTitleForCard:(Card *)card overrideIsChosenCheck:(BOOL)override
+{  
+  NSAttributedString *title;
+  
+  if (override) {
+    NSDictionary *attributes = [[super class] attributesDictionary];
+    title = [[NSAttributedString alloc] initWithString:card.contents attributes:attributes];
+  } else {
+    NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor blackColor]};
+    if (card.isChosen) {
+      title = [[NSAttributedString alloc] initWithString:card.contents attributes:attributes];
     } else {
-      cardButton.enabled = YES;
-      [cardButton setAlpha:1.0];
-    }
-    
-  }
-  
-  // update game score
-  self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
-  
-  // update game commentary
-  NSMutableString *label = [NSMutableString string];
-  for (Card *card in self.game.lastMatched) {
-    [label appendString:card.contents];
-  }
-  
-  // 2 cards case
-  if ([self.game.lastMatched count] > 1) {
-    
-    if (self.game.lastScore < 0) {
-      [label appendFormat:@" don't match.\n%ld point penalty.\n\n", (long)self.game.lastScore];
-    } else {
-      [label appendFormat:@" matched for %ld points!\n\n", (long)self.game.lastScore];
+      title = [[NSAttributedString alloc] initWithString:@"" attributes:attributes];
     }
   }
-  
-  self.gameCommentaryLabel.text = label;
-  
-  [self.gameCommentaryHistory appendAttributedString:[[NSAttributedString alloc] initWithString:label]];
-  
-  
-  
+  return title;
 }
 
-- (Deck *)createDeck
+- (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)cardButtonIndex
 {
-  return [[PlayingCardDeck alloc] init];
+  Card *card = [self.game cardAtIndex:cardButtonIndex];
+  return card.isChosen ? [UIImage imageNamed:@"cardfront"] : [UIImage imageNamed:@"cardback"];
 }
 
-- (NSString *)titleForCard:(Card *)card
+- (BOOL)shadowForCardAtIndex:(NSUInteger)index; 
 {
-  return card.isChosen ? card.contents : @"";
-}
-
-- (UIImage *)backgroundImageForCard:(Card *)card
-{
-  return card.isChosen ?
-  [UIImage imageNamed:@"cardfront"] : [UIImage imageNamed:@"cardback"];
+  return NO;
 }
 
 @end

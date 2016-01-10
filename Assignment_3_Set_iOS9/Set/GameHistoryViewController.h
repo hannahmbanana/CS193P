@@ -10,6 +10,8 @@
 
 @interface GameHistoryViewController : UIViewController
 
-- (instancetype)initWithPlayHistoryString:(NSMutableAttributedString *)historyArray NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
+- (instancetype)initWithPlayHistoryString:(NSMutableAttributedString *)historyString NS_DESIGNATED_INITIALIZER;
 
 @end

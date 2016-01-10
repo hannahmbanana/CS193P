@@ -58,6 +58,11 @@
   return score;
 }
 
+- (NSString *)description
+{
+  return self.contents;// [[super description] stringByAppendingString:self.contents];
+}
+
 #pragma mark - Class Methods
 
 + (NSUInteger)maxRank

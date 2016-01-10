@@ -26,13 +26,13 @@ static const int MATCH_BONUS = 2;
   Card *card = [self.cards objectAtIndex:index];
   
   // reset lastMatched & lastScore properties?
-  if ( ([self.lastMatched count] > 1) && (self.lastScore > 0) ) {
+  if ( ([self.lastMatched count] >= 2) && (self.lastScore > 0) ) {
     // successful match
     [self.lastMatched removeAllObjects];
-  } else if ( ([self.lastMatched count] > 1) && (self.lastScore < 0) ){
+    
+  } else if ( ([self.lastMatched count] >= 2) && (self.lastScore < 0) ){
     // unsuccessful match
-    [self.lastMatched removeObjectAtIndex:0];
-    [self.lastMatched removeObjectAtIndex:1];
+    [self.lastMatched removeObjectsInRange:NSMakeRange(0, 2)]; //remove first 2 objects
   }
   
   self.lastScore = 0;
@@ -43,7 +43,7 @@ static const int MATCH_BONUS = 2;
     // if the card is already chosen, unchose it
     if (card.isChosen) {
       card.chosen = NO;
-      [self.lastMatched removeObject:card];
+      [self.lastMatched removeObjectIdenticalTo:card];
       
     } else {
       
@@ -61,16 +61,11 @@ static const int MATCH_BONUS = 2;
         }
       }
       
-      NSLog(@"# CARDS = %d", numChosenCards);
-      NSLog(@"chosenCards = %@", [chosenCards description]);
-      
       // if 2 cards are chosen
       if (numChosenCards == 2) {
         
         // match cards against eachother
         int matchScore = [card match:[chosenCards copy]];
-        
-        NSLog(@"chosenCards = %@", [chosenCards description]);
         
         NSArray *cardSet = [chosenCards arrayByAddingObject:card];
         
