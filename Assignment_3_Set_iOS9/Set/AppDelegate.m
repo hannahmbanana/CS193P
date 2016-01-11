@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "CardGameViewController.h"
 #import "SetGameViewController.h"
+#import "ScoreTableViewController.h"
+#import "SettingsTableViewController.h"
 #import "CustomTabBarController.h"
 
 @interface AppDelegate ()
@@ -31,10 +33,10 @@
   SetGameViewController *setGameViewController = [[SetGameViewController alloc] initWithColumnCount:7 rowCount:5];
   UINavigationController *setNavController = [[UINavigationController alloc] initWithRootViewController:setGameViewController];
   
-  CardGameViewController *scoreboardViewController = [[CardGameViewController alloc] initWithColumnCount:0 rowCount:0];
+  ScoreTableViewController *scoreboardViewController = [[ScoreTableViewController alloc] init];
   UINavigationController *scoreboardNavController = [[UINavigationController alloc] initWithRootViewController:scoreboardViewController];
   
-  CardGameViewController *settingsViewController = [[CardGameViewController alloc] initWithColumnCount:0 rowCount:0];
+  SettingsTableViewController *settingsViewController = [[SettingsTableViewController alloc] init];
   UINavigationController *settingsNavController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
   
   // CustomTabBarController extends UITabBarController's addChildViewController to make a custom UITabBarItem
@@ -45,7 +47,7 @@
   [tabBarController addChildViewController:setNavController itemTitle:@"CLASSIC SET" itemImageText:@"■ ▲" itemImageTextSize:24];
   [tabBarController addChildViewController:scoreboardNavController itemTitle:@"SCOREBOARD" itemImageText:@"| | |" itemImageTextSize:24];
   [tabBarController addChildViewController:settingsNavController itemTitle:@"SETTINGS" itemImageText:@"+" itemImageTextSize:24];
-  tabBarController.selectedViewController = setNavController;
+  tabBarController.selectedViewController = scoreboardNavController;
   
   self.window.rootViewController = tabBarController;
   [self.window makeKeyAndVisible];

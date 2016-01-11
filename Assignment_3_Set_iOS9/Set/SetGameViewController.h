@@ -10,4 +10,6 @@
 
 @interface SetGameViewController : GameViewController
 
+- (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows;
+
 @end

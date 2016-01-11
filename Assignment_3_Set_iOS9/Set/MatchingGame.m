@@ -8,13 +8,6 @@
 
 #import "MatchingGame.h"
 
-@interface MatchingGame()
-
-@property (nonatomic, assign, readwrite) NSInteger      score;
-@property (nonatomic, assign, readwrite) NSInteger      lastScore;
-@property (nonatomic, strong, readwrite) NSMutableArray *lastMatched;
-@property (nonatomic, strong, readwrite) NSMutableArray *cards;
-@end
 
 @implementation MatchingGame
 
