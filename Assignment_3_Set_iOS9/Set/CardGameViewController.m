@@ -31,6 +31,20 @@
 }
 
 
+#pragma mark - Lifecycle
+
+- (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows
+{
+  self = [super initWithColumnCount:numCols rowCount:numRows];
+  if (self) {
+    
+    // set navigation title
+    self.navigationItem.title = @"Card Matching";
+  }
+  return self;
+}
+
+
 #pragma mark - ButtonGridViewDelegate Methods
 
 - (NSAttributedString *)attributedTitleForCard:(Card *)card overrideIsChosenCheck:(BOOL)override

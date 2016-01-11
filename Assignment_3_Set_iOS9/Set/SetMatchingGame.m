@@ -9,20 +9,35 @@
 #import "SetMatchingGame.h"
 #import "SetCard.h"
 
-@interface MatchingGame()
-@property (nonatomic, assign, readwrite) NSInteger      score;
-@property (nonatomic, assign, readwrite) NSInteger      lastScore;
-@property (nonatomic, strong, readwrite) NSMutableArray *lastMatched;
-@property (nonatomic, strong, readwrite) NSMutableArray *cards;
-@end
-
 @implementation SetMatchingGame
+
+
+#pragma mark - Lifecycle
+
+- (instancetype)initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck
+{
+  self = [super initWithCardCount:count usingDeck:deck];
+  
+  if (self) {
+    self.gameName = @"Set";
+  }
+  
+  return self;
+}
+
+
+#pragma mark - Instance Methods
 
 static const int MISMATCH_PENALTY = 1;
 static const int MATCH_BONUS = 2;
 
 - (void)choseCardAtIndex:(NSUInteger)index
 {
+  // create game start timestamp if game not already started
+  if (!self.startTimestamp) {
+    self.startTimestamp = [NSDate date];
+  }
+
   Card *card = [self.cards objectAtIndex:index];
   
   // reset lastMatched & lastScore properties?

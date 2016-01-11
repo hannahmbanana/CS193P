@@ -12,10 +12,12 @@
 // abstract class
 @interface MatchingGame : NSObject
 
-@property (nonatomic, assign, readonly) NSInteger       score;
-@property (nonatomic, assign, readonly) NSInteger       lastScore;
-@property (nonatomic, strong, readonly) NSMutableArray  *lastMatched;
-@property (nonatomic, strong, readonly) NSMutableArray  *cards;
+@property (nonatomic, assign, readwrite) NSInteger       score;
+@property (nonatomic, assign, readwrite) NSInteger       lastScore;
+@property (nonatomic, strong, readwrite) NSMutableArray  *lastMatched;
+@property (nonatomic, strong, readwrite) NSMutableArray  *cards;
+@property (nonatomic, strong, readwrite) NSDate          *startTimestamp;
+@property (nonatomic, strong, readwrite) NSString        *gameName;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck NS_DESIGNATED_INITIALIZER;

@@ -92,7 +92,6 @@
     _colCount = numCols;
     _rowCount = numRows;
   }
-  
   return self;
 }
 
@@ -166,6 +165,11 @@
 
 - (void)touchDealButton
 {
+  // save game score & other metadata to NSUserDefaults
+  if (self.game.score && self.game.startTimestamp) {
+    [self saveGameWithScore:self.game.score gameType:self.game.gameName start:self.game.startTimestamp];
+  }
+  
   // remove current game & gameCommentary History
   self.game = nil;
   self.gameCommentaryHistory = nil;
@@ -280,7 +284,7 @@
 // subclass must implement
 - (BOOL)shadowForCardAtIndex:(NSUInteger)index
 {
-  return nil;
+  return NO;
 }
 
 - (BOOL)enableCardAtIndex:(NSUInteger)cardButtonIndex
@@ -293,6 +297,55 @@
 - (CGFloat)alphaForCardAtIndex:(NSUInteger)cardButtonIndex
 {
   return [self enableCardAtIndex:cardButtonIndex] ? 1.0 : 0.4;
+}
+
+
+#pragma mark - NSUser Defaults
+
+static const int MAX_NUM_SAVED_SCORES = 11;
+
+- (void)saveGameWithScore:(NSInteger)score gameType:(NSString *)game start:(NSDate *)startDate
+{
+  // create game dictionary with 4 metadata keys
+  NSDictionary *gameData = @{@"gameType": game,
+                             @"score": [NSNumber numberWithInteger:score],
+                             @"start": startDate,
+                             @"end": [NSDate date]};
+  
+  // get gameDataArray from NSUserDefaults
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSMutableArray *gameDataArray = [[defaults objectForKey:@"gameDataArray"] mutableCopy];
+  
+  // check that gameDataArray isn't nil
+  if (!gameDataArray) {
+    gameDataArray = [[NSMutableArray alloc] init];
+  }
+  
+  // add game dictionary to gameDataArray
+  [gameDataArray addObject:gameData];
+  
+  // sort gameDataArray by key "score"
+  [gameDataArray sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+    
+    NSInteger score1 = [[obj1 objectForKey:@"score"] integerValue];
+    NSInteger score2 = [[obj2 objectForKey:@"score"] integerValue];
+    
+    if ( score1 < score2 ) {
+      return (NSComparisonResult)NSOrderedDescending;
+    } else if ( score1 > score2 ) {
+      return (NSComparisonResult)NSOrderedAscending;
+    }
+    return (NSComparisonResult)NSOrderedSame;
+    
+  }];
+  
+  // if gameDataArray has more than 15 scores, trim it
+  if ( [gameDataArray count] > MAX_NUM_SAVED_SCORES ) {
+     gameDataArray = [[gameDataArray subarrayWithRange:NSMakeRange(0, MAX_NUM_SAVED_SCORES)] mutableCopy];
+  }
+  
+  // save updated gameDataArray to NSUserDefaults
+  [defaults setObject:gameDataArray forKey:@"gameDataArray"];
 }
 
 

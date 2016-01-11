@@ -33,6 +33,20 @@
 }
 
 
+#pragma mark - Lifecycle
+
+- (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows
+{
+  self = [super initWithColumnCount:numCols rowCount:numRows];
+  if (self) {
+    
+    // set navigation title
+    self.navigationItem.title = @"Classic Set";
+  }
+  return self;
+}
+
+
 #pragma mark - ButtonGridViewDelegate Methods
 
 - (NSAttributedString *)attributedTitleForCard:(Card *)setCard overrideIsChosenCheck:(BOOL)override

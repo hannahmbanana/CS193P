@@ -10,6 +10,7 @@
 
 @interface CardGameViewController : GameViewController
 
+- (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows;
 
 @end
 

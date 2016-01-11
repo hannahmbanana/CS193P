@@ -57,7 +57,7 @@
 
 - (NSString *)description
 {
-  return [NSString stringWithFormat:@"%lu-%@-%@-%@", self.number, self.shade, [self.shape description], [self.color description]];
+  return [NSString stringWithFormat:@"%lu-%@-%@-%@", (unsigned long)self.number, self.shade, [self.shape description], [self.color description]];
 }
 
 #pragma mark - Class Methods
