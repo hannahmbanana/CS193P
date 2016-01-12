@@ -17,8 +17,6 @@
 @property (nonatomic, strong, readwrite) MatchingGame              *game;
 @property (nonatomic, strong, readwrite) ButtonGridView            *buttonGridView;
 @property (nonatomic, strong, readwrite) UILabel                   *scoreLabel;
-@property (nonatomic, strong, readwrite) UILabel                   *gameCommentaryLabel;
-@property (nonatomic, strong, readwrite) NSMutableAttributedString *gameCommentaryHistory;
 @property (nonatomic, strong, readwrite) UIButton                  *dealButton;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;

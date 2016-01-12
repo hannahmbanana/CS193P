@@ -16,7 +16,6 @@
 		766D5B901C36A19E00BDB471 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 766D5B8E1C36A19E00BDB471 /* LaunchScreen.storyboard */; };
 		766D5BA41C374A2400BDB471 /* CardGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 766D5B9B1C374A2400BDB471 /* CardGameViewController.m */; };
 		766D5BA51C374A2400BDB471 /* CustomTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 766D5B9D1C374A2400BDB471 /* CustomTabBarController.m */; };
-		766D5BA61C374A2400BDB471 /* GameHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 766D5B9F1C374A2400BDB471 /* GameHistoryViewController.m */; };
 		766D5BA71C374A2400BDB471 /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 766D5BA11C374A2400BDB471 /* GameViewController.m */; };
 		766D5BA81C374A2400BDB471 /* SetGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 766D5BA31C374A2400BDB471 /* SetGameViewController.m */; };
 		766D5BAB1C374A8A00BDB471 /* ButtonGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 766D5BAA1C374A8A00BDB471 /* ButtonGridView.m */; };
@@ -49,8 +48,6 @@
 		766D5B9B1C374A2400BDB471 /* CardGameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardGameViewController.m; sourceTree = "<group>"; };
 		766D5B9C1C374A2400BDB471 /* CustomTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTabBarController.h; sourceTree = "<group>"; };
 		766D5B9D1C374A2400BDB471 /* CustomTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTabBarController.m; sourceTree = "<group>"; };
-		766D5B9E1C374A2400BDB471 /* GameHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameHistoryViewController.h; sourceTree = "<group>"; };
-		766D5B9F1C374A2400BDB471 /* GameHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameHistoryViewController.m; sourceTree = "<group>"; };
 		766D5BA01C374A2400BDB471 /* GameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
 		766D5BA11C374A2400BDB471 /* GameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
 		766D5BA21C374A2400BDB471 /* SetGameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetGameViewController.h; sourceTree = "<group>"; };
@@ -173,8 +170,6 @@
 				766D5B9B1C374A2400BDB471 /* CardGameViewController.m */,
 				766D5BA21C374A2400BDB471 /* SetGameViewController.h */,
 				766D5BA31C374A2400BDB471 /* SetGameViewController.m */,
-				766D5B9E1C374A2400BDB471 /* GameHistoryViewController.h */,
-				766D5B9F1C374A2400BDB471 /* GameHistoryViewController.m */,
 				7602C2B21C423B7A002C5F8E /* ScoreTableViewController.h */,
 				7602C2B31C423B7A002C5F8E /* ScoreTableViewController.m */,
 				7602C2B81C4343B7002C5F8E /* ScoreTableViewCell.h */,
@@ -266,7 +261,6 @@
 				766D5BA41C374A2400BDB471 /* CardGameViewController.m in Sources */,
 				766D5BA51C374A2400BDB471 /* CustomTabBarController.m in Sources */,
 				766D5BBC1C374B3700BDB471 /* Card.m in Sources */,
-				766D5BA61C374A2400BDB471 /* GameHistoryViewController.m in Sources */,
 				766D5BC71C374B5700BDB471 /* SetCard.m in Sources */,
 				766D5BBE1C374B3700BDB471 /* Deck.m in Sources */,
 				766D5BC01C374B3700BDB471 /* PlayingCard.m in Sources */,

@@ -7,7 +7,6 @@
 //
 
 #import "GameViewController.h"
-#import "GameHistoryViewController.h"
 
 @interface GameViewController () <ButtonGridViewDelegate>
 @end
@@ -67,16 +66,6 @@
   return _game;
 }
 
-// lazy instantiation for _gameCommentaryHistory so that we can set it to nil when dealing
-- (NSMutableAttributedString *)gameCommentaryHistory
-{
-  if (!_gameCommentaryHistory) {
-    _gameCommentaryHistory = [[NSMutableAttributedString alloc] init];
-  }
-  
-  return _gameCommentaryHistory;
-}
-
 
 #pragma mark - Lifecycle
 
@@ -85,10 +74,6 @@
   self = [super initWithNibName:nil bundle:nil];
   
   if (self) {
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Play History"
-                                                                              style:UIBarButtonItemStylePlain
-                                                                             target:self
-                                                                             action:@selector(touchHistoryButton)];
     _colCount = numCols;
     _rowCount = numRows;
   }
@@ -105,11 +90,6 @@
   self.scoreLabel.textColor = [UIColor whiteColor];
   self.scoreLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
   
-  // create gameCommentaryLabel
-  self.gameCommentaryLabel = [[UILabel alloc] init];
-  self.gameCommentaryLabel.textAlignment = NSTextAlignmentCenter;
-  self.gameCommentaryLabel.numberOfLines = 0;
-  
   // create dealButton
   self.dealButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [self.dealButton setImage:[self backgroundImageForDealButton] forState:UIControlStateNormal];
@@ -123,7 +103,6 @@
   // add subviews to view
   [self.view addSubview:self.buttonGridView];
   [self.view addSubview:self.scoreLabel];
-  [self.view addSubview:self.gameCommentaryLabel];
   [self.view addSubview:self.dealButton];
 }
 
@@ -142,15 +121,6 @@
                                      self.view.bounds.size.height - 40 - 54,
                                      self.view.bounds.size.width - 40,
                                      20);
-  
-  // set frame for gameCommentaryLabel
-  [self.gameCommentaryLabel sizeToFit];
-
-  CGRect gameCommentaryLabelFrame = self.gameCommentaryLabel.frame;
-  gameCommentaryLabelFrame.size = [self.gameCommentaryLabel sizeThatFits:CGSizeMake(boundsSize.width, CGFLOAT_MAX)];
-  gameCommentaryLabelFrame.origin = CGPointMake(roundf((boundsSize.width - gameCommentaryLabelFrame.size.width) / 2),
-                                                CGRectGetMaxY(self.buttonGridView.frame));
-  self.gameCommentaryLabel.frame = gameCommentaryLabelFrame;
   
   // set frame for dealButton
   [self.dealButton sizeToFit];
@@ -172,18 +142,9 @@
   
   // remove current game & gameCommentary History
   self.game = nil;
-  self.gameCommentaryHistory = nil;
   
   // update UI
   [self updateUI];
-}
-
-- (void)touchHistoryButton
-{
-  GameHistoryViewController *historyViewController = [[GameHistoryViewController alloc]
-                                                      initWithPlayHistoryString:self.gameCommentaryHistory];
-  
-  [self.navigationController pushViewController: historyViewController animated:YES];
 }
 
 
@@ -196,48 +157,6 @@
   
   // update game score
   self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
-  
-  // update game commentary label
-  NSMutableAttributedString *labelString = [[NSMutableAttributedString alloc] init];
-  
-  // display the title of the currently selected cards in the label
-  for (Card *card in self.game.lastMatched) {
-    
-    // create a UIImage of the card's attributed title string
-    NSAttributedString *attributedCardString = [self attributedTitleForCard:card overrideIsChosenCheck:YES];
-    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-    textAttachment.image = [self imageFromString:attributedCardString];
-    NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
-    
-    // append the card's UIImage attributed title string to the label
-    [labelString appendAttributedString:attrStringWithImage];
-  }
-  
-  // append any game commentary to the label
-  if ([self.game.lastMatched count] > [[self class] numCardsInMatch] - 1) {
-    
-    NSString *commentary;
-    
-    // come up with game commentary
-    if (self.game.lastScore < 0) {
-      commentary = [NSString stringWithFormat:@"\n are not a match (%ld points)\n\n", (long)self.game.lastScore];
-    } else {
-      commentary = [NSString stringWithFormat:@"\n match (+%ld points)!\n\n", (long)self.game.lastScore];
-    }
-    
-    // append the game commentary to the label
-    [labelString appendAttributedString:[[NSAttributedString alloc] initWithString:commentary
-                                                                        attributes:[[self class] attributesDictionary]]];
-    
-    // append the current label to the gameCommentaryHistory
-    [self.gameCommentaryHistory appendAttributedString:labelString];
-    
-  } else if ([self.game.lastMatched count]) {
-    [labelString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
-  }
-  
-  // update game commentary label
-  self.gameCommentaryLabel.attributedText = labelString;
   
   // refresh view
   [self.view setNeedsLayout];
