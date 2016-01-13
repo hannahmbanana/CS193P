@@ -35,6 +35,13 @@
 }
 
 // subclass must implement
++ (Class)cardGridClass
+{
+  NSAssert(NO, @"This should not be reached - abstract class");
+  return Nil;
+}
+
+// subclass must implement
 + (NSUInteger)numCardsInMatch
 {
   NSAssert(NO, @"This should not be reached - abstract class");
@@ -97,7 +104,7 @@
   [self.dealButton setTintColor:[UIColor whiteColor]];
   
   // create & update buttonGridView
-  self.buttonGridView = [[ButtonGridView alloc] initWithColumns:_colCount rows:_rowCount delegate:self];
+  self.buttonGridView = [[[[self class] cardGridClass] alloc] initWithColumns:_colCount rows:_rowCount delegate:self game:self.game];
   [self updateUI];
 
   // add subviews to view
@@ -150,19 +157,6 @@
 
 #pragma mark - Instance Methods
 
-- (void)updateUI
-{
-  // updates cardButton title, background image, enabled, alpha, shadow
-  [self.buttonGridView updateBtnCards];
-  
-  // update game score
-  self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
-  
-  // refresh view
-  [self.view setNeedsLayout];
-
-}
-
 // subclass must implement
 - (NSAttributedString *)attributedTitleForCard:(Card *)card overrideIsChosenCheck:(BOOL)shouldOverride
 {
@@ -175,6 +169,22 @@
   return [[self.game cardAtIndex:cardButtonIndex] isMatched];
 }
 
+- (void)updateUI
+{
+  // updates cardButton title, background image, enabled, alpha, shadow
+  for (Card *card in self.game.cards) {
+    NSUInteger cardIndex = [self.game.cards indexOfObject:card];
+    [self.buttonGridView updateCardAtIndex:cardIndex withCard:card];
+  }
+  
+  // update game score
+  self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
+  
+  // refresh view
+  [self.view setNeedsLayout];
+  
+}
+
 
 #pragma mark - ButtonGridViewDelegate Methods
 
@@ -182,6 +192,10 @@
 {
   // update game model
   [self.game choseCardAtIndex:cardButtonIndex];
+  
+  // have cardGrid update that card's view
+  Card *card = [self.game cardAtIndex:cardButtonIndex];
+  [self.buttonGridView updateCardAtIndex:cardButtonIndex withCard:card];
   
   // update UI
   [self updateUI];

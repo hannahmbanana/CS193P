@@ -1,9 +1,9 @@
 //
 //  SetCardView.h
-//  CustomCards-Project4
+//  Set
 //
-//  Created by Hannah Troisi on 10/22/15.
-//  Copyright © 2015 Hannah Troisi. All rights reserved.
+//  Created by Hannah Troisi on 1/10/16.
+//  Copyright © 2016 Hannah Troisi. All rights reserved.
 //
 
 #import "CardView.h"

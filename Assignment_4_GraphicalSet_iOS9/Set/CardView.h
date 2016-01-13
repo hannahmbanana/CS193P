@@ -1,26 +1,25 @@
 //
 //  CardView.h
-//  CustomCards-Project4
+//  Set
 //
-//  Created by Hannah Troisi on 10/22/15.
-//  Copyright © 2015 Hannah Troisi. All rights reserved.
+//  Created by Hannah Troisi on 1/10/16.
+//  Copyright © 2016 Hannah Troisi. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import "Card.h"
 
 // ABSTRACT CLASS
 @interface CardView : UIView
 
 @property (nonatomic, assign, readwrite) BOOL faceUp;
 
+- (instancetype)initWithFrame:(CGRect)frame card:(Card *)card;
+
+- (void)updateCardProperties:(Card *)card;
+
 + (CGSize)preferredCardSizeForWidth:(CGFloat)width;
 - (CGFloat)cornerScaleFactor;
 - (CGFloat)cornerRadius;
-
-// subclass must implement
-- (void)tappedCard:(UIGestureRecognizer *)gestureRecognizer;
-- (void)tappedCardTwice:(UIGestureRecognizer *)gestureRecognizer;
-- (void)tappedCardThrice:(UIGestureRecognizer *)gestureRecognizer;
-- (void)tappedCardQuarce:(UIGestureRecognizer *)gestureRecognizer;
 
 @end

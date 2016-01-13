@@ -13,7 +13,7 @@
 
 @property (nonatomic, strong, readwrite) NSString    *shape;
 @property (nonatomic, assign, readwrite) NSUInteger  number;
-@property (nonatomic, strong, readwrite) UIColor     *color;
+@property (nonatomic, strong, readwrite) NSString    *color;
 @property (nonatomic, strong, readwrite) NSString    *shade;
 
 + (NSArray *)validShapes;

@@ -1,12 +1,13 @@
 //
 //  PlayingCardView.m
-//  CustomCards-Project4
+//  Set
 //
-//  Created by Hannah Troisi on 10/22/15.
-//  Copyright © 2015 Hannah Troisi. All rights reserved.
+//  Created by Hannah Troisi on 1/10/16.
+//  Copyright © 2016 Hannah Troisi. All rights reserved.
 //
 
 #import "PlayingCardView.h"
+#import "PlayingCard.h"
 
 @implementation PlayingCardView
 
@@ -30,11 +31,45 @@
   return @[@"?",@"A",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"10",@"J",@"Q",@"K"][self.rank];
 }
 
+
+#pragma mark - Lifecycle
+
+- (instancetype)initWithFrame:(CGRect)frame card:(PlayingCard *)card
+{
+  self = [super initWithFrame:frame card:card];
+  
+  if (self) {
+    
+    // card properties
+    [self updateCardProperties:card];
+  }
+  
+  return self;
+}
+
+
+#pragma mark - Instance Methods
+
+- (void)updateCardProperties:(PlayingCard *)card
+{
+  [super updateCardProperties:card];
+  
+  self.suit = card.suit;
+  self.rank = card.rank;
+  
+  self.userInteractionEnabled = card.isMatched ? NO : YES;
+  self.alpha = card.isMatched ? 0.4 : 1.0;
+}
+
+
 #pragma mark - Drawing
 
 #define DEFAULT_FACE_CARD_SCALE_FACTOR 0.90
 
-- (CGFloat)cornerOffset { return [self cornerRadius] / 3.0; }
+- (CGFloat)cornerOffset
+{
+  return [self cornerRadius] / 3.0;
+}
 
 - (void)pushContextAndRotateUpsideDown
 {
@@ -83,7 +118,7 @@
 - (void)drawRect:(CGRect)rect
 {
   [super drawRect:rect];
-  
+    
   if (self.faceUp) {
     
     // check if the card is a facecard (J,Q,K)
@@ -110,6 +145,7 @@
   }
 }
 
+
 #pragma mark - Pips
 
 #define PIP_HOFFSET_PERCENTAGE 0.165
@@ -120,85 +156,48 @@
 - (void)drawPips
 {
   if ((self.rank == 1) || (self.rank == 5) || (self.rank == 9) || (self.rank == 3)) {
-    [self drawPipsWithHorizontalOffset:0
-                        verticalOffset:0
-                    mirroredVertically:NO];
+    [self drawPipsWithHorizontalOffset:0 verticalOffset:0 mirroredVertically:NO];
   }
   if ((self.rank == 6) || (self.rank == 7) || (self.rank == 8)) {
-    [self drawPipsWithHorizontalOffset:PIP_HOFFSET_PERCENTAGE
-                        verticalOffset:0
-                    mirroredVertically:NO];
+    [self drawPipsWithHorizontalOffset:PIP_HOFFSET_PERCENTAGE verticalOffset:0 mirroredVertically:NO];
   }
   if ((self.rank == 2) || (self.rank == 3) || (self.rank == 7) || (self.rank == 8) || (self.rank == 10)) {
-    [self drawPipsWithHorizontalOffset:0
-                        verticalOffset:PIP_VOFFSET2_PERCENTAGE
-                    mirroredVertically:(self.rank != 7)];
+    [self drawPipsWithHorizontalOffset:0 verticalOffset:PIP_VOFFSET2_PERCENTAGE mirroredVertically:(self.rank != 7)];
   }
   if ((self.rank == 4) || (self.rank == 5) || (self.rank == 6) || (self.rank == 7) || (self.rank == 8) || (self.rank == 9) || (self.rank == 10)) {
-    [self drawPipsWithHorizontalOffset:PIP_HOFFSET_PERCENTAGE
-                        verticalOffset:PIP_VOFFSET3_PERCENTAGE
-                    mirroredVertically:YES];
+    [self drawPipsWithHorizontalOffset:PIP_HOFFSET_PERCENTAGE verticalOffset:PIP_VOFFSET3_PERCENTAGE mirroredVertically:YES];
   }
   if ((self.rank == 9) || (self.rank == 10)) {
-    [self drawPipsWithHorizontalOffset:PIP_HOFFSET_PERCENTAGE
-                        verticalOffset:PIP_VOFFSET1_PERCENTAGE
-                    mirroredVertically:YES];
+    [self drawPipsWithHorizontalOffset:PIP_HOFFSET_PERCENTAGE verticalOffset:PIP_VOFFSET1_PERCENTAGE mirroredVertically:YES];
   }
 }
 
 #define PIP_FONT_SCALE_FACTOR 0.012
 
-- (void)drawPipsWithHorizontalOffset:(CGFloat)hoffset
-                      verticalOffset:(CGFloat)voffset
-                          upsideDown:(BOOL)upsideDown
+- (void)drawPipsWithHorizontalOffset:(CGFloat)hoffset verticalOffset:(CGFloat)voffset upsideDown:(BOOL)upsideDown
 {
   if (upsideDown) [self pushContextAndRotateUpsideDown];
-  CGPoint middle = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
+  CGPoint middle = CGPointMake( self.bounds.size.width / 2, self.bounds.size.height / 2 );
   UIFont *pipFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
   pipFont = [pipFont fontWithSize:[pipFont pointSize] * self.bounds.size.width * PIP_FONT_SCALE_FACTOR];
-  NSAttributedString *attributedSuit = [[NSAttributedString alloc] initWithString:self.suit attributes:@{ NSFontAttributeName : pipFont }];
+  NSDictionary *attributes = @{ NSFontAttributeName : pipFont };
+  NSAttributedString *attributedSuit = [[NSAttributedString alloc] initWithString:self.suit attributes:attributes];
   CGSize pipSize = [attributedSuit size];
-  CGPoint pipOrigin = CGPointMake(
-                                  middle.x-pipSize.width/2.0-hoffset*self.bounds.size.width,
-                                  middle.y-pipSize.height/2.0-voffset*self.bounds.size.height
-                                  );
+  CGPoint pipOrigin = CGPointMake(middle.x-pipSize.width/2.0-hoffset*self.bounds.size.width,
+                                  middle.y-pipSize.height/2.0-voffset*self.bounds.size.height);
   [attributedSuit drawAtPoint:pipOrigin];
   if (hoffset) {
-    pipOrigin.x += hoffset*2.0*self.bounds.size.width;
+    pipOrigin.x += hoffset * 2.0 * self.bounds.size.width;
     [attributedSuit drawAtPoint:pipOrigin];
   }
   if (upsideDown) [self popContext];
 }
 
-- (void)drawPipsWithHorizontalOffset:(CGFloat)hoffset
-                      verticalOffset:(CGFloat)voffset
-                  mirroredVertically:(BOOL)mirroredVertically
+- (void)drawPipsWithHorizontalOffset:(CGFloat)hoffset verticalOffset:(CGFloat)voffset mirroredVertically:(BOOL)mirroredVertically
 {
-  [self drawPipsWithHorizontalOffset:hoffset
-                      verticalOffset:voffset
-                          upsideDown:NO];
+  [self drawPipsWithHorizontalOffset:hoffset verticalOffset:voffset upsideDown:NO];
   if (mirroredVertically) {
-    [self drawPipsWithHorizontalOffset:hoffset
-                        verticalOffset:voffset
-                            upsideDown:YES];
-  }
-}
-
-
-#pragma mark - Gesture Handling
-
-- (void)tappedCard:(UITapGestureRecognizer *)gesture
-{
-  if (gesture.state == UIGestureRecognizerStateRecognized) {
-    
-    self.faceUp = !self.faceUp;
-    
-    if (!self.faceUp) {
-      self.rank += 1;
-      if (self.rank >= 14) {
-        self.rank = 1;
-      }
-    }
+    [self drawPipsWithHorizontalOffset:hoffset verticalOffset:voffset upsideDown:YES];
   }
 }
 

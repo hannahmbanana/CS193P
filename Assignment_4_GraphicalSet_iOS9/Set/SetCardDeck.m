@@ -20,7 +20,7 @@
     for (NSString *shape in [SetCard validShapes]) {
       for (NSUInteger number=1; number <= [SetCard maxNumber]; number++) {
         for (NSString *shade in [SetCard validShades]) {
-          for (UIColor *color in [SetCard validColors]) {
+          for (NSString *color in [SetCard validColors]) {
             
             SetCard *card = [[SetCard alloc] init];
             card.shape = shape;

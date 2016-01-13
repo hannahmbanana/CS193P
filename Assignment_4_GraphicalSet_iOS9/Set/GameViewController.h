@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ButtonGridView.h"
+#import "PlayingCardGrid.h"
 #import "MatchingGame.h"
 #import "Deck.h"
 
@@ -15,7 +16,7 @@
 @interface GameViewController : UIViewController 
 
 @property (nonatomic, strong, readwrite) MatchingGame              *game;
-@property (nonatomic, strong, readwrite) ButtonGridView            *buttonGridView;
+@property (nonatomic, strong, readwrite) PlayingCardGrid           *buttonGridView;
 @property (nonatomic, strong, readwrite) UILabel                   *scoreLabel;
 @property (nonatomic, strong, readwrite) UIButton                  *dealButton;
 
@@ -25,12 +26,15 @@
 
 + (Class)gameClass;                                                                          // SUBCLASS MUST IMPLEMENT
 + (Class)deckClass;                                                                          // SUBCLASS MUST IMPLEMENT
++ (Class)cardGridClass;                                                                          // SUBCLASS MUST IMPLEMENT
 + (NSUInteger)numCardsInMatch;                                                               // SUBCLASS MUST IMPLEMENT
 + (NSDictionary *)attributesDictionary;
 
-- (void) updateUI;
 - (NSAttributedString *)attributedTitleForCard:(Card *)card overrideIsChosenCheck:(BOOL)shouldOverride;   // SUBCLASS MUST IMPLEMENT
 - (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)index;                                // SUBCLASS MUST IMPLEMENT
 - (BOOL)shadowForCardAtIndex:(NSUInteger)index;                                              // SUBCLASS MUST IMPLEMENT
+
+- (UIImage *)backgroundImageForDealButton;
+
 
 @end

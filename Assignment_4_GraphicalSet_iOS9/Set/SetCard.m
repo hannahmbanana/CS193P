@@ -29,7 +29,7 @@
 }
 
 // override the color setter to make sure it's a valid color
-- (void)setColor:(UIColor *)color
+- (void)setColor:(NSString *)color
 {
   if ([[SetCard validColors] containsObject:color]) {
     _color = color;
@@ -88,7 +88,7 @@
 
 + (NSArray *)validShapes
 {
-  return @[@"▲", @"●", @"■"];
+  return @[@"diamond", @"oval", @"squiggle"];
 }
 
 + (NSUInteger)maxNumber
@@ -98,14 +98,15 @@
 
 + (NSArray *)validColors
 {
-  return @[[UIColor colorWithRed:252.0f/255.0f green:004.0f/255.0f blue:118.0f/255.0f alpha:1.0f],
-           [UIColor colorWithRed:085.0f/255.0f green:070.0f/255.0f blue:151.0f/255.0f alpha:1.0f],
-           [UIColor colorWithRed:085.0f/255.0f green:218.0f/255.0f blue:089.0f/255.0f alpha:1.0f]];
+  return @[@"pink", @"purple", @"green"];
+//  return @[[UIColor colorWithRed:252.0f/255.0f green:004.0f/255.0f blue:118.0f/255.0f alpha:1.0f],
+//           [UIColor colorWithRed:085.0f/255.0f green:070.0f/255.0f blue:151.0f/255.0f alpha:1.0f],
+//           [UIColor colorWithRed:085.0f/255.0f green:218.0f/255.0f blue:089.0f/255.0f alpha:1.0f]];
 }
 
 + (NSArray *)validShades
 {
-  return @[@"solid", @"striped", @"open"];
+  return @[@"solid", @"striped", @"unfilled"];
 }
 
 @end

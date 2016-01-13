@@ -25,6 +25,11 @@
   return [PlayingCardDeck class];
 }
 
++ (Class)cardGridClass
+{
+  return [PlayingCardGrid class];
+}
+
 + (NSUInteger)numCardsInMatch
 {
   return 2;
@@ -65,11 +70,11 @@
   return title;
 }
 
-- (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)cardButtonIndex
-{
-  Card *card = [self.game cardAtIndex:cardButtonIndex];
-  return card.isChosen ? [UIImage imageNamed:@"cardfront"] : [UIImage imageNamed:@"cardback"];
-}
+//- (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)cardButtonIndex
+//{
+//  Card *card = [self.game cardAtIndex:cardButtonIndex];
+//  return card.isChosen ? [UIImage imageNamed:@"cardfront"] : [UIImage imageNamed:@"cardback"];
+//}
 
 - (BOOL)shadowForCardAtIndex:(NSUInteger)index; 
 {

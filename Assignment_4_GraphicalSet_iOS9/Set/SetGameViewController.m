@@ -10,10 +10,13 @@
 #import "SetMatchingGame.h"
 #import "SetCardDeck.h"
 #import "SetCard.h"
+#import "SetCardGrid.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation SetGameViewController
-
+{
+  UIButton *_btn;
+}
 
 #pragma mark - Class Methods
 
@@ -25,6 +28,11 @@
 + (Class)deckClass
 {
   return [SetCardDeck class];
+}
+
++ (Class)cardGridClass
+{
+  return [SetCardGrid class];
 }
 
 + (NSUInteger)numCardsInMatch
@@ -44,6 +52,40 @@
     self.navigationItem.title = @"Classic Set";
   }
   return self;
+}
+
+- (void)viewDidLoad
+{
+  [super viewDidLoad];
+  
+  // create deal3Button
+  _btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [_btn setTitle:@"Deal 3" forState:UIControlStateNormal];
+  [_btn addTarget:self action:@selector(dealThreeCards) forControlEvents:UIControlEventTouchUpInside];
+  [_btn setTintColor:[UIColor whiteColor]];
+  
+  [self.view addSubview:_btn];
+}
+
+- (void)viewWillLayoutSubviews
+{
+  [super viewWillLayoutSubviews];
+  
+  // set frame for dealButton
+  [_btn sizeToFit];
+  CGRect dealButtonFrame = self.dealButton.frame;
+  dealButtonFrame.size = _btn.frame.size;
+  dealButtonFrame.origin = CGPointMake(dealButtonFrame.origin.x - _btn.frame.size.width - 20,
+                                       dealButtonFrame.origin.y);
+  _btn.frame = dealButtonFrame;
+}
+
+
+#pragma mark - Helper Methods
+
+- (void)dealThreeCards
+{
+  NSLog(@"HI");
 }
 
 

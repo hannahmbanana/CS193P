@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MatchingGame.h"
 
 @class ButtonGridView;
 @protocol ButtonGridViewDelegate <NSObject>
@@ -21,13 +22,24 @@
 
 @interface ButtonGridView : UIView
 
+@property (nonatomic, strong, readwrite) NSMutableArray              *cardArray;
+@property (nonatomic, assign, readwrite) NSUInteger                  columnCount;
+@property (nonatomic, assign, readwrite) NSUInteger                  rowCount;
+@property (nonatomic, strong, readwrite) id<ButtonGridViewDelegate>  delegate;
+
++ (Class)cardViewClass;  // subclass must implement
+
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (instancetype)initWithColumns:(NSUInteger)columnCount
                            rows:(NSUInteger)rowCount
-                       delegate:(id<ButtonGridViewDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+                       delegate:(id<ButtonGridViewDelegate>)delegate
+                           game:(MatchingGame *)game NS_DESIGNATED_INITIALIZER;
 
 - (CGSize)preferredSizeForWidth:(CGFloat)width;
-- (void)updateBtnCards;
+- (void)buttonTouched:(UIGestureRecognizer *)gr;
+- (void)updateCard;
+- (void)updateCardAtIndex:(NSUInteger)cardButtonIndex withCard:(Card *)card;
+
 
 @end

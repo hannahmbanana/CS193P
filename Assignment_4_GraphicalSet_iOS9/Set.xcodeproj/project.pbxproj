@@ -31,6 +31,8 @@
 		76FA67971C44D854006BCC56 /* CardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 76FA67921C44D854006BCC56 /* CardView.m */; };
 		76FA67981C44D854006BCC56 /* PlayingCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 76FA67941C44D854006BCC56 /* PlayingCardView.m */; };
 		76FA67991C44D854006BCC56 /* SetCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 76FA67961C44D854006BCC56 /* SetCardView.m */; };
+		76FA679F1C44E51C006BCC56 /* PlayingCardGrid.m in Sources */ = {isa = PBXBuildFile; fileRef = 76FA679E1C44E51C006BCC56 /* PlayingCardGrid.m */; };
+		76FA67A21C461AC5006BCC56 /* SetCardGrid.m in Sources */ = {isa = PBXBuildFile; fileRef = 76FA67A11C461AC5006BCC56 /* SetCardGrid.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +83,10 @@
 		76FA67941C44D854006BCC56 /* PlayingCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayingCardView.m; sourceTree = "<group>"; };
 		76FA67951C44D854006BCC56 /* SetCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetCardView.h; sourceTree = "<group>"; };
 		76FA67961C44D854006BCC56 /* SetCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetCardView.m; sourceTree = "<group>"; };
+		76FA679D1C44E51C006BCC56 /* PlayingCardGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayingCardGrid.h; sourceTree = "<group>"; };
+		76FA679E1C44E51C006BCC56 /* PlayingCardGrid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayingCardGrid.m; sourceTree = "<group>"; };
+		76FA67A01C461AC5006BCC56 /* SetCardGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetCardGrid.h; sourceTree = "<group>"; };
+		76FA67A11C461AC5006BCC56 /* SetCardGrid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetCardGrid.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +170,10 @@
 			children = (
 				766D5BA91C374A8A00BDB471 /* ButtonGridView.h */,
 				766D5BAA1C374A8A00BDB471 /* ButtonGridView.m */,
+				76FA679D1C44E51C006BCC56 /* PlayingCardGrid.h */,
+				76FA679E1C44E51C006BCC56 /* PlayingCardGrid.m */,
+				76FA67A01C461AC5006BCC56 /* SetCardGrid.h */,
+				76FA67A11C461AC5006BCC56 /* SetCardGrid.m */,
 				76FA67911C44D854006BCC56 /* CardView.h */,
 				76FA67921C44D854006BCC56 /* CardView.m */,
 				76FA67931C44D854006BCC56 /* PlayingCardView.h */,
@@ -271,11 +281,13 @@
 				7602C2BA1C4343B7002C5F8E /* ScoreTableViewCell.m in Sources */,
 				76FA67981C44D854006BCC56 /* PlayingCardView.m in Sources */,
 				766D5BA81C374A2400BDB471 /* SetGameViewController.m in Sources */,
+				76FA679F1C44E51C006BCC56 /* PlayingCardGrid.m in Sources */,
 				766D5BBF1C374B3700BDB471 /* MatchingGame.m in Sources */,
 				766D5BBD1C374B3700BDB471 /* CardMatchingGame.m in Sources */,
 				766D5BC81C374B5700BDB471 /* SetMatchingGame.m in Sources */,
 				766D5B851C36A19E00BDB471 /* AppDelegate.m in Sources */,
 				766D5BA41C374A2400BDB471 /* CardGameViewController.m in Sources */,
+				76FA67A21C461AC5006BCC56 /* SetCardGrid.m in Sources */,
 				76FA67991C44D854006BCC56 /* SetCardView.m in Sources */,
 				766D5BA51C374A2400BDB471 /* CustomTabBarController.m in Sources */,
 				766D5BBC1C374B3700BDB471 /* Card.m in Sources */,

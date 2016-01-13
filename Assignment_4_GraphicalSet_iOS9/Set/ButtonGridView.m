@@ -7,6 +7,7 @@
 //
 
 #import "ButtonGridView.h"
+#import "CardView.h"
 
 typedef struct CardLayoutInfo {
   CGFloat  cardHeight;
@@ -18,11 +19,15 @@ typedef struct CardLayoutInfo {
 
 
 @implementation ButtonGridView
+
+
+#pragma mark - Class Methods
+
+// subclass MUST implement
++ (Class)cardViewClass
 {
-  NSMutableArray              *_cardButtonArray;
-  NSUInteger                  _columnCount;
-  NSUInteger                  _rowCount;
-  id<ButtonGridViewDelegate>  _delegate;
+  NSAssert(NO, @"This should not be reached - abstract class");
+  return Nil;
 }
 
 
@@ -30,34 +35,23 @@ typedef struct CardLayoutInfo {
 
 - (instancetype)initWithColumns:(NSUInteger)columnCount
                            rows:(NSUInteger)rowCount
-                       delegate:(id<ButtonGridViewDelegate>)delegate;
+                       delegate:(id<ButtonGridViewDelegate>)delegate
+                           game:(MatchingGame *)game;
 {
   self = [super initWithFrame:CGRectZero];
   
   if (self) {
     
     // create and configure instance variables
-    _cardButtonArray = [[NSMutableArray alloc] init];
-    _columnCount = columnCount;
-    _rowCount = rowCount;
-    _delegate = delegate;
+    self.cardArray = [[NSMutableArray alloc] init];
+    self.columnCount = columnCount;
+    self.rowCount = rowCount;
+    self.delegate = delegate;
     
-    // add columnCount * rowCount number of buttons to the cardButtonArray
-    for (int i = 0; i < _columnCount * _rowCount; i++) {
-      
-      // initialize & configure the card button
-      UIButton *btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-      [btn setBackgroundImage:[ButtonGridView cardImage] forState:UIControlStateNormal];
-      [btn addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
-      [btn setTintColor:[UIColor clearColor]];  // iOS9 seems to throw a blue tint on UIButtonTypeRoundedRect
-      
-      // add the button to the cardButtonArray & to the UIView
-      [_cardButtonArray addObject:btn];
-      [self addSubview:btn];
-    }
   }
   return self;
 }
+
 
 #pragma mark - Layout
 
@@ -72,11 +66,11 @@ typedef struct CardLayoutInfo {
 {
   CGSize cardAssetSize = [[ButtonGridView cardImage] size];
   CGFloat availableCardSpan = (width - 2 * HORIZONTAL_INSET);
-  CGFloat cardWidth = roundf(availableCardSpan / (_columnCount + (_columnCount - 1) * CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH));
+  CGFloat cardWidth = roundf(availableCardSpan / (self.columnCount + (self.columnCount - 1) * CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH));
   CGFloat cardAspectRatio = cardAssetSize.height / cardAssetSize.width;
   CGFloat cardHeight = roundf(cardWidth * cardAspectRatio);
   CGFloat cardBuffer = roundf(CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH * cardWidth);
-  CGFloat gridHeight = 2 * VERTICAL_INSET + cardHeight * _rowCount + cardBuffer * (_rowCount - 1);
+  CGFloat gridHeight = 2 * VERTICAL_INSET + cardHeight * self.rowCount + cardBuffer * (self.rowCount - 1);
   
   CardLayoutInfo layoutInfo;
   layoutInfo.cardHeight = cardHeight;
@@ -96,70 +90,45 @@ static const float CARD_BUFFER_PERCENTAGE_OF_CARD_WIDTH = 0.2;
 {
   CardLayoutInfo layoutInfo = [self layoutInfoForWidth:self.bounds.size.width];
   
-  // layout UIButtons in _cardButtonArray
-  for (UIButton *button in _cardButtonArray) {
+  // layout cards in self.cardArray
+  for (CardView *card in self.cardArray) {
     
-    CGRect buttonFrame = (CGRect){ CGPointZero, layoutInfo.cardWidth, layoutInfo.cardHeight };
+    CGRect cardFrame = (CGRect){ CGPointZero, layoutInfo.cardWidth, layoutInfo.cardHeight };
     
-    NSUInteger buttonIndex        = [_cardButtonArray indexOfObjectIdenticalTo:button];
-    NSUInteger cardColumnPosition = buttonIndex % _columnCount;
-    NSUInteger cardRowPosition    = buttonIndex / _columnCount;
+    NSUInteger index              = [self.cardArray indexOfObjectIdenticalTo:card];
+    NSUInteger cardColumnPosition = index % self.columnCount;
+    NSUInteger cardRowPosition    = index / self.columnCount;
     
-    buttonFrame.origin.x = HORIZONTAL_INSET + cardColumnPosition * layoutInfo.cardWidth + cardColumnPosition * layoutInfo.cardBuffer;
-    buttonFrame.origin.y = VERTICAL_INSET + cardRowPosition * layoutInfo.cardHeight + cardRowPosition * layoutInfo.cardBuffer;
+    cardFrame.origin.x = HORIZONTAL_INSET + cardColumnPosition * layoutInfo.cardWidth + cardColumnPosition * layoutInfo.cardBuffer;
+    cardFrame.origin.y = VERTICAL_INSET + cardRowPosition * layoutInfo.cardHeight + cardRowPosition * layoutInfo.cardBuffer;
     
-    button.frame = buttonFrame;
+    card.frame = cardFrame;
   }
 }
 
 #pragma mark - user actions
 
-- (void)buttonTouched:(UIButton *)sender
+- (void)buttonTouched:(UIGestureRecognizer *)gr
 {
-  NSUInteger cardButtonIndex = [_cardButtonArray indexOfObject:sender];
+  NSUInteger cardIndex = [self.cardArray indexOfObject:gr.view];
   
   // notify delegate cardButton has been touched
-  [_delegate touchCardButtonAtIndex:cardButtonIndex];
-  
+  [self.delegate touchCardButtonAtIndex:cardIndex];
 }
 
 
 #pragma mark - Instance Methods
 
-- (void)updateBtnCards
+// subclass must implement
+- (void)updateCard
 {
-  // for each card
-  for (UIButton *cardButton in _cardButtonArray) {
-    
-    // find index of cardButton
-    NSUInteger cardButtonIndex = [_cardButtonArray indexOfObject:cardButton];
-    
-    // update cardButton title
-    [cardButton setAttributedTitle:[_delegate attributedTitleForCardAtIndex:cardButtonIndex] forState:UIControlStateNormal];
-    cardButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    cardButton.titleLabel.numberOfLines = 3;
-    cardButton.titleLabel.textAlignment = NSTextAlignmentCenter;
-    cardButton.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    
-    // update cardButton image
-    [cardButton setBackgroundImage:[_delegate backgroundImageForCardAtIndex:cardButtonIndex] forState:UIControlStateNormal];
-    
-    // update cardButton shadow
-    if ([_delegate shadowForCardAtIndex:cardButtonIndex]) {
-      cardButton.layer.shadowColor = [UIColor blackColor].CGColor;
-      cardButton.layer.shadowOffset = CGSizeMake(4.0,4.0);
-      cardButton.layer.shadowOpacity = 1.0;
-      cardButton.layer.shadowRadius = 0.0;
-    } else {
-      cardButton.layer.shadowOffset = CGSizeZero;
-    }
+}
 
-    // update cardButton alpha
-    [cardButton setAlpha:[_delegate alphaForCardAtIndex:cardButtonIndex]];
-    
-    // update cardButton enabled
-    cardButton.enabled = [_delegate enableCardAtIndex:cardButtonIndex];
-  }
+- (void)updateCardAtIndex:(NSUInteger)cardButtonIndex withCard:(Card *)card;
+{
+  CardView *cardView = [self.cardArray objectAtIndex:cardButtonIndex];
+  
+  [cardView updateCardProperties:card];
 }
 
 

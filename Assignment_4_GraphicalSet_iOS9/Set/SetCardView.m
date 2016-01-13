@@ -1,12 +1,13 @@
 //
 //  SetCardView.m
-//  CustomCards-Project4
+//  Set
 //
-//  Created by Hannah Troisi on 10/22/15.
-//  Copyright © 2015 Hannah Troisi. All rights reserved.
+//  Created by Hannah Troisi on 1/10/16.
+//  Copyright © 2016 Hannah Troisi. All rights reserved.
 //
 
 #import "SetCardView.h"
+#import "SetCard.h"
 
 @implementation SetCardView
 
@@ -25,7 +26,7 @@
 
 + (NSArray *)setCardFills
 {
-  return @[@"filled", @"unfilled", @"striped"];
+  return @[@"solid", @"unfilled", @"striped"];
 }
 
 + (NSArray *)setCardNumbers
@@ -53,6 +54,48 @@
   return color;
 }
 
+
+#pragma mark - Lifecycle
+
+- (instancetype)initWithFrame:(CGRect)frame card:(SetCard *)card
+{
+  self = [super initWithFrame:frame card:card];
+  
+  if (self) {
+    
+    // card properties
+    [self updateCardProperties:card];
+  }
+  
+  return self;
+}
+
+
+#pragma mark - Instance Methods
+
+- (void)updateCardProperties:(SetCard *)card
+{
+  [super updateCardProperties:card];
+
+  // card properties
+  self.number = card.number;
+  self.color = card.color;
+  self.shape = card.shape;
+  self.fill = card.shade;
+  
+  self.userInteractionEnabled = card.isMatched ? NO : YES;
+  self.alpha = card.isMatched ? 0.4 : 1.0;
+  
+  // add shadow
+  if (card.isChosen && !card.isMatched) {
+    self.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.layer.shadowOffset = CGSizeMake(4.0,4.0);
+    self.layer.shadowOpacity = 1.0;
+    self.layer.shadowRadius = 0.0;
+  } else {
+    self.layer.shadowOffset = CGSizeZero;
+  }
+}
 
 #pragma mark - Properties
 
@@ -109,11 +152,11 @@
   return roundf(width * CARD_WIDTH_TO_SHAPE_BUFFER_RATIO);
 }
 
-#define CARD_WIDTH_TO_STRIP_WIDTH 0.05
+#define CARD_WIDTH_TO_STRIP_WIDTH 19
 
 - (CGFloat)preferredStripeFillWidthForCardWidth:(CGFloat)width;
 {
-  return roundf(width * CARD_WIDTH_TO_STRIP_WIDTH);
+  return roundf(width / CARD_WIDTH_TO_STRIP_WIDTH);
 }
 
 
@@ -235,7 +278,7 @@
           controlPoint2: CGPointMake(origin.x + floorf(width * 0.9),    origin.y + floorf(height * 0.11))];
   
   // draw shape path with correct fill
-  [self drawShapeFillWithPath:path WithWidth:rect.size.height * STROKE_LINE_WIDTH_SCALE];
+  [self drawShapeFillWithPath:path WithWidth:roundf(rect.size.height * STROKE_LINE_WIDTH_SCALE)];
 }
 
 - (void)drawShapeFillWithPath:(UIBezierPath *)path WithWidth:(CGFloat)width
@@ -247,10 +290,10 @@
   UIColor *color = [[self class] uIColorForSetColorString:self.color];
   [color set];
   
-  // draw outline (for solid, unfilled & striped cases)
+  // draw outline (for unfilled, solid & striped cases)
   [path stroke];
   
-  if ([self.fill isEqualToString:@"filled"]) {
+  if ([self.fill isEqualToString:@"solid"]) {
     
     [path fill];
   
@@ -263,6 +306,7 @@
     CGContextSaveGState(context);
     
     CGFloat stripeWidth = [self preferredStripeFillWidthForCardWidth:self.bounds.size.width];
+//    CGContextSetLineWidth(context, ceilf(self.bounds.size.width * ?));
     
     // declare an array to hold a color value and sets the value (which will be in RGB color space) to self.color
     const double *colorComponents = CGColorGetComponents(color.CGColor);
@@ -286,7 +330,7 @@
     CGPatternRef pattern = CGPatternCreate(NULL,
                                            self.bounds,
                                            CGAffineTransformIdentity,
-                                           roundf(stripeWidth / 2),
+                                           stripeWidth,
                                            1,
                                            kCGPatternTilingConstantSpacing,
                                            false,
@@ -323,81 +367,6 @@ void StripedPatternStencil (void *info, CGContextRef myContext)
   
   // stroke the path
   CGContextStrokePath(myContext);
-}
-
-
-#pragma mark - Gesture Handling
-
-// rotate through number
-- (void)tappedCard:(UITapGestureRecognizer *)gesture
-{
-  if (gesture.state == UIGestureRecognizerStateRecognized) {
-    
-    NSArray *propertyArray = [[self class] setCardNumbers];
-    
-    NSInteger index = [propertyArray indexOfObject:[NSNumber numberWithUnsignedInteger:self.number]];
-    index += 1;
-    
-    if (index >= [propertyArray count]) {
-      self.number = [propertyArray[0] integerValue];
-    } else {
-      self.number = [propertyArray[index] integerValue];
-    }
-  }
-}
-
-// rotate through shape
-- (void)tappedCardTwice:(UITapGestureRecognizer *)gesture
-{
-  if (gesture.state == UIGestureRecognizerStateRecognized) {
-    
-    NSArray *propertyArray = [[self class] setCardShapes];
-    
-    NSInteger index = [propertyArray indexOfObject:self.shape];
-    index += 1;
-    
-    if (index >= [propertyArray count]) {
-      self.shape = propertyArray[0];
-    } else {
-      self.shape = propertyArray[index];
-    }
-  }
-}
-
-// rotate through fill
-- (void)tappedCardThrice:(UITapGestureRecognizer *)gesture
-{
-  if (gesture.state == UIGestureRecognizerStateRecognized) {
-    
-    NSArray *propertyArray = [[self class] setCardFills];
-    
-    NSInteger index = [propertyArray indexOfObject:self.fill];
-    index += 1;
-    
-    if (index >= [propertyArray count]) {
-      self.fill = propertyArray[0];
-    } else {
-      self.fill = propertyArray[index];
-    }
-  }
-}
-
-// rotate through color
-- (void)tappedCardQuarce:(UITapGestureRecognizer *)gesture
-{
-  if (gesture.state == UIGestureRecognizerStateRecognized) {
-    
-    NSArray *propertyArray = [[self class] setCardColors];
-    
-    NSInteger index = [propertyArray indexOfObject:self.color];
-    index += 1;
-    
-    if (index >= [propertyArray count]) {
-      self.color = propertyArray[0];
-    } else {
-      self.color = propertyArray[index];
-    }
-  }
 }
 
 @end

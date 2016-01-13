@@ -78,7 +78,7 @@
 
 + (NSArray *)validSuits
 {
-  return @[@"♢",@"♡",@"♤",@"♧"];
+  return @[@"♦︎",@"♥︎",@"♠︎",@"♣︎"];
 }
 
 @end
