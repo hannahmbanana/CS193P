@@ -1,0 +1,22 @@
+Assignment IV: Graphical Set
+Objective
+You will use your knowledge of the card matching games from the past few weeks combined with your newfound skills at creating custom UIView subclasses and using UIDynamicAnimator to build better versions of Set and the Playing Card matching games that look (and in the Set case, play) more like the real thing. Finally, you will also need to familiarize yourself enough with Autolayout to make your UI autorotate properly.
+
+Required Tasks
+1. Your application this week is still required to play both the Set and Playing Card matching games (in separate tabs) and must show the score and allow re-deals, but you can remove the UI for showing the result of the last card choice as well as the History MVC added last week.
+2. Cards must have a “standard” look and feel (i.e. for Set, 1, 2 or 3 squiggles, diamonds or ovals that are solid, striped or unfilled, and are either green, red or purple; for Playing Cards, pips and faces). You must draw these using UIBezierPath and Core Graphics functions. You may not use images or attributed strings for Set cards. The drawings on the card must scale appropriately to the card’s bounds. You can use the PlayingCardView from the in-class demo to draw your Playing Card game cards.
+3. When a Set match is successfully chosen, the matching cards should now be removed from the game (not just blanked out or grayed out, but removed from the UI entirely).
+4. As in a real game of Set, the user should start with 12 cards and then have the option of requesting 3 more cards to be dealt at any time if he or she is unable to locate a Set. Do something sensible when there are no more cards in the deck.
+5. Use a flip transition to animate choosing cards in the Playing Card game (so that the cards look like they are being flipped over when chosen).
+6. The arrival and departure of cards must be animated and, as they come and go, you must automatically adjust the layout of the cards in your user-interface (i.e. their size and position) to efficiently use the real estate on screen (i.e. don’t waste space) and make them all fit.
+7. Animate re-deals.
+8. The game must work properly (and look good) in both Landscape and Portrait orientations on both the iPhone 4 and the iPhone 5. Use Autolayout as much as possible to make this work. Positioning the cards themselves will require some additional work (although you are probably already doing this work for some of the Required Tasks above). None of your code should be specific to any given screen width or height or orientation (i.e. no “if landscape then” or “if width/height ... then” code). The bottom line of this task is that your MVCs’ Views should look good in any reasonably-sized bounds rectangle.
+9. The movement of the elements inside your UI that occur in response to device rotation must be animated (Autolayout already animates any changes it makes for you, but any other layout changes that you do in code must be animated by you).
+10. Use a UIDynamicAnimator to allow the cards in either game to be gathered up into a pile via a pinch gesture. Once gathered, the stack of gathered cards must be able to be moved around (via a pan gesture). Tapping on the stack will return the cards to their normal positions (animated, of course) unharmed. 
+
+Extra Credit
+Here are a few ideas for some things you could do to get some more experience with developing for iOS.
+1. You could add better score-keeping to the Set part of this application if you can figure out an algorithm for calculating whether a Set exists in the current cards in play. Then you can penalize the user not only for mismatches, but for clicking the “deal 3 more cards” button if he or she missed a Set. You’d also know when the game was “over” (because the user would click on “deal 3 more cards” and there would be no more cards in the deck and no more Sets to choose).
+2. Knowing how to find Sets in the remaining cards also would allow you to let the user cheat. Have a button that will show them a Set (if available). It’s up to you how you want to show it, but maybe some little indicator (a star or something) on each of the 3 cards?
+3. Make the Set game a two player game. There’s no need to go overboard here. Think of a simple UI and a straightforward implementation that make sense.
+4. Think of some other way(s) to use animation in your application and implement it.
