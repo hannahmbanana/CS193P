@@ -8,43 +8,44 @@
 
 #import "ViewController.h"
 #import "DropItBehavior.h"
+#import "AnchorBarView.h"
 
-@interface ViewController () <UIDynamicAnimatorDelegate>
+@interface ViewController () <UIDynamicAnimatorDelegate, UICollisionBehaviorDelegate>
 
-@property (nonatomic, assign, readwrite) CGFloat            dropSize;
-@property (nonatomic, strong, readwrite) UIDynamicAnimator  *animator;
-@property (nonatomic, strong, readwrite) DropItBehavior     *dropItBehavior;
+@property (nonatomic, assign, readwrite) CGFloat              dropSize;
+@property (nonatomic, strong, readwrite) UIView               *droppingView;
+@property (nonatomic, strong, readwrite) UIDynamicAnimator    *animator;
+@property (nonatomic, strong, readwrite) DropItBehavior       *dropItBehavior;
+@property (nonatomic, strong, readwrite) UIAttachmentBehavior *attachmentBehavior;
 @end
 
 @implementation ViewController
 
 #pragma mark - Lifecycle
 
-- (instancetype)init
+- (void)loadView
 {
-  self = [super init];
-
-  if (self) {
-    
-    // create a UITapGestureRecognizer recognizer & add it to the view
-    UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dropCube)];
-    [self.view addGestureRecognizer:tgr];
-    
-    // create a UIDynamicAnimator
-    self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
-    self.animator.delegate = self;
-    
-    // create a UIGravityBehavior and add it to the animator
-    self.dropItBehavior = [[DropItBehavior alloc] init];
-    [self.animator addBehavior:self.dropItBehavior];
-    
-  }
-
-  return self;
+  // create anchorBarView
+  self.view = [[AnchorBarView alloc] init];
+  
+  // create a UITapGestureRecognizer & add it to the view
+  UITapGestureRecognizer *tgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dropCube)];
+  [self.view addGestureRecognizer:tgr];
+  
+  // create a UIPanGestureRecognizer & add it to the view
+  UIPanGestureRecognizer *pgr = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moveCube:)];
+  [self.view addGestureRecognizer:pgr];
+  
+  // create a UIDynamicAnimator
+  self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
+  self.animator.delegate = self;
+  
+  // create a DropItBehavior and add it to the animator
+  self.dropItBehavior = [[DropItBehavior alloc] init];
+  [self.animator addBehavior:self.dropItBehavior];
 }
 
-
-#pragma mark - Helper Methods
+#pragma mark - Touch Handling
 
 - (void)dropCube
 {
@@ -67,6 +68,62 @@
   
   // add dropCube to the UIDynamicBehaviors
   [self.dropItBehavior addItem:dropView];
+  
+  // set dropCube to be the droppingView
+  self.droppingView = dropView;
+}
+
+- (void)moveCube:(UIPanGestureRecognizer *)sender
+{
+  // find coordinates of gesture
+  CGPoint gesturePoint = [sender locationInView:self.view];
+  
+  if (sender.state == UIGestureRecognizerStateBegan) {
+    
+    [self attachDropingViewToPoint:gesturePoint];
+    
+  } else if (sender.state == UIGestureRecognizerStateChanged) {
+    
+    // change anchor point to new gesture location
+    self.attachmentBehavior.anchorPoint = gesturePoint;
+    
+  } else if (sender.state == UIGestureRecognizerStateEnded) {
+    
+    // remove anchorBarView path
+    AnchorBarView *view = (AnchorBarView *)self.view;
+    [view setPath:nil];
+    
+    // remove attachment behavior from animator
+    [self.animator removeBehavior:self.attachmentBehavior];
+  }
+}
+
+
+#pragma mark - Helper Methods
+
+- (void)attachDropingViewToPoint:(CGPoint)anchorPoint
+{
+  if (self.droppingView) {
+    
+    // create attachment behavior
+    self.attachmentBehavior = [[UIAttachmentBehavior alloc] initWithItem:self.droppingView attachedToAnchor:anchorPoint];
+    
+    UIView *droppingView = self.droppingView;     // copy of self.dropping view (gets set to nil below)
+    __weak ViewController *weakSelf = self;       // to avoid retain cycle
+    self.attachmentBehavior.action = ^{
+      UIBezierPath *path = [[UIBezierPath alloc] init];
+      [path moveToPoint:weakSelf.attachmentBehavior.anchorPoint];  // need to use current value, not method arg
+      [path addLineToPoint:droppingView.center];
+      AnchorBarView *view = (AnchorBarView *)weakSelf.view;
+      [view setPath:path];
+    };
+    
+    // add attachment behavior to animator
+    [self.animator addBehavior:self.attachmentBehavior];
+    
+    // don't allow the user to attach to the droppingView again
+    self.droppingView = nil;
+  }
 }
 
 - (UIColor *)randomColor
@@ -138,6 +195,14 @@
       [dropsToRemove makeObjectsPerformSelector:@selector(removeFromSuperview)];
     }
   }];
+}
+
+
+#pragma mark - UICollisionBehaviorDelegate
+
+- (void)collisionBehavior:(UICollisionBehavior *)behavior endedContactForItem:(id <UIDynamicItem>)item1 withItem:(id <UIDynamicItem>)item2
+{
+  
 }
 
 
