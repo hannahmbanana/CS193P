@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+static NSString *CardMatchedNotification = @"CardMatched";
+static NSString *CardChosenNotification = @"CardChosen";
+
 @interface Card : NSObject
 
 @property (nonatomic, strong, readwrite)                    NSString  *contents;

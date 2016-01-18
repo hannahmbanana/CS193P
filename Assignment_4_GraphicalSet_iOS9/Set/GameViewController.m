@@ -7,14 +7,16 @@
 //
 
 #import "GameViewController.h"
+#import "SetCardView.h"
+#import "SetCard.h"
+#import "CardCollectionViewCell.h"
 
-@interface GameViewController () <ButtonGridViewDelegate>
+@interface GameViewController () <UICollectionViewDataSource, UICollectionViewDelegate>
 @end
 
 @implementation GameViewController
 {
-  NSUInteger _colCount;
-  NSUInteger _rowCount;
+  UIToolbar *_toolBar;
 }
 
 
@@ -35,7 +37,7 @@
 }
 
 // subclass must implement
-+ (Class)cardGridClass
++ (Class)cardViewClass
 {
   NSAssert(NO, @"This should not be reached - abstract class");
   return Nil;
@@ -67,7 +69,7 @@
 {
   if (!_game) {
     Deck *deck = [[[[self class] deckClass] alloc] init];
-    _game = [[[[self class] gameClass] alloc] initWithCardCount:_colCount * _rowCount usingDeck:deck];
+    _game = [[[[self class] gameClass] alloc] initWithCardCount:50 usingDeck:deck];  // FIXME: hardcoded card count
   }
   
   return _game;
@@ -76,13 +78,12 @@
 
 #pragma mark - Lifecycle
 
-- (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows
+- (instancetype)init
 {
   self = [super initWithNibName:nil bundle:nil];
   
   if (self) {
-    _colCount = numCols;
-    _rowCount = numRows;
+
   }
   return self;
 }
@@ -104,11 +105,28 @@
   [self.dealButton setTintColor:[UIColor whiteColor]];
   
   // create & update buttonGridView
-  self.buttonGridView = [[[[self class] cardGridClass] alloc] initWithColumns:_colCount rows:_rowCount delegate:self game:self.game];
-  [self updateUI];
+  UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
+  flowLayout.itemSize = CGSizeMake(60, 100);  // FIXME:
+  flowLayout.minimumInteritemSpacing = 10;
+  flowLayout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
+  
+  self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
+  self.collectionView.backgroundColor = [UIColor redColor];
+  self.collectionView.delegate = self;
+  self.collectionView.dataSource = self;
+  [self.collectionView registerClass:[CardCollectionViewCell class] forCellWithReuseIdentifier:@"card"];
+  
+  _toolBar = [[UIToolbar alloc] init];
+  _toolBar.backgroundColor = [UIColor greenColor];
+  _toolBar.alpha =  0;
+  
+  [self.view addSubview:_toolBar];
+  [self.view addSubview:self.collectionView];
+  
+  [self updateScore];
 
   // add subviews to view
-  [self.view addSubview:self.buttonGridView];
+//  [self.view addSubview:self.buttonGridView];
   [self.view addSubview:self.scoreLabel];
   [self.view addSubview:self.dealButton];
 }
@@ -119,9 +137,16 @@
   
   CGSize boundsSize = self.view.bounds.size;
   
+  _toolBar.frame = CGRectMake(0,
+                              CGRectGetMinY(self.tabBarController.tabBar.frame) - 40,
+                              boundsSize.width,
+                              40);
+  
   // set frame for buttonGridView
-  self.buttonGridView.frame = (CGRect){ CGPointMake(0, CGRectGetMaxY(self.navigationController.navigationBar.frame)),
-                                        [self.buttonGridView preferredSizeForWidth:boundsSize.width] };
+  self.collectionView.frame = CGRectMake( 0,
+                                      CGRectGetMaxY(self.navigationController.navigationBar.frame),
+                                      boundsSize.width,
+                                      CGRectGetMinY(_toolBar.frame) - CGRectGetMaxY(self.navigationController.navigationBar.frame));
   
   // set frame for scoreLabel
   self.scoreLabel.frame = CGRectMake(20,
@@ -151,91 +176,60 @@
   self.game = nil;
   
   // update UI
-  [self updateUI];
+  [self updateScore];
+  
+  [self.collectionView reloadData];
 }
 
 
 #pragma mark - Instance Methods
 
-// subclass must implement
-- (NSAttributedString *)attributedTitleForCard:(Card *)card overrideIsChosenCheck:(BOOL)shouldOverride
+- (void)updateScore
 {
-  NSAssert(NO, @"This should not be reached - abstract class");
-  return nil;
-}
-
-- (BOOL)cardMatchedAtIndex:(NSUInteger)cardButtonIndex
-{
-  return [[self.game cardAtIndex:cardButtonIndex] isMatched];
-}
-
-- (void)updateUI
-{
-  // updates cardButton title, background image, enabled, alpha, shadow
-  for (Card *card in self.game.cards) {
-    NSUInteger cardIndex = [self.game.cards indexOfObject:card];
-    [self.buttonGridView updateCardAtIndex:cardIndex withCard:card];
-  }
-  
   // update game score
   self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
-  
-  // refresh view
-  [self.view setNeedsLayout];
-  
 }
-
-
-#pragma mark - ButtonGridViewDelegate Methods
 
 - (void)touchCardButtonAtIndex:(NSUInteger)cardButtonIndex
 {
   // update game model
   [self.game choseCardAtIndex:cardButtonIndex];
   
-  // have cardGrid update that card's view
-  Card *card = [self.game cardAtIndex:cardButtonIndex];
-  [self.buttonGridView updateCardAtIndex:cardButtonIndex withCard:card];
-  
   // update UI
-  [self updateUI];
+  [self updateScore];
 }
 
-- (NSAttributedString *)attributedTitleForCardAtIndex:(NSUInteger)cardButtonIndex;
-{
-  Card *card = [self.game cardAtIndex:cardButtonIndex];
 
-  return [self attributedTitleForCard:card overrideIsChosenCheck:NO];
+#pragma mark - UICollectionViewDataSource Protocol Methods
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  [self touchCardButtonAtIndex:indexPath.item];
 }
 
-// subclass must implement
-- (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)index;
+
+#pragma mark - UICollectionViewDataSource Protocol Methods
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-  return nil;
+  // reloadItemsAtIndexPath FIXME: // containsObjectIdenticalTo or use isSelected
+  return [self.game.cards count];
 }
 
-// subclass must implement
-- (BOOL)shadowForCardAtIndex:(NSUInteger)index
+// The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  return NO;
-}
-
-- (BOOL)enableCardAtIndex:(NSUInteger)cardButtonIndex
-{
-  Card *card = [self.game cardAtIndex:cardButtonIndex];
+  Card *card = [self.game cardAtIndex:indexPath.item];
+  CardCollectionViewCell *newCell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"card" forIndexPath:indexPath];
+  newCell.card = card;
   
-  return card.isMatched ? NO : YES;
-}
-
-- (CGFloat)alphaForCardAtIndex:(NSUInteger)cardButtonIndex
-{
-  return [self enableCardAtIndex:cardButtonIndex] ? 1.0 : 0.4;
+  return newCell;
 }
 
 
 #pragma mark - NSUser Defaults
 
-static const int MAX_NUM_SAVED_SCORES = 11;
+static const int MAX_NUM_SAVED_SCORES = 10;
 
 - (void)saveGameWithScore:(NSInteger)score gameType:(NSString *)game start:(NSDate *)startDate
 {
@@ -283,26 +277,6 @@ static const int MAX_NUM_SAVED_SCORES = 11;
 
 
 #pragma mark - Helper Drawing Methods
-
-- (UIImage *)imageFromString:(NSAttributedString *)string
-{
-  // returns the minimum size required to draw the contents of the string
-  CGSize stringSize = [string size];
-  
-  // create a CGContext with the correct buffer size
-  UIGraphicsBeginImageContextWithOptions(stringSize, NO, 0);
-  
-  // draw the string
-  [string drawInRect:CGRectMake(0, 0, stringSize.width, stringSize.height)];
-  
-  // get an image from the current CGContext
-  UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-  
-  // end the context
-  UIGraphicsEndImageContext();
-  
-  return image;
-}
 
 - (UIImage *)backgroundImageForDealButton
 {

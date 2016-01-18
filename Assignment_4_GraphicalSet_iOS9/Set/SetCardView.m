@@ -54,29 +54,14 @@
   return color;
 }
 
-
-#pragma mark - Lifecycle
-
-- (instancetype)initWithFrame:(CGRect)frame card:(SetCard *)card
-{
-  self = [super initWithFrame:frame card:card];
-  
-  if (self) {
-    
-    // card properties
-    [self updateCardProperties:card];
-  }
-  
-  return self;
-}
-
-
 #pragma mark - Instance Methods
 
-- (void)updateCardProperties:(SetCard *)card
+- (void)updateCardProperties
 {
-  [super updateCardProperties:card];
+  [super updateCardProperties];
 
+  SetCard *card = (SetCard *)self.card;
+  
   // card properties
   self.number = card.number;
   self.color = card.color;

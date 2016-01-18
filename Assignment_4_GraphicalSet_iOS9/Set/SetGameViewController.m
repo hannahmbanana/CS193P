@@ -10,8 +10,14 @@
 #import "SetMatchingGame.h"
 #import "SetCardDeck.h"
 #import "SetCard.h"
-#import "SetCardGrid.h"
+#import "SetCardView.h"
 #import <QuartzCore/QuartzCore.h>
+#import "CardCollectionViewCell.h"
+
+@interface SetGameViewController ()
+@property (nonatomic, strong, readwrite)   NSMutableArray *visibleCards;
+@property (nonatomic, assign, readwrite)   NSUInteger highestIndex;
+@end
 
 @implementation SetGameViewController
 {
@@ -30,9 +36,9 @@
   return [SetCardDeck class];
 }
 
-+ (Class)cardGridClass
++ (Class)cardViewClass
 {
-  return [SetCardGrid class];
+  return [SetCardView class];
 }
 
 + (NSUInteger)numCardsInMatch
@@ -43,13 +49,16 @@
 
 #pragma mark - Lifecycle
 
-- (instancetype)initWithColumnCount:(NSUInteger)numCols rowCount:(NSUInteger)numRows
+- (instancetype)init
 {
-  self = [super initWithColumnCount:numCols rowCount:numRows];
+  self = [super init];
   if (self) {
     
     // set navigation title
     self.navigationItem.title = @"Classic Set";
+    
+    _visibleCards = [[self.game.cards subarrayWithRange:NSMakeRange(0, 20)] mutableCopy];  // FIXME: number
+    self.highestIndex = 20 - 1;
   }
   return self;
 }
@@ -81,66 +90,97 @@
 }
 
 
-#pragma mark - Helper Methods
+#pragma mark - Instance Methods
 
 - (void)dealThreeCards
 {
-  NSLog(@"HI");
-}
+  NSUInteger newGameIdx;
+  NSMutableArray *idxPathArray = [NSMutableArray array];
 
-
-#pragma mark - ButtonGridViewDelegate Methods
-
-- (NSAttributedString *)attributedTitleForCard:(Card *)setCard overrideIsChosenCheck:(BOOL)override
-{
-  SetCard *card = (SetCard *)setCard;
-  
-  // set attributes for card's color
-  NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
-  [attributes setObject:card.color forKey:NSForegroundColorAttributeName];
-
-  // set attributes for card's fill
-  if ([card.shade isEqualToString:@"solid"]) {
-    [attributes setObject:@-5 forKey:NSStrokeWidthAttributeName];
-
-  } else if ([card.shade isEqualToString:@"striped"]) {
-    [attributes addEntriesFromDictionary:@{ NSStrokeWidthAttributeName      : @-5,
-                                            NSStrokeColorAttributeName      : attributes[NSForegroundColorAttributeName],
-                                            NSForegroundColorAttributeName  : [attributes[NSForegroundColorAttributeName] colorWithAlphaComponent:0.3]}];
-
-  } else if ([card.shade isEqualToString:@"open"]) {
-    [attributes setObject:@5 forKey:NSStrokeWidthAttributeName];
-  }
-
-  // create the correct string for card's number, shape
-  NSMutableString *numberShapeString = [[NSMutableString alloc] init];
-  for (int i = 1; i <= card.number; i++) {
-    [numberShapeString appendString:card.shape];
-    if (i != card.number) {
-      [numberShapeString appendString:@"\n"];
+  // add up to 3 cards to self.visibleCards
+  for (int i = 0; i < 3; i++) {
+    
+    newGameIdx = self.highestIndex + 1;
+    
+    Card *newCard = [self.game.cards objectAtIndex:newGameIdx];
+    
+    if (newCard) {
+      
+      // if card exists in game
+      [self.visibleCards addObject:newCard];
+      
+      [idxPathArray addObject:[NSIndexPath indexPathForItem:[self.visibleCards count]-1 inSection:0]];
+      
+      self.highestIndex += 1;
+      
+    } else {
+      
+      // no cards left in game, hide "deal 3" button
+      _btn.hidden = YES;
     }
   }
-
-  // create the attributed string
-  NSAttributedString *title = [[NSAttributedString alloc] initWithString:[numberShapeString copy] attributes:attributes];
-
-  return title;
-}
-
-- (UIImage *)backgroundImageForCardAtIndex:(NSUInteger)cardButtonIndex
-{
-  return [UIImage imageNamed:@"cardfront"];
-}
-
-- (BOOL)shadowForCardAtIndex:(NSUInteger)cardButtonIndex;
-{
-  Card *card = [self.game cardAtIndex:cardButtonIndex];
   
-  if (card.isChosen && !card.isMatched) {
-    return YES;
-  } else {
-    return NO;
+//   reload UICollectionView data
+  if (idxPathArray) {
+    [self.collectionView insertItemsAtIndexPaths:idxPathArray];
   }
 }
+
+
+- (void)touchCardButtonAtIndex:(NSUInteger)cardButtonIndex
+{
+  Card *cardVisible = [self.visibleCards objectAtIndex:cardButtonIndex];
+  NSUInteger cardIndex = [self.game.cards indexOfObjectIdenticalTo:cardVisible];
+  [super touchCardButtonAtIndex:cardIndex];
+  
+  // remove matched cards
+  NSMutableArray *indexPathsToRemove = [[NSMutableArray alloc] init];
+  for (Card *card in _visibleCards) {
+    if (card.isMatched) {
+      NSInteger itemIndex = [_visibleCards indexOfObjectIdenticalTo:card];
+      [indexPathsToRemove addObject:[NSIndexPath indexPathForItem:itemIndex inSection:0]];
+    }
+  }
+  
+  // reverseObjectEnumerator allows us to delete indices backwards so that you don't mess up the next index to delete
+  for (NSIndexPath *indexPath in [indexPathsToRemove reverseObjectEnumerator]) {
+    [_visibleCards removeObjectAtIndex:indexPath.item];
+  }
+  
+  [self.collectionView deleteItemsAtIndexPaths:indexPathsToRemove];
+}
+
+- (void)touchDealButton
+{
+  [super touchDealButton];
+  
+  _visibleCards = [[self.game.cards subarrayWithRange:NSMakeRange(0, 20)] mutableCopy];  // FIXME: number, duplication of code
+  self.highestIndex = 20 - 1;
+  
+  _btn.hidden = NO;
+}
+
+
+#pragma mark - UICollectionViewDataSource Protocol Methods
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+  // reloadItemsAtIndexPath FIXME: // containsObjectIdenticalTo or use isSelected
+  return [self.visibleCards count];
+}
+
+// The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  Card *cardVisible = [self.visibleCards objectAtIndex:indexPath.item];
+  NSUInteger cardIndex = [self.game.cards indexOfObjectIdenticalTo:cardVisible];
+  Card *card = [self.game cardAtIndex:cardIndex];
+  
+  CardCollectionViewCell *newCell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"card" forIndexPath:indexPath];
+  newCell.card = card;
+  
+  return newCell;
+}
+
 
 @end

@@ -27,11 +27,11 @@
   // make the background color look like green felt
   self.window.backgroundColor = [UIColor colorWithRed:15/255.0 green:110/255.0 blue:48/255.0 alpha:1];
   
-  CardGameViewController *cardGameViewController = [[CardGameViewController alloc] initWithColumnCount:4 rowCount:4];
+  // create ViewControllers, NavigationControllers, Tab Bar Controllers
+  CardGameViewController *cardGameViewController = [[CardGameViewController alloc] init];
   UINavigationController *cardNavController = [[UINavigationController alloc] initWithRootViewController:cardGameViewController];
   
-  // Set games start with 12 cards
-  SetGameViewController *setGameViewController = [[SetGameViewController alloc] initWithColumnCount:6 rowCount:3];
+  SetGameViewController *setGameViewController = [[SetGameViewController alloc] init];
   UINavigationController *setNavController = [[UINavigationController alloc] initWithRootViewController:setGameViewController];
   
   ScoreTableViewController *scoreboardViewController = [[ScoreTableViewController alloc] init];
