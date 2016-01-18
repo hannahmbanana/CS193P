@@ -11,7 +11,7 @@
 #import "Card.h"
 
 @implementation CardView
-
+@synthesize card = _card;
 
 #pragma mark - Layout Class Method
 
@@ -34,14 +34,11 @@
 
 #pragma mark - Lifecycle
 
-- (instancetype)initWithFrame:(CGRect)frame card:(Card *)card
+- (instancetype)initWithFrame:(CGRect)frame
 {
   self = [super initWithFrame:frame];
   
   if (self) {
-    
-    // card properties
-    [self updateCardProperties:card];
     
     // UIView properties
     self.opaque = NO;
@@ -56,11 +53,18 @@
 
 #pragma mark - Instance Methods
 
-- (void)updateCardProperties:(Card *)card
+- (void)setCard:(Card *)card 
 {
-  self.faceUp = card.chosen;
+  if (_card != card) {
+    _card = card;
+    [self updateCardProperties];
+  }
 }
 
+- (void)updateCardProperties
+{
+  self.faceUp = _card.chosen;
+}
 
 #pragma mark - Drawing
 

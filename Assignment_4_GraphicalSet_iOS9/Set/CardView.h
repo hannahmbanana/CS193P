@@ -13,10 +13,13 @@
 @interface CardView : UIView
 
 @property (nonatomic, assign, readwrite) BOOL faceUp;
+@property (nonatomic, assign, readwrite) Card *card;
 
-- (instancetype)initWithFrame:(CGRect)frame card:(Card *)card;
+- (void)updateCardProperties;
 
-- (void)updateCardProperties:(Card *)card;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(CGRect)frame NS_DESIGNATED_INITIALIZER;
 
 + (CGSize)preferredCardSizeForWidth:(CGFloat)width;
 - (CGFloat)cornerScaleFactor;

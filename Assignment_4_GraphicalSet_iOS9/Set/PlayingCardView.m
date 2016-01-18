@@ -32,35 +32,19 @@
 }
 
 
-#pragma mark - Lifecycle
-
-- (instancetype)initWithFrame:(CGRect)frame card:(PlayingCard *)card
-{
-  self = [super initWithFrame:frame card:card];
-  
-  if (self) {
-    
-    // card properties
-    [self updateCardProperties:card];
-  }
-  
-  return self;
-}
-
-
 #pragma mark - Instance Methods
 
-- (void)updateCardProperties:(PlayingCard *)card
+- (void)updateCardProperties
 {
-  [super updateCardProperties:card];
+  [super updateCardProperties];
   
+  PlayingCard *card = (PlayingCard *)self.card;
   self.suit = card.suit;
   self.rank = card.rank;
   
   self.userInteractionEnabled = card.isMatched ? NO : YES;
   self.alpha = card.isMatched ? 0.4 : 1.0;
 }
-
 
 #pragma mark - Drawing
 
@@ -119,8 +103,8 @@
 {
   [super drawRect:rect];
     
-  if (self.faceUp) {
-    
+//  if (self.faceUp) {
+  
     // check if the card is a facecard (J,Q,K)
     UIImage *faceImage = [UIImage imageNamed:[NSString stringWithFormat:@"%@%@", [self rankAsString], self.suit]];
     
@@ -140,9 +124,9 @@
     // draw the corner content
     [self drawCorners];
     
-  } else {
-    [[UIImage imageNamed:@"cardback"] drawInRect:self.bounds];
-  }
+//  } else {
+//    [[UIImage imageNamed:@"cardback"] drawInRect:self.bounds];
+//  }
 }
 
 

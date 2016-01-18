@@ -11,6 +11,24 @@
 @implementation Card
 
 
+#pragma mark - Properties
+
+- (void)setMatched:(BOOL)matched
+{
+  _matched = matched;
+  
+  // notify observers that the card was set to matched
+  [[NSNotificationCenter defaultCenter] postNotificationName:CardMatchedNotification object:self];
+}
+
+- (void)setChosen:(BOOL)chosen
+{
+  _chosen = chosen;
+  
+  // notify observers that the card was set to matched
+  [[NSNotificationCenter defaultCenter] postNotificationName:CardChosenNotification object:self];
+}
+
 #pragma mark - Instance Methods
 
 - (int)match:(NSArray *)otherCards
