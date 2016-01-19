@@ -116,6 +116,7 @@
   _flowLayout = [[UICollectionViewFlowLayout alloc] init];
   _flowLayout.itemSize = CGSizeMake(60, 100);  // FIXME:
   _flowLayout.minimumInteritemSpacing = 5;
+  _flowLayout.minimumLineSpacing = 5;
   _flowLayout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
   
   _customLayout = [[CardPileCollectionViewLayout alloc] init];
@@ -126,6 +127,7 @@
   self.collectionView.backgroundColor = [UIColor redColor];
   self.collectionView.delegate = self;
   self.collectionView.dataSource = self;
+  self.collectionView.scrollEnabled = NO;
   [self.collectionView registerClass:[CardCollectionViewCell class] forCellWithReuseIdentifier:@"card"];
   
   _pinchGR = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
@@ -139,7 +141,7 @@
   [self.collectionView addGestureRecognizer:_tapGR];
   
   _toolBar = [[UIToolbar alloc] init];
-  _toolBar.backgroundColor = [UIColor greenColor];
+  _toolBar.backgroundColor = [UIColor purpleColor];
   _toolBar.alpha =  0;
   
   [self.view addSubview:_toolBar];
@@ -222,11 +224,18 @@
 }
 
 
-#pragma mark - UICollectionViewDataSource Protocol Methods
+
+
+#pragma mark - UICollectionViewDelegate Protocol Methods
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
   [self touchCardButtonAtIndex:indexPath.item];
+}
+
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  [(CardCollectionViewCell *)cell fadeIn];
 }
 
 

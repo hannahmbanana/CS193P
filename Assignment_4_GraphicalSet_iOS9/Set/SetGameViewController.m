@@ -22,6 +22,7 @@
 @implementation SetGameViewController
 {
   UIButton *_btn;
+  CGSize   _itemSize;
 }
 
 #pragma mark - Class Methods
@@ -87,6 +88,10 @@
   dealButtonFrame.origin = CGPointMake(dealButtonFrame.origin.x - _btn.frame.size.width - 20,
                                        dealButtonFrame.origin.y);
   _btn.frame = dealButtonFrame;
+  
+//  [(UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout setEstimatedItemSize:[self calculateItemSize]];
+  _itemSize = [self calculateItemSize];
+  [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 
@@ -96,15 +101,15 @@
 {
   NSUInteger newGameIdx;
   NSMutableArray *idxPathArray = [NSMutableArray array];
-
+  
   // add up to 3 cards to self.visibleCards
   for (int i = 0; i < 3; i++) {
     
     newGameIdx = self.highestIndex + 1;
     
-    Card *newCard = [self.game.cards objectAtIndex:newGameIdx];
-    
-    if (newCard) {
+    if (newGameIdx < [self.game.cards count]) {
+      
+      Card *newCard = [self.game.cards objectAtIndex:newGameIdx];
       
       // if card exists in game
       [self.visibleCards addObject:newCard];
@@ -122,6 +127,12 @@
   
 //   reload UICollectionView data
   if (idxPathArray) {
+    
+    // trigger resizing of cells
+    _itemSize = [self calculateItemSize];
+    [self.collectionView.collectionViewLayout invalidateLayout];
+    
+    // insert cells
     [self.collectionView insertItemsAtIndexPaths:idxPathArray];
   }
 }
@@ -158,6 +169,66 @@
   self.highestIndex = 20 - 1;
   
   _btn.hidden = NO;
+  
+  _itemSize = [self calculateItemSize];
+  [self.collectionView.collectionViewLayout invalidateLayout];
+}
+
+
+- (CGSize)calculateItemSize
+{
+  CGSize bounds = self.collectionView.bounds.size;
+  
+  CGFloat numCards = [self.visibleCards count];
+  CGFloat cardAspectRatio = 1.57;
+  
+  UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
+  UIEdgeInsets insets = flowLayout.sectionInset;
+  CGFloat spacing = flowLayout.minimumInteritemSpacing;
+  CGFloat lineSpacing = flowLayout.minimumLineSpacing;
+  
+  BOOL doneSizing = NO;
+  CGFloat numColumns = 1;
+  CGFloat numRows;
+  CGFloat availableCardSpan, cardWidth, cardHeight, cardGridHeight;
+  CGSize cardSize;
+  
+  // For loop adding columns until cards fit
+  while (!doneSizing) {
+    
+    availableCardSpan = bounds.width - insets.left - insets.right;
+    cardWidth         = floorf( (availableCardSpan - (numColumns - 1) * spacing) / numColumns );
+    cardHeight        = floorf( cardWidth * cardAspectRatio );
+    cardSize          = CGSizeMake( cardWidth, cardHeight );
+    
+    numRows           = ceilf( numCards / numColumns );
+    
+    cardGridHeight    = numRows * cardHeight +
+                        (numRows - 1) * lineSpacing +
+                        insets.top + insets.bottom;
+    
+    NSLog(@"%@", NSStringFromCGSize(cardSize));
+    NSLog(@" numCards %2.0f / numColumns %2.0f = numRows %3.0f", numCards, numColumns, numRows);
+    NSLog(@"cardGridHeight %f < bounds.height %f\n\n", cardGridHeight, bounds.height);
+    
+    if (cardGridHeight < bounds.height) {
+      doneSizing = YES;
+    }
+    
+    numColumns++;
+  }
+  
+  return cardSize;
+}
+
+
+#pragma mark - UICollectionViewDelegateFlowLayout Protocol Methods
+
+- (CGSize)collectionView:(UICollectionView *)collectionView
+                  layout:(UICollectionViewLayout*)collectionViewLayout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  return _itemSize;
 }
 
 

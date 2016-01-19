@@ -13,4 +13,6 @@
 
 @property (nonatomic, strong, readwrite, nullable) Card *card;
 
+- (void)fadeIn;
+
 @end

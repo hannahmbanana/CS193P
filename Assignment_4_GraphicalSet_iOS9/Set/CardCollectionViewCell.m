@@ -119,4 +119,16 @@
   [_cardFrontView updateCardProperties];
 }
 
+- (void)fadeIn
+{
+  if (_cardFrontShowing) {
+    _cardFrontView.alpha = 0;
+    [UIView animateWithDuration:0.5 animations:^{ _cardFrontView.alpha = 1; }];
+  } else {
+    _cardBackView.alpha = 0;
+    [UIView animateWithDuration:0.5 animations:^{ _cardBackView.alpha = 1; }];
+  }
+}
+
+
 @end
