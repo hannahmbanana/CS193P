@@ -22,6 +22,8 @@
 @implementation SetGameViewController
 {
   UIButton *_btn;
+  CGSize   _itemSize;
+  UIButton *_matchesAvailable;
 }
 
 #pragma mark - Class Methods
@@ -57,8 +59,8 @@
     // set navigation title
     self.navigationItem.title = @"Classic Set";
     
-    _visibleCards = [[self.game.cards subarrayWithRange:NSMakeRange(0, 20)] mutableCopy];  // FIXME: number
-    self.highestIndex = 20 - 1;
+    _visibleCards = [[self.game.cards subarrayWithRange:NSMakeRange(0, 12)] mutableCopy];  // FIXME: number
+    self.highestIndex = 12 - 1;
   }
   return self;
 }
@@ -67,6 +69,13 @@
 {
   [super viewDidLoad];
   
+  _matchesAvailable = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [_matchesAvailable setTitle:@"Show Match" forState:UIControlStateNormal];
+  [_matchesAvailable addTarget:self action:@selector(showMatch) forControlEvents:UIControlEventTouchUpInside];
+  [_matchesAvailable setTintColor:[UIColor whiteColor]];
+  [self.view addSubview:_matchesAvailable];
+
+
   // create deal3Button
   _btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [_btn setTitle:@"Deal 3" forState:UIControlStateNormal];
@@ -87,24 +96,69 @@
   dealButtonFrame.origin = CGPointMake(dealButtonFrame.origin.x - _btn.frame.size.width - 20,
                                        dealButtonFrame.origin.y);
   _btn.frame = dealButtonFrame;
+  
+  
+  // set frame for dealButton
+  [_matchesAvailable sizeToFit];
+  CGRect mtFrame = _btn.frame;
+  mtFrame.size = _matchesAvailable.frame.size;
+  mtFrame.origin = CGPointMake(mtFrame.origin.x - _matchesAvailable.frame.size.width - 20,
+                              mtFrame.origin.y);
+  _matchesAvailable.frame = mtFrame;
+  
+  
+//  [(UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout setEstimatedItemSize:[self calculateItemSize]];
+  _itemSize = [self calculateItemSize];
+  [self.collectionView.collectionViewLayout invalidateLayout];
+  
+  [self setMatchButtonVisibility];
 }
 
 
 #pragma mark - Instance Methods
 
+- (void)setMatchButtonVisibility
+{
+  NSArray *matchedCards = [self matchInVisibleCards];
+  
+  if ([matchedCards count] > 0) {
+    _matchesAvailable.hidden = NO;
+  } else {
+    _matchesAvailable.hidden = YES;   // FIXME: bounce cards!
+  }
+}
+
+- (void)showMatch
+{
+  NSArray *matchedCards = [self matchInVisibleCards];
+  
+  for (Card *card in matchedCards) {
+    NSUInteger cardVisibleIdx = [self.visibleCards indexOfObjectIdenticalTo:card];
+    NSIndexPath *path = [NSIndexPath indexPathForItem:cardVisibleIdx inSection:0];
+    CardCollectionViewCell *cell = (CardCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:path];
+    [cell fadeIn];
+  }
+}
+
+- (NSArray *)matchInVisibleCards
+{
+  return [(SetMatchingGame *)self.game matchInSet:self.visibleCards];
+}
+
+
 - (void)dealThreeCards
 {
   NSUInteger newGameIdx;
   NSMutableArray *idxPathArray = [NSMutableArray array];
-
+  
   // add up to 3 cards to self.visibleCards
   for (int i = 0; i < 3; i++) {
     
     newGameIdx = self.highestIndex + 1;
     
-    Card *newCard = [self.game.cards objectAtIndex:newGameIdx];
-    
-    if (newCard) {
+    if (newGameIdx < [self.game.cards count]) {
+      
+      Card *newCard = [self.game.cards objectAtIndex:newGameIdx];
       
       // if card exists in game
       [self.visibleCards addObject:newCard];
@@ -122,8 +176,16 @@
   
 //   reload UICollectionView data
   if (idxPathArray) {
+    
+    // trigger resizing of cells
+    _itemSize = [self calculateItemSize];
+    [self.collectionView.collectionViewLayout invalidateLayout];
+    
+    // insert cells
     [self.collectionView insertItemsAtIndexPaths:idxPathArray];
   }
+  
+  [self setMatchButtonVisibility];
 }
 
 
@@ -148,16 +210,84 @@
   }
   
   [self.collectionView deleteItemsAtIndexPaths:indexPathsToRemove];
+  
+  // trigger resizing of cells
+  _itemSize = [self calculateItemSize];
+  [self.collectionView.collectionViewLayout invalidateLayout];
+  
+  [self setMatchButtonVisibility];
 }
 
 - (void)touchDealButton
 {
   [super touchDealButton];
   
-  _visibleCards = [[self.game.cards subarrayWithRange:NSMakeRange(0, 20)] mutableCopy];  // FIXME: number, duplication of code
-  self.highestIndex = 20 - 1;
+  _visibleCards = [[self.game.cards subarrayWithRange:NSMakeRange(0, 12)] mutableCopy];  // FIXME: number, duplication of code
+  self.highestIndex = 12 - 1;
   
   _btn.hidden = NO;
+  
+  _itemSize = [self calculateItemSize];
+  [self.collectionView.collectionViewLayout invalidateLayout];
+  
+  [self setMatchButtonVisibility];
+}
+
+
+- (CGSize)calculateItemSize
+{
+  CGSize bounds = self.collectionView.bounds.size;
+  
+  CGFloat numCards = [self.visibleCards count];
+  CGFloat cardAspectRatio = 1.57;
+  
+  UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
+  UIEdgeInsets insets = flowLayout.sectionInset;
+  CGFloat spacing = flowLayout.minimumInteritemSpacing;
+  CGFloat lineSpacing = flowLayout.minimumLineSpacing;
+  
+  BOOL doneSizing = NO;
+  CGFloat numColumns = 1;
+  CGFloat numRows;
+  CGFloat availableCardSpan, cardWidth, cardHeight, cardGridHeight;
+  CGSize cardSize;
+  
+  // For loop adding columns until cards fit
+  while (!doneSizing) {
+    
+    availableCardSpan = bounds.width - insets.left - insets.right;
+    cardWidth         = floorf( (availableCardSpan - (numColumns - 1) * spacing) / numColumns );
+    cardHeight        = floorf( cardWidth * cardAspectRatio );
+    cardSize          = CGSizeMake( cardWidth, cardHeight );
+    
+    numRows           = ceilf( numCards / numColumns );
+    
+    cardGridHeight    = numRows * cardHeight +
+                        (numRows - 1) * lineSpacing +
+                        insets.top + insets.bottom;
+    
+    NSLog(@"%@", NSStringFromCGSize(cardSize));
+    NSLog(@" numCards %2.0f / numColumns %2.0f = numRows %3.0f", numCards, numColumns, numRows);
+    NSLog(@"cardGridHeight %f < bounds.height %f\n\n", cardGridHeight, bounds.height);
+    
+    if (cardGridHeight < bounds.height) {
+      doneSizing = YES;
+    }
+    
+    numColumns++;
+  }
+  
+  return cardSize;
+}
+
+
+#pragma mark - UICollectionViewDelegateFlowLayout Protocol Methods
+
+- (CGSize)collectionView:(UICollectionView *)collectionView
+                  layout:(UICollectionViewLayout*)collectionViewLayout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  return _itemSize;
 }
 
 

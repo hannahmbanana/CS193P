@@ -10,6 +10,7 @@
 #import "SetCardView.h"
 #import "SetCard.h"
 #import "CardCollectionViewCell.h"
+#import "CardPileCollectionViewLayout.h"
 
 @interface GameViewController () <UICollectionViewDataSource, UICollectionViewDelegate>
 @end
@@ -17,6 +18,12 @@
 @implementation GameViewController
 {
   UIToolbar *_toolBar;
+  UICollectionViewFlowLayout *_flowLayout;
+  CardPileCollectionViewLayout *_customLayout;
+  UIPinchGestureRecognizer *_pinchGR;
+  UIPanGestureRecognizer *_panGR;
+  UITapGestureRecognizer *_tapGR;
+  UICollectionViewTransitionLayout *_transitionLayout;
 }
 
 
@@ -104,20 +111,37 @@
   [self.dealButton addTarget:self action:@selector(touchDealButton) forControlEvents:UIControlEventTouchUpInside];
   [self.dealButton setTintColor:[UIColor whiteColor]];
   
-  // create & update buttonGridView
-  UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-  flowLayout.itemSize = CGSizeMake(60, 100);  // FIXME:
-  flowLayout.minimumInteritemSpacing = 10;
-  flowLayout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
+  // CollectionFlowLayout
   
-  self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
+  _flowLayout = [[UICollectionViewFlowLayout alloc] init];
+  _flowLayout.itemSize = CGSizeMake(60, 100);  // FIXME:
+  _flowLayout.minimumInteritemSpacing = 5;
+  _flowLayout.minimumLineSpacing = 5;
+  _flowLayout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
+  
+  _customLayout = [[CardPileCollectionViewLayout alloc] init];
+  
+  _transitionLayout = [[UICollectionViewTransitionLayout alloc] initWithCurrentLayout:_flowLayout nextLayout:_customLayout];
+  
+  self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:_flowLayout];
   self.collectionView.backgroundColor = [UIColor redColor];
   self.collectionView.delegate = self;
   self.collectionView.dataSource = self;
+  self.collectionView.scrollEnabled = NO;
   [self.collectionView registerClass:[CardCollectionViewCell class] forCellWithReuseIdentifier:@"card"];
   
+  _pinchGR = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
+  _panGR = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+  _panGR.enabled = NO;
+  _tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+  _tapGR.enabled = NO;
+  
+  [self.collectionView addGestureRecognizer:_pinchGR];
+  [self.collectionView addGestureRecognizer:_panGR];
+  [self.collectionView addGestureRecognizer:_tapGR];
+  
   _toolBar = [[UIToolbar alloc] init];
-  _toolBar.backgroundColor = [UIColor greenColor];
+  _toolBar.backgroundColor = [UIColor purpleColor];
   _toolBar.alpha =  0;
   
   [self.view addSubview:_toolBar];
@@ -200,11 +224,18 @@
 }
 
 
-#pragma mark - UICollectionViewDataSource Protocol Methods
+
+
+#pragma mark - UICollectionViewDelegate Protocol Methods
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
   [self touchCardButtonAtIndex:indexPath.item];
+}
+
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+  [(CardCollectionViewCell *)cell fadeIn];
 }
 
 
@@ -225,6 +256,76 @@
   
   return newCell;
 }
+
+
+#pragma mark - Gesture Handling
+
+- (void)handleTapGesture:(UIPanGestureRecognizer *)sender
+{
+//  NSLog(@"TAPPED");
+  
+  [_collectionView setCollectionViewLayout:_flowLayout animated:YES];
+  _collectionView.allowsSelection = YES;
+  _panGR.enabled = NO;
+  _tapGR.enabled = NO;
+  _pinchGR.enabled = YES;
+}
+
+- (void)handlePanGesture:(UIPanGestureRecognizer *)sender
+{
+//  NSLog(@"PANNING");
+  
+  static CGPoint originalCenter;
+  
+  if (sender.state == UIGestureRecognizerStateBegan) {
+    
+    originalCenter = sender.view.center;
+    
+  } else if (sender.state == UIGestureRecognizerStateChanged) {
+    
+    CGPoint translation = [sender translationInView:sender.view.superview];
+    sender.view.center = CGPointMake(originalCenter.x + translation.x, originalCenter.y + translation.y);
+    
+  }
+}
+
+- (void)handlePinchGesture:(UIPinchGestureRecognizer *)sender
+{
+//  NSLog(@"Pinching");
+  
+  if ([sender numberOfTouches] != 2)
+    return;
+  
+  if (sender.state == UIGestureRecognizerStateBegan) {
+    
+    CGPoint pinchPoint = [sender locationInView:sender.view];
+    _customLayout.itemOffset = UIOffsetMake(pinchPoint.x , pinchPoint.y );  //FIXME: center
+    
+    [_collectionView setCollectionViewLayout:_transitionLayout];  // FIXME: use transition Layout
+    
+  } else if (sender.state == UIGestureRecognizerStateChanged) {
+    
+    // Update the custom layout parameter and invalidate.
+    _transitionLayout.transitionProgress = 1 - sender.scale;
+//    NSLog(@"%f", sender.scale);
+    
+    [_customLayout invalidateLayout];
+    
+  } else if (sender.state == UIGestureRecognizerStateEnded |
+             sender.state == UIGestureRecognizerStateCancelled |
+             sender.state == UIGestureRecognizerStateFailed) {
+    
+//    _transitionLayout.transitionProgress = 1;
+//    [_customLayout invalidateLayout];
+    
+//    _collectionView.allowsSelection = NO;
+    _pinchGR.enabled = NO;
+    _panGR.enabled = YES;
+    _tapGR.enabled = YES;
+    
+  }
+}
+
 
 
 #pragma mark - NSUser Defaults

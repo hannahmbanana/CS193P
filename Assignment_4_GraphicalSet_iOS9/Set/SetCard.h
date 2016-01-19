@@ -21,4 +21,6 @@
 + (NSArray *)validColors;
 + (NSArray *)validShades;
 
++ (BOOL)match:(NSArray <SetCard *> *)cards;
+
 @end

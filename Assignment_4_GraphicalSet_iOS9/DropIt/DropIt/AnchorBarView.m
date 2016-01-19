@@ -11,7 +11,7 @@
 @implementation AnchorBarView
 
 
-# pragma mark - Properties
+#pragma mark - Properties
 
 - (void)setPath:(UIBezierPath *)path
 {
@@ -22,7 +22,7 @@
 }
 
 
-# pragma mark - Lifecycle
+#pragma mark - Lifecycle
 
 - (void)drawRect:(CGRect)rect
 {

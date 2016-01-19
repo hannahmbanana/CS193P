@@ -88,6 +88,8 @@
   
   [[UIColor whiteColor] set];
   [path fill];
+  path.lineWidth = 1.0;
+  [[UIColor blackColor] set];
   [path stroke];
   [path addClip];
 }
