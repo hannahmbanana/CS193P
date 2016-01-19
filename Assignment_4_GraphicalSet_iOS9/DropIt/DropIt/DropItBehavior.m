@@ -8,7 +8,7 @@
 
 #import "DropItBehavior.h"
 
-@interface DropItBehavior ()
+@interface DropItBehavior () 
 
 @property (nonatomic, strong, readwrite) UIGravityBehavior      *gravity;
 @property (nonatomic, strong, readwrite) UICollisionBehavior    *collision;
@@ -18,6 +18,7 @@
 
 @implementation DropItBehavior
 
+#pragma mark - Lifecycle
 
 - (instancetype)init
 {
@@ -31,6 +32,9 @@
     
     self.collision = [[UICollisionBehavior alloc] init];
     self.collision.translatesReferenceBoundsIntoBoundary = YES;
+    self.collision.collisionMode = UICollisionBehaviorModeEverything;
+    self.collision.collisionDelegate = self.dynamicAnimator.delegate;
+  
     [self addChildBehavior:self.collision];
     
     self.nonRotatingBehavior = [[UIDynamicItemBehavior alloc] init];
@@ -40,6 +44,8 @@
   
   return self;
 }
+
+#pragma mark - Instance Methods
 
 - (void)addItem:(id <UIDynamicItem>)item
 {
