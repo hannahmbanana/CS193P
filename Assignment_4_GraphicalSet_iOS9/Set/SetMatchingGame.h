@@ -10,4 +10,7 @@
 
 @interface SetMatchingGame : MatchingGame
 
+- (NSArray *)matchInSet:(NSMutableArray *)setCardArray;
+
+
 @end

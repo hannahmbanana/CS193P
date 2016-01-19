@@ -28,6 +28,47 @@
 
 #pragma mark - Instance Methods
 
+- (NSArray *)matchInSet:(NSArray *)setCardArray
+{
+  BOOL matchAvailable = NO;
+  NSArray *matchedCards = [NSArray array];
+  
+  if ([setCardArray count] < 3) {
+    return matchedCards;
+  }
+  
+  // get all combinations of 3 cards (order doesn't matter)
+  
+  NSMutableArray *combinations = [[NSMutableArray alloc] init];
+  
+  for (NSInteger i = 0; i < [setCardArray count] - 2; i++) {
+    for (NSInteger j = i + 1; j < [setCardArray count] - 1; j++) {
+      for (NSInteger k = j + 1; k < [setCardArray count]; k++) {
+        NSArray *newCombo = [NSArray arrayWithObjects:[setCardArray objectAtIndex:i],
+                                                                    [setCardArray objectAtIndex:j],
+                                                                    [setCardArray objectAtIndex:k],
+                                                                    nil];
+      
+        [combinations addObject:newCombo];
+        NSLog(@"added combination %@", newCombo);
+      }
+    }
+  }
+  
+  for (int i = 0; i < [combinations count]; i++) {
+    matchAvailable = [SetCard match:[combinations objectAtIndex:i]];
+    
+    if (matchAvailable) {
+      matchedCards = [combinations objectAtIndex:i];
+      NSLog(@"MATCH %@", matchedCards);
+      return matchedCards;
+    }
+  }
+  
+  return matchedCards;
+}
+
+
 static const int MISMATCH_PENALTY = 1;
 static const int MATCH_BONUS = 2;
 
