@@ -4,4 +4,3 @@ Coursework from Stanford's CS193P 2013-14 Fall iPhone App Dev course. Lectures a
 Notes: 
 - all assignments are written in Objective-C
 - all assignments are modified to use programatic layout rather than the suggested storyboards
-- I’ve tried to include MVC / UML diagrams when possible
