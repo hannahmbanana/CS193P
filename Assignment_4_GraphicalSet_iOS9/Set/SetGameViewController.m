@@ -238,6 +238,9 @@ static const int NUM_CARDS_AT_START_OF_GAME = 12;
   CGFloat cardAspectRatio = 1.57;
   
   UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
+  if (![flowLayout isKindOfClass:[UICollectionViewFlowLayout class]])
+    return CGSizeZero;
+  
   UIEdgeInsets insets = flowLayout.sectionInset;
   CGFloat spacing = flowLayout.minimumInteritemSpacing;
   CGFloat lineSpacing = flowLayout.minimumLineSpacing;

@@ -261,12 +261,14 @@ static const int MAX_NUM_SAVED_SCORES = 10;
 {
   // return cards to normal layout in animated way
   [_collectionView setCollectionViewLayout:_flowLayout animated:YES];
-  _collectionView.allowsSelection = YES;
   
   // recenter collection view
   self.collectionView.bounds = self.view.bounds;
   
   // disable pan and tap gestures, enable pinch gesture
+  [self.toolBar.items makeObjectsPerformSelector:@selector(setEnabled:) withObject:[NSNumber numberWithBool:YES]];
+  self.navigationItem.rightBarButtonItem.enabled = YES;
+  _collectionView.allowsSelection = YES;
   _panGR.enabled = NO;
   _tapGR.enabled = NO;
   _pinchGR.enabled = YES;
@@ -295,7 +297,7 @@ static const int MAX_NUM_SAVED_SCORES = 10;
   if (sender.state == UIGestureRecognizerStateBegan) {
     
     CGPoint pinchPoint = [sender locationInView:sender.view];
-    _customLayout.pinchPointCenter = CGPointMake( pinchPoint.x , pinchPoint.y ); 
+    _customLayout.pinchPointCenter = CGPointMake( pinchPoint.x , pinchPoint.y ); // FIXME:
     
     [_collectionView setCollectionViewLayout:_transitionLayout];
     
@@ -310,9 +312,11 @@ static const int MAX_NUM_SAVED_SCORES = 10;
              sender.state == UIGestureRecognizerStateCancelled |
              sender.state == UIGestureRecognizerStateFailed) {
     
-    _transitionLayout.transitionProgress = 1;
+    _transitionLayout.transitionProgress = 1;  //FIXME:
     [_customLayout invalidateLayout];
     
+    [self.toolBar.items makeObjectsPerformSelector:@selector(setEnabled:) withObject:[NSNumber numberWithBool:NO]];
+    self.navigationItem.rightBarButtonItem.enabled = NO;
     _collectionView.allowsSelection = NO;
     _pinchGR.enabled = NO;
     _panGR.enabled = YES;
