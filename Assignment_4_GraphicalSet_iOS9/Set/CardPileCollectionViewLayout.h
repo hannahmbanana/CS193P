@@ -11,6 +11,7 @@
 @interface CardPileCollectionViewLayout : UICollectionViewLayout
 
 @property (nonatomic, assign, readwrite) UIOffset itemOffset;
+@property (nonatomic, assign, readwrite) CGPoint  pinchPointCenter;
 
 - (CGSize)collectionViewContentSize;
 

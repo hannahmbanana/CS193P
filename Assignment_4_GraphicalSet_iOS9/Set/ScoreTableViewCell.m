@@ -10,10 +10,10 @@
 
 @implementation ScoreTableViewCell
 {
-  UILabel *_label1;
-  UILabel *_label2;
-  UILabel *_label3;
-  UILabel *_label4;
+  UILabel *_scorelabel;
+  UILabel *_typeLabel;
+  UILabel *_durationLabel;
+  UILabel *_dateLabel;
 }
 
 
@@ -32,33 +32,34 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
     // create & add UILabels to cell's content view
-    NSInteger score     = [[dictionary objectForKey:@"score"] integerValue];
-    NSString *gameType  = [dictionary objectForKey:@"gameType"];
-    NSDate   *start     = [dictionary objectForKey:@"start"];
-    NSDate   *end       = [dictionary objectForKey:@"end"];
+    NSInteger score      = [[dictionary objectForKey:@"score"] integerValue];
+    NSString  *gameType  = [dictionary objectForKey:@"gameType"];
+    NSDate    *start     = [dictionary objectForKey:@"start"];
+    NSDate    *end       = [dictionary objectForKey:@"end"];
     
-    if (score > 0) {
-      _label1 = [[self class] labelWithString:[NSString stringWithFormat:@" %ld", (long)score]];
-    } else {
-      _label1 = [[self class] labelWithString:[NSString stringWithFormat:@"%ld", (long)score]];
-    }
+    // score label
+    NSString *formatString = (score > 0) ? @" %ld" : @"%ld";
+    _scorelabel = [[self class] labelWithString:[NSString stringWithFormat:formatString, (long)score]];
     
-    _label2 = [[self class] labelWithString:gameType];
+    // game type label
+    _typeLabel = [[self class] labelWithString:gameType];
     
+    // game duration label
     NSTimeInterval duration = [end timeIntervalSinceDate:start];
     NSDateComponentsFormatter *formatter = [NSDateComponentsFormatter new];
     formatter.unitsStyle = NSDateComponentsFormatterUnitsStyleAbbreviated;
+    _durationLabel = [[self class] labelWithString:[formatter stringFromTimeInterval:duration]];
     
-    _label3 = [[self class] labelWithString:[formatter stringFromTimeInterval:duration]];
-    
-    _label4 = [[self class] labelWithString:[NSDateFormatter localizedStringFromDate:start
-                                                                           dateStyle:NSDateFormatterShortStyle
-                                                                           timeStyle:NSDateFormatterShortStyle]];
+    // date label
+    _dateLabel = [[self class] labelWithString:[NSDateFormatter localizedStringFromDate:start
+                                                                              dateStyle:NSDateFormatterShortStyle
+                                                                              timeStyle:NSDateFormatterShortStyle]];
 
-    [self.contentView addSubview:_label1];
-    [self.contentView addSubview:_label2];
-    [self.contentView addSubview:_label3];
-    [self.contentView addSubview:_label4];
+    // add subviews to cell's contentView
+    [self.contentView addSubview:_scorelabel];
+    [self.contentView addSubview:_typeLabel];
+    [self.contentView addSubview:_durationLabel];
+    [self.contentView addSubview:_dateLabel];
   }
   
   return self;
@@ -67,14 +68,16 @@
 - (void)layoutSubviews
 {
   CGSize cellSize = self.bounds.size;
-  _label1.frame = CGRectMake( 0,                            0, roundf(cellSize.width * 1/6),  cellSize.height );
-  _label2.frame = CGRectMake( roundf(cellSize.width * 1/6), 0, roundf(cellSize.width * 1/6),  cellSize.height );
-  _label3.frame = CGRectMake( roundf(cellSize.width * 2/6), 0, roundf(cellSize.width * 2/6),  cellSize.height );
-  _label4.frame = CGRectMake( roundf(cellSize.width * 4/6), 0, roundf(cellSize.width * 2/6),  cellSize.height );
+  
+  _scorelabel.frame     = CGRectIntegral( CGRectMake( 0,                    0, cellSize.width * 1/6,  cellSize.height ));
+  _typeLabel.frame      = CGRectIntegral( CGRectMake( cellSize.width * 1/6, 0, cellSize.width * 1/6,  cellSize.height ));
+  _durationLabel.frame  = CGRectIntegral( CGRectMake( cellSize.width * 2/6, 0, cellSize.width * 2/6,  cellSize.height ));
+  _dateLabel.frame      = CGRectIntegral( CGRectMake( cellSize.width * 4/6, 0, cellSize.width * 2/6,  cellSize.height ));
 }
 
 
 #pragma mark - Helper Methods
+
 + (UILabel *)labelWithString:(NSString *)string
 {
   UILabel *label = [[UILabel alloc] init];

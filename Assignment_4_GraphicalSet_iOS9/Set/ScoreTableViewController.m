@@ -24,8 +24,13 @@
   self = [super initWithStyle:UITableViewStylePlain];
   
   if (self) {
-    // configure Nav title
+    
+    // configure Navigation items
     self.navigationItem.title = @"Score Board";
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reset"
+                                                                              style:UIBarButtonItemStylePlain
+                                                                             target:self
+                                                                             action:@selector(clearScoreBoard)];
   }
   return self;
 }
@@ -33,41 +38,95 @@
 // put all view stuff in here so that it doesn't waste time making it until tab is selected
 - (void)viewDidLoad
 {
+  // configure tableView
+  self.tableView.scrollEnabled = NO;
+  self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+  self.tableView.backgroundColor = [UIColor clearColor];
+  
   // configure the UISegmentedControl
-  NSArray *items = @[@"Score", @"Game", @"Duration", @"Date Played"];
-  _tableHeaderSegControl = [[UISegmentedControl alloc] initWithItems:items];
+  _tableHeaderSegControl = [[UISegmentedControl alloc] initWithItems:@[@"Score", @"Game", @"Duration", @"Date Played"]];
   _tableHeaderSegControl.selectedSegmentIndex = 0;
-  _tableHeaderSegControl.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.80];
+  
+  // target action pair for selecting segments
   [_tableHeaderSegControl addTarget:self action:@selector(touchSegmentedControl:) forControlEvents:UIControlEventValueChanged];
+  
+  // change appearance of SegmentedControl to have square corners
+  UIEdgeInsets insets = UIEdgeInsetsMake(2, 2, 2, 2);
+  
+  // create resizableImage - one filled, one not
+  UIImage *assetImage1 = [[[self resizeableSquareImageWithFill:NO] resizableImageWithCapInsets:insets]
+                          imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+  UIImage *assetImage2 = [[[self resizeableSquareImageWithFill:YES] resizableImageWithCapInsets:insets]
+                          imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+  
+  [[UISegmentedControl appearance] setBackgroundImage:assetImage1 forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+  [[UISegmentedControl appearance] setBackgroundImage:assetImage2 forState:UIControlStateSelected barMetrics:UIBarMetricsDefault];
   
   // set the UISegmentedControl to be the tableHeaderView
   self.tableView.tableHeaderView = _tableHeaderSegControl;
-  self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-
-  // set the UITableViewController's background to green
-  self.view.backgroundColor = [UIColor colorWithRed:15/255.0 green:110/255.0 blue:48/255.0 alpha:1];
+  self.tableView.tableHeaderView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.8];  // matches Nav color
 }
 
 - (void)viewWillLayoutSubviews
 {
   // set widths of UISegControl
-  CGFloat width = self.tableView.bounds.size.width;
-  [_tableHeaderSegControl setWidth:roundf(width * 1/6) forSegmentAtIndex:0];
-  [_tableHeaderSegControl setWidth:roundf(width * 1/6) forSegmentAtIndex:1];
-  [_tableHeaderSegControl setWidth:roundf(width * 2/6) forSegmentAtIndex:2];
-  [_tableHeaderSegControl setWidth:roundf(width * 2/6) forSegmentAtIndex:3];
+  CGFloat boundsWidth = self.tableView.bounds.size.width;
+  
+  [_tableHeaderSegControl setWidth:roundf(boundsWidth * 1/6) forSegmentAtIndex:0];
+  [_tableHeaderSegControl setWidth:roundf(boundsWidth * 1/6) forSegmentAtIndex:1];
+  [_tableHeaderSegControl setWidth:roundf(boundsWidth * 2/6) forSegmentAtIndex:2];
+  [_tableHeaderSegControl setWidth:roundf(boundsWidth * 2/6) forSegmentAtIndex:3];
   
   // set frame for tableHeaderView
-  self.tableView.tableHeaderView.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 35);
+  self.tableView.tableHeaderView.frame = CGRectMake(0, 0, boundsWidth, 30);
 }
 
 - (void)viewWillAppear:(BOOL)animated
+{
+  [self updateScoreBoard];
+}
+
+
+#pragma mark - Helper Methods
+
+- (void)updateScoreBoard
 {
   // get gameDataArray from NSUserDefaults
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   _gameDataArray = [[defaults objectForKey:@"gameDataArray"] mutableCopy];
   
+  // reload data
   [self.tableView reloadData];
+}
+
+- (void)clearScoreBoard
+{
+  // reset NSUserDefaults
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults removeObjectForKey:@"gameDataArray"];
+  
+  [self updateScoreBoard];
+}
+
+- (UIImage *)resizeableSquareImageWithFill:(BOOL)fill
+{
+  CGSize size = CGSizeMake(5,5);
+  CGRect rect = (CGRect){ CGPointZero, size };
+  UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+  
+  UIBezierPath *path = [UIBezierPath bezierPathWithRect:rect];
+  path.lineWidth = 3;
+  [path stroke];
+  
+  if (fill) {
+    [[UIColor whiteColor] set];
+    [path fill];
+  }
+  
+  UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+  UIGraphicsEndImageContext();
+  
+  return image;
 }
 
 #pragma mark - Sorting

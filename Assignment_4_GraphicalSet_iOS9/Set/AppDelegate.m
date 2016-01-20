@@ -10,8 +10,9 @@
 #import "CardGameViewController.h"
 #import "SetGameViewController.h"
 #import "ScoreTableViewController.h"
-#import "SettingsTableViewController.h"
 #import "CustomTabBarController.h"
+
+const static float TAB_BAR_TEXT_SIZE = 24;
 
 @interface AppDelegate ()
 
@@ -19,37 +20,33 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
-  // make the background color look like green felt
+  // make the background color look like green poker felt
   self.window.backgroundColor = [UIColor colorWithRed:15/255.0 green:110/255.0 blue:48/255.0 alpha:1];
   
-  // create ViewControllers, NavigationControllers, Tab Bar Controllers
-  CardGameViewController *cardGameViewController = [[CardGameViewController alloc] init];
-  UINavigationController *cardNavController = [[UINavigationController alloc] initWithRootViewController:cardGameViewController];
+  // create NavigationControllers & assign rootViewControllers
+  CardGameViewController    *cardGameViewController   = [[CardGameViewController alloc] init];
+  UINavigationController    *cardNavController        = [[UINavigationController alloc] initWithRootViewController:cardGameViewController];
   
-  SetGameViewController *setGameViewController = [[SetGameViewController alloc] init];
-  UINavigationController *setNavController = [[UINavigationController alloc] initWithRootViewController:setGameViewController];
+  SetGameViewController     *setGameViewController    = [[SetGameViewController alloc] init];
+  UINavigationController    *setNavController         = [[UINavigationController alloc] initWithRootViewController:setGameViewController];
   
-  ScoreTableViewController *scoreboardViewController = [[ScoreTableViewController alloc] init];
-  UINavigationController *scoreboardNavController = [[UINavigationController alloc] initWithRootViewController:scoreboardViewController];
+  ScoreTableViewController  *scoreboardViewController = [[ScoreTableViewController alloc] init];
+  UINavigationController    *scoreboardNavController  = [[UINavigationController alloc] initWithRootViewController:scoreboardViewController];
   
-  SettingsTableViewController *settingsViewController = [[SettingsTableViewController alloc] init];
-  UINavigationController *settingsNavController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
+  // CustomTabBarController extends UITabBarController's addChildViewController to create a custom UITabBarItem
+  CustomTabBarController  *tabBarController = [[CustomTabBarController alloc] init];
   
-  // CustomTabBarController extends UITabBarController's addChildViewController to make a custom UITabBarItem
-  CustomTabBarController *tabBarController = [[CustomTabBarController alloc] init];
-  
-  // the TabBarController owns the UINavigationControllers, which own the Card & Set game view controllers
-  [tabBarController addChildViewController:cardNavController itemTitle:@"CARD MATCH" itemImageText:@"♠︎ ♥︎" itemImageTextSize:24];
-  [tabBarController addChildViewController:setNavController itemTitle:@"CLASSIC SET" itemImageText:@"■ ▲" itemImageTextSize:24];
-  [tabBarController addChildViewController:scoreboardNavController itemTitle:@"SCOREBOARD" itemImageText:@"| | |" itemImageTextSize:24];
-  [tabBarController addChildViewController:settingsNavController itemTitle:@"SETTINGS" itemImageText:@"+" itemImageTextSize:24];
+  // tabBarController owns the UINavigationControllers
+  [tabBarController addChildViewController:cardNavController        itemTitle:@"CARD MATCH"   itemImageText:@"♠︎ ♥︎"    itemImageTextSize:TAB_BAR_TEXT_SIZE];
+  [tabBarController addChildViewController:setNavController         itemTitle:@"CLASSIC SET"  itemImageText:@"■ ▲"    itemImageTextSize:TAB_BAR_TEXT_SIZE];
+  [tabBarController addChildViewController:scoreboardNavController  itemTitle:@"SCOREBOARD"   itemImageText:@"| | |"  itemImageTextSize:TAB_BAR_TEXT_SIZE];
   tabBarController.selectedViewController = setNavController;
   
+  // set tabBarController to be window's rootViewController
   self.window.rootViewController = tabBarController;
   [self.window makeKeyAndVisible];
   

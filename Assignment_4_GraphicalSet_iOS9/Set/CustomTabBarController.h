@@ -10,7 +10,7 @@
 
 @interface CustomTabBarController : UITabBarController
 
-// extends superclass' addChildViewController: method
+// extends superclass' addChildViewController: method to create a custom UITabBarItem
 - (void)addChildViewController:(UIViewController *)childController
                      itemTitle:(NSString *)tabBarTitle
                  itemImageText:(NSString *)imageText
