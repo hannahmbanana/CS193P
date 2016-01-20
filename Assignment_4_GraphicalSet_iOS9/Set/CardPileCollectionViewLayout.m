@@ -32,7 +32,6 @@
 // called when the CollectionView presents itself for the first time and each time the layout is invalidated
 - (void)prepareLayout
 {
-  
   // reset itemAttributes
   [self setItemAttributes:nil];
   _itemAttributes = [[NSMutableArray alloc] init];

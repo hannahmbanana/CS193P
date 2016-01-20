@@ -50,7 +50,6 @@
                                                                     nil];
       
         [combinations addObject:newCombo];
-        NSLog(@"added combination %@", newCombo);
       }
     }
   }
@@ -60,7 +59,6 @@
     
     if (matchAvailable) {
       matchedCards = [combinations objectAtIndex:i];
-      NSLog(@"MATCH %@", matchedCards);
       return matchedCards;
     }
   }

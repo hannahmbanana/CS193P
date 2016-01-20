@@ -37,6 +37,8 @@
   NSDictionary *attributes = @{NSFontAttributeName : [UIFont systemFontOfSize:size]};
   NSAttributedString *titleString = [[NSAttributedString alloc] initWithString:imageString attributes:attributes];
   CGSize textSize = [titleString size];
+  
+  // create UIImage from string and attributes
   UIImage *stringImage = [self imageFromNSString:imageString attributes:attributes size:textSize];
   
   // set tabBarItem image
@@ -45,7 +47,7 @@
   return tabBarItem;
 }
 
-// returns a UIImage of size, size, with text, string
+// returns a UIImage of size (size) from string (string) with attributes (attributes)
 - (UIImage *)imageFromNSString:(NSString *)string attributes:(NSDictionary *)attributes size:(CGSize)size
 {
   UIGraphicsBeginImageContextWithOptions(size, NO, 0);

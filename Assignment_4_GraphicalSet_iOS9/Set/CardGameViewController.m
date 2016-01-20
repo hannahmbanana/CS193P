@@ -38,6 +38,10 @@
   return 2;
 }
 
++ (NSUInteger)numCardsInGame
+{
+  return 30;
+}
 
 #pragma mark - Lifecycle
 

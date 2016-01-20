@@ -269,7 +269,7 @@
 - (void)drawShapeFillWithPath:(UIBezierPath *)path WithWidth:(CGFloat)width
 {
   // set line width
-  path.lineWidth = width;
+  path.lineWidth = width * 2;
   
   // set color
   UIColor *color = [[self class] uIColorForSetColorString:self.color];
