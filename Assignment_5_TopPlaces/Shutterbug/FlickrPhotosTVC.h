@@ -14,4 +14,7 @@
 
 @property (nonatomic, strong, readwrite) NSArray *photos;
 
+// SUBCLASS MUST IMPLEMENT
+- (void)fetchPhotos;
+
 @end

@@ -8,6 +8,7 @@
 
 #import "FlickrPhotosTVC.h"
 #import "FlickrFetcher.h"
+#import "NonBlockingImageViewController.h"
 
 @implementation FlickrPhotosTVC
 
@@ -30,8 +31,15 @@
   
   [self.view bringSubviewToFront:self.refreshControl];
   self.navigationItem.title = @"Shutterbug";
-  self.refreshControl.enabled = YES;
-  self.refreshControl.tintColor = [UIColor blueColor];
+  self.refreshControl = [[UIRefreshControl alloc] init];
+  [self.refreshControl addTarget:self action:@selector(fetchPhotos) forControlEvents:UIControlEventValueChanged];
+}
+
+#pragma mark - Helper Methods
+
+- (void)fetchPhotos
+{
+  NSAssert(NO, @"Error - should not reach this abstract class incomplete method.");
 }
 
 #pragma mark - UITableViewDataSource
@@ -54,6 +62,7 @@
     
     // create a cell if none are available
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Flickr subtitle cell"];
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   }
   
   // configure the cell's view
@@ -64,5 +73,17 @@
   return cell;
 }
 
+#pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+  NonBlockingImageViewController *imgVC = [[NonBlockingImageViewController alloc] init];
+  
+  NSDictionary *place = self.photos[indexPath.row];
+  imgVC.imgURL = [FlickrFetcher URLforPhoto:place format:FlickrPhotoFormatLarge];
+  imgVC.navigationItem.title = [place valueForKeyPath:FLICKR_PHOTO_TITLE];
+                  
+  [self.navigationController pushViewController:imgVC animated:YES];
+}
 
 @end
