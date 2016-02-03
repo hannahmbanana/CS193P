@@ -8,9 +8,10 @@
 
 #import "FlickrPhotosTVC.h"
 #import "FlickrFetcher.h"
-#import "NonBlockingImageViewController.h"
+#import "ImageViewController.h"
 
 @implementation FlickrPhotosTVC
+
 
 #pragma mark - Properties
 
@@ -23,17 +24,23 @@
   [self.tableView reloadData];
 }
 
+
 #pragma mark - Lifecycle
 
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-  
-  [self.view bringSubviewToFront:self.refreshControl];
+
+  // set the Nav title
   self.navigationItem.title = @"Shutterbug";
+  
+  // create the refreshControl (UITableViewController property starts out as nil)
   self.refreshControl = [[UIRefreshControl alloc] init];
+  
+  // add a target / action pair to the refreshControl
   [self.refreshControl addTarget:self action:@selector(fetchPhotos) forControlEvents:UIControlEventValueChanged];
 }
+
 
 #pragma mark - Helper Methods
 
@@ -41,6 +48,7 @@
 {
   NSAssert(NO, @"Error - should not reach this abstract class incomplete method.");
 }
+
 
 #pragma mark - UITableViewDataSource
 
@@ -60,12 +68,12 @@
   
   if (cell == nil) {
     
-    // create a cell if none are available
+    // create a cell if none are available for reuse
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Flickr subtitle cell"];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   }
   
-  // configure the cell's view
+  // configure the cell's view with the model data
   NSDictionary *place       = self.photos[indexPath.row];
   cell.textLabel.text       = [place valueForKeyPath:FLICKR_PHOTO_TITLE];
   cell.detailTextLabel.text = [place valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
@@ -73,22 +81,30 @@
   return cell;
 }
 
+
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  NonBlockingImageViewController *imgVC = [[NonBlockingImageViewController alloc] init];
-  
+  // get the corresponding photo from the model
   NSDictionary *place = self.photos[indexPath.row];
-  imgVC.imgURL = [FlickrFetcher URLforPhoto:place format:FlickrPhotoFormatLarge];
-  imgVC.navigationItem.title = [place valueForKeyPath:FLICKR_PHOTO_TITLE];
-  imgVC.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
   
-  BOOL iPad = ( [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad );
-  if (iPad) {
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:imgVC];
-    self.splitViewController.viewControllers = @[self.splitViewController.viewControllers[0], navController];
+  // create & configure an imageViewController
+  ImageViewController *imgVC              = [[ImageViewController alloc] init];
+  imgVC.imgURL                            = [FlickrFetcher URLforPhoto:place format:FlickrPhotoFormatLarge];
+  imgVC.navigationItem.title              = [place valueForKeyPath:FLICKR_PHOTO_TITLE];
+  imgVC.navigationItem.leftBarButtonItem  = self.splitViewController.displayModeButtonItem;
+  
+  // push the imageViewController (iphone) or set it to be the detailViewController (iPad)
+  if ( [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad ) {
+    
+    // iPad
+    UINavigationController *navController     = [[UINavigationController alloc] initWithRootViewController:imgVC];
+    self.splitViewController.viewControllers  = @[self.splitViewController.viewControllers[0], navController];
+
   } else {
+    
+    // iPhone
     [self.navigationController pushViewController:imgVC animated:YES];
   }
 }

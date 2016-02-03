@@ -12,7 +12,7 @@
 
 @interface FlickrPhotosTVC : UITableViewController
 
-@property (nonatomic, strong, readwrite) NSArray *photos;
+@property (nonatomic, strong, readwrite) NSArray *photos;  // of Flickr photo NSDictionary
 
 // SUBCLASS MUST IMPLEMENT
 - (void)fetchPhotos;

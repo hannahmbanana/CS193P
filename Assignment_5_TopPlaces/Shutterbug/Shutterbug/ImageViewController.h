@@ -12,14 +12,7 @@
 
 @interface ImageViewController : UIViewController
 
-@property (nonatomic, strong, readwrite) NSURL                    *imgURL;
-@property (nonatomic, strong, readwrite) UIImageView              *imageView;
-@property (nonatomic, strong, readwrite) UIImage                  *image;
-@property (nonatomic, strong, readwrite) UIScrollView             *scrollView;
-@property (nonatomic, strong, readwrite) UIActivityIndicatorView  *spinner;
-
-// SUBCLASS MUST IMPLEMENT
-+ (Class)imageViewClass;
+@property (nonatomic, strong, readwrite) NSURL                    *imgURL;      // URL of the image to display
 
 // SUBCLASS MUST IMPLEMENT
 - (void)startDownloadingImage;

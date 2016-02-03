@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import "JustPostedFlickrPhotosTVC.h"
-#import "NonBlockingImageViewController.h"
+#import "ImageViewController.h"
 
 @interface AppDelegate ()
 
@@ -21,25 +21,41 @@
   
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
-  JustPostedFlickrPhotosTVC *tvc        = [[JustPostedFlickrPhotosTVC alloc] init];
-  UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:tvc];
+  // create the photos tableViewController & wrap it in a NavController
+  JustPostedFlickrPhotosTVC *tvc            = [[JustPostedFlickrPhotosTVC alloc] init];
+  UINavigationController *tvcNavController  = [[UINavigationController alloc] initWithRootViewController:tvc];
   
+  // is the app running on an iPad?
   BOOL iPad = ( [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad );
+  
+  // set the window's rootViewController
   if (iPad) {
+    
+    // if the app is running on an iPad, create a splitViewController
     UISplitViewController *svc = [[UISplitViewController alloc] init];
     
-    NonBlockingImageViewController *imgVC = [[NonBlockingImageViewController alloc] init];
-    UINavigationController *imgNavController = [[UINavigationController alloc] initWithRootViewController:imgVC];
-    imgVC.navigationItem.leftBarButtonItem = svc.displayModeButtonItem;
+    // create the detailViewController & wrap it in a NavController
+    ImageViewController *detailVC    = [[ImageViewController alloc] init];
+    UINavigationController *detailNavController = [[UINavigationController alloc] initWithRootViewController:detailVC];
 
+    // add the masterViewController is hidden back button to the detailViewController
+    detailVC.navigationItem.leftBarButtonItem = svc.displayModeButtonItem;
     
-    svc.viewControllers = @[navController, imgNavController];
+    // set the splitViewController's master and detail viewControllers
+    svc.viewControllers = @[tvcNavController, detailNavController];
+    
+    // (iPad) set the splitViewController to be the window's rootViewController
     self.window.rootViewController = svc;
+    
   } else {
-    self.window.rootViewController = navController;
+    
+    // (iPhone) set the photos tableViewController as the window's rootViewController
+    self.window.rootViewController = tvcNavController;
   }
   
+  // show main window and make it key
   [self.window makeKeyAndVisible];
+  
   return YES;
 }
 
