@@ -8,8 +8,9 @@
 
 #import "AppDelegate.h"
 #import "JustPostedFlickrPhotosTVC.h"
+#import "NonBlockingImageViewController.h"
 
-@interface AppDelegate () <UISplitViewControllerDelegate>
+@interface AppDelegate ()
 
 @end
 
@@ -22,8 +23,22 @@
   
   JustPostedFlickrPhotosTVC *tvc        = [[JustPostedFlickrPhotosTVC alloc] init];
   UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:tvc];
-  self.window.rootViewController = navController;
+  
+  BOOL iPad = ( [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad );
+  if (iPad) {
+    UISplitViewController *svc = [[UISplitViewController alloc] init];
     
+    NonBlockingImageViewController *imgVC = [[NonBlockingImageViewController alloc] init];
+    UINavigationController *imgNavController = [[UINavigationController alloc] initWithRootViewController:imgVC];
+    imgVC.navigationItem.leftBarButtonItem = svc.displayModeButtonItem;
+
+    
+    svc.viewControllers = @[navController, imgNavController];
+    self.window.rootViewController = svc;
+  } else {
+    self.window.rootViewController = navController;
+  }
+  
   [self.window makeKeyAndVisible];
   return YES;
 }
@@ -49,5 +64,6 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
   // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
 
 @end

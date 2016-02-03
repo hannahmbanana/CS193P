@@ -82,8 +82,15 @@
   NSDictionary *place = self.photos[indexPath.row];
   imgVC.imgURL = [FlickrFetcher URLforPhoto:place format:FlickrPhotoFormatLarge];
   imgVC.navigationItem.title = [place valueForKeyPath:FLICKR_PHOTO_TITLE];
-                  
-  [self.navigationController pushViewController:imgVC animated:YES];
+  imgVC.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+  
+  BOOL iPad = ( [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad );
+  if (iPad) {
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:imgVC];
+    self.splitViewController.viewControllers = @[self.splitViewController.viewControllers[0], navController];
+  } else {
+    [self.navigationController pushViewController:imgVC animated:YES];
+  }
 }
 
 @end
