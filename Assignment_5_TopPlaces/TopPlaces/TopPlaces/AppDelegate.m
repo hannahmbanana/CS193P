@@ -28,7 +28,7 @@
   // create "Recently Viewed" tableViewController, wrap in a navController and add a tabBarItem
   UITableViewController *recentlyViewedTVC            = [[UITableViewController alloc] init];
   UINavigationController *recentlyViewedNavController = [[UINavigationController alloc] initWithRootViewController:recentlyViewedTVC];
-  UITabBarItem *recentlyViewedTabBarItem              = [[UITabBarItem alloc] initWithTitle:@"Recently Viewed" image:nil tag:1];
+  UITabBarItem *recentlyViewedTabBarItem              = [[UITabBarItem alloc] initWithTitle:@"Recents" image:nil tag:1];
   recentlyViewedNavController.tabBarItem              = recentlyViewedTabBarItem;
 
   // create the tabBarController

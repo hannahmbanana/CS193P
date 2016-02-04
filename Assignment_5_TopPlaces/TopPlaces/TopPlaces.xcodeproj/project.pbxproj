@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		76BF7E721C61D68200EC1D71 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E711C61D68200EC1D71 /* main.m */; };
 		76BF7E751C61D68200EC1D71 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E741C61D68200EC1D71 /* AppDelegate.m */; };
-		76BF7E781C61D68200EC1D71 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E771C61D68200EC1D71 /* ViewController.m */; };
-		76BF7E7B1C61D68200EC1D71 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76BF7E791C61D68200EC1D71 /* Main.storyboard */; };
 		76BF7E7D1C61D68200EC1D71 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76BF7E7C1C61D68200EC1D71 /* Assets.xcassets */; };
 		76BF7E801C61D68200EC1D71 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76BF7E7E1C61D68200EC1D71 /* LaunchScreen.storyboard */; };
+		76BF7E8C1C62F9D400EC1D71 /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E8B1C62F9D400EC1D71 /* ImageViewController.m */; };
+		76BF7E8F1C6302FB00EC1D71 /* TopPlacesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,12 +20,13 @@
 		76BF7E711C61D68200EC1D71 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		76BF7E731C61D68200EC1D71 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		76BF7E741C61D68200EC1D71 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		76BF7E761C61D68200EC1D71 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		76BF7E771C61D68200EC1D71 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		76BF7E7A1C61D68200EC1D71 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		76BF7E7C1C61D68200EC1D71 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		76BF7E7F1C61D68200EC1D71 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		76BF7E811C61D68200EC1D71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		76BF7E8A1C62F9D400EC1D71 /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewController.h; sourceTree = "<group>"; };
+		76BF7E8B1C62F9D400EC1D71 /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewController.m; sourceTree = "<group>"; };
+		76BF7E8D1C6302FB00EC1D71 /* TopPlacesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopPlacesTableViewController.h; sourceTree = "<group>"; };
+		76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopPlacesTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,12 +61,9 @@
 			children = (
 				76BF7E731C61D68200EC1D71 /* AppDelegate.h */,
 				76BF7E741C61D68200EC1D71 /* AppDelegate.m */,
-				76BF7E761C61D68200EC1D71 /* ViewController.h */,
-				76BF7E771C61D68200EC1D71 /* ViewController.m */,
-				76BF7E791C61D68200EC1D71 /* Main.storyboard */,
-				76BF7E7C1C61D68200EC1D71 /* Assets.xcassets */,
-				76BF7E7E1C61D68200EC1D71 /* LaunchScreen.storyboard */,
-				76BF7E811C61D68200EC1D71 /* Info.plist */,
+				76BF7E891C62F99200EC1D71 /* Controller */,
+				76BF7E881C62F98700EC1D71 /* View */,
+				76BF7E871C62F98000EC1D71 /* Model */,
 				76BF7E701C61D68200EC1D71 /* Supporting Files */,
 			);
 			path = TopPlaces;
@@ -74,9 +72,37 @@
 		76BF7E701C61D68200EC1D71 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				76BF7E7C1C61D68200EC1D71 /* Assets.xcassets */,
+				76BF7E7E1C61D68200EC1D71 /* LaunchScreen.storyboard */,
+				76BF7E811C61D68200EC1D71 /* Info.plist */,
 				76BF7E711C61D68200EC1D71 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		76BF7E871C62F98000EC1D71 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		76BF7E881C62F98700EC1D71 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				76BF7E8A1C62F9D400EC1D71 /* ImageViewController.h */,
+				76BF7E8B1C62F9D400EC1D71 /* ImageViewController.m */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		76BF7E891C62F99200EC1D71 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				76BF7E8D1C6302FB00EC1D71 /* TopPlacesTableViewController.h */,
+				76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */,
+			);
+			name = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,7 +164,6 @@
 			files = (
 				76BF7E801C61D68200EC1D71 /* LaunchScreen.storyboard in Resources */,
 				76BF7E7D1C61D68200EC1D71 /* Assets.xcassets in Resources */,
-				76BF7E7B1C61D68200EC1D71 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,23 +174,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76BF7E781C61D68200EC1D71 /* ViewController.m in Sources */,
 				76BF7E751C61D68200EC1D71 /* AppDelegate.m in Sources */,
+				76BF7E8C1C62F9D400EC1D71 /* ImageViewController.m in Sources */,
 				76BF7E721C61D68200EC1D71 /* main.m in Sources */,
+				76BF7E8F1C6302FB00EC1D71 /* TopPlacesTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		76BF7E791C61D68200EC1D71 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				76BF7E7A1C61D68200EC1D71 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		76BF7E7E1C61D68200EC1D71 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -263,6 +281,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = TopPlaces/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HMT.TopPlaces;
@@ -274,6 +293,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = TopPlaces/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HMT.TopPlaces;
