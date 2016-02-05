@@ -122,6 +122,7 @@
   
   ImageViewController *imgVC = [[ImageViewController alloc] init];
   imgVC.imageURL = photoURL;
+  imgVC.navigationItem.title = [photo valueForKeyPath:@"title"];
   [self.navigationController pushViewController:imgVC animated:YES];
 }
 
