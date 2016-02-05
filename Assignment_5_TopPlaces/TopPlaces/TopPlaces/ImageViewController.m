@@ -29,6 +29,7 @@
 - (void)setImage:(UIImage *)image
 {
   _imageView.image = image;
+  [_imageView sizeToFit];
   
   // update the scrollView's contentSize
   _scrollView.contentSize = self.image ? self.image.size : CGSizeZero;
@@ -67,6 +68,13 @@
   
   [self.scrollView  addSubview:self.imageView];
   [self.view        addSubview:self.scrollView];
+}
+
+- (void)viewWillLayoutSubviews
+{
+  [super viewWillLayoutSubviews];
+  
+  self.scrollView.frame = self.view.bounds;
 }
 
 #pragma mark - Helper Methods

@@ -13,6 +13,8 @@
 		76BF7E801C61D68200EC1D71 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76BF7E7E1C61D68200EC1D71 /* LaunchScreen.storyboard */; };
 		76BF7E8C1C62F9D400EC1D71 /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E8B1C62F9D400EC1D71 /* ImageViewController.m */; };
 		76BF7E8F1C6302FB00EC1D71 /* TopPlacesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */; };
+		76BF7E931C63047F00EC1D71 /* FlickrFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E921C63047F00EC1D71 /* FlickrFetcher.m */; };
+		76BF7EA91C6461E400EC1D71 /* PlaceTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7EA81C6461E400EC1D71 /* PlaceTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,11 @@
 		76BF7E8B1C62F9D400EC1D71 /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewController.m; sourceTree = "<group>"; };
 		76BF7E8D1C6302FB00EC1D71 /* TopPlacesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopPlacesTableViewController.h; sourceTree = "<group>"; };
 		76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopPlacesTableViewController.m; sourceTree = "<group>"; };
+		76BF7E901C63047F00EC1D71 /* FlickrAPIKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrAPIKey.h; sourceTree = "<group>"; };
+		76BF7E911C63047F00EC1D71 /* FlickrFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrFetcher.h; sourceTree = "<group>"; };
+		76BF7E921C63047F00EC1D71 /* FlickrFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrFetcher.m; sourceTree = "<group>"; };
+		76BF7EA71C6461E400EC1D71 /* PlaceTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceTableViewController.h; sourceTree = "<group>"; };
+		76BF7EA81C6461E400EC1D71 /* PlaceTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +90,9 @@
 		76BF7E871C62F98000EC1D71 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				76BF7E901C63047F00EC1D71 /* FlickrAPIKey.h */,
+				76BF7E911C63047F00EC1D71 /* FlickrFetcher.h */,
+				76BF7E921C63047F00EC1D71 /* FlickrFetcher.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -101,6 +111,8 @@
 			children = (
 				76BF7E8D1C6302FB00EC1D71 /* TopPlacesTableViewController.h */,
 				76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */,
+				76BF7EA71C6461E400EC1D71 /* PlaceTableViewController.h */,
+				76BF7EA81C6461E400EC1D71 /* PlaceTableViewController.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -175,8 +187,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				76BF7E751C61D68200EC1D71 /* AppDelegate.m in Sources */,
+				76BF7EA91C6461E400EC1D71 /* PlaceTableViewController.m in Sources */,
 				76BF7E8C1C62F9D400EC1D71 /* ImageViewController.m in Sources */,
 				76BF7E721C61D68200EC1D71 /* main.m in Sources */,
+				76BF7E931C63047F00EC1D71 /* FlickrFetcher.m in Sources */,
 				76BF7E8F1C6302FB00EC1D71 /* TopPlacesTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -281,7 +295,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = TopPlaces/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HMT.TopPlaces;
@@ -293,7 +307,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = TopPlaces/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HMT.TopPlaces;

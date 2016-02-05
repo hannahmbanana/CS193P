@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "TopPlacesTableViewController.h"
 
 @interface AppDelegate ()
 
@@ -20,7 +21,7 @@
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
   // create "Top Places" tableViewController, wrap in a navController and add a tabBarItem
-  UITableViewController *topPlacesTVC             = [[UITableViewController alloc] init];
+  TopPlacesTableViewController *topPlacesTVC      = [[TopPlacesTableViewController alloc] init];
   UINavigationController *topPlacesNavController  = [[UINavigationController alloc] initWithRootViewController:topPlacesTVC];
   UITabBarItem *topPlacesTabBarItem               = [[UITabBarItem alloc] initWithTitle:@"Top Places" image:nil tag:0];
   topPlacesNavController.tabBarItem               = topPlacesTabBarItem;
