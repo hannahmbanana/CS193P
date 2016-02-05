@@ -15,6 +15,7 @@
 		76BF7E8F1C6302FB00EC1D71 /* TopPlacesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */; };
 		76BF7E931C63047F00EC1D71 /* FlickrFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E921C63047F00EC1D71 /* FlickrFetcher.m */; };
 		76BF7EA91C6461E400EC1D71 /* PlaceTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7EA81C6461E400EC1D71 /* PlaceTableViewController.m */; };
+		76BF7EAC1C6555CC00EC1D71 /* RecentsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7EAB1C6555CC00EC1D71 /* RecentsTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,8 @@
 		76BF7E921C63047F00EC1D71 /* FlickrFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrFetcher.m; sourceTree = "<group>"; };
 		76BF7EA71C6461E400EC1D71 /* PlaceTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceTableViewController.h; sourceTree = "<group>"; };
 		76BF7EA81C6461E400EC1D71 /* PlaceTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceTableViewController.m; sourceTree = "<group>"; };
+		76BF7EAA1C6555CC00EC1D71 /* RecentsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecentsTableViewController.h; sourceTree = "<group>"; };
+		76BF7EAB1C6555CC00EC1D71 /* RecentsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecentsTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +116,8 @@
 				76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */,
 				76BF7EA71C6461E400EC1D71 /* PlaceTableViewController.h */,
 				76BF7EA81C6461E400EC1D71 /* PlaceTableViewController.m */,
+				76BF7EAA1C6555CC00EC1D71 /* RecentsTableViewController.h */,
+				76BF7EAB1C6555CC00EC1D71 /* RecentsTableViewController.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -189,6 +194,7 @@
 				76BF7E751C61D68200EC1D71 /* AppDelegate.m in Sources */,
 				76BF7EA91C6461E400EC1D71 /* PlaceTableViewController.m in Sources */,
 				76BF7E8C1C62F9D400EC1D71 /* ImageViewController.m in Sources */,
+				76BF7EAC1C6555CC00EC1D71 /* RecentsTableViewController.m in Sources */,
 				76BF7E721C61D68200EC1D71 /* main.m in Sources */,
 				76BF7E931C63047F00EC1D71 /* FlickrFetcher.m in Sources */,
 				76BF7E8F1C6302FB00EC1D71 /* TopPlacesTableViewController.m in Sources */,

@@ -17,15 +17,21 @@
 
 @implementation TopPlacesTableViewController
 
+#warning Jump before table loads (only on app startup, not subsequent table reloads) - no problem if refreshControl removed
+
 # pragma mark - Properties
 
 - (void)setPlaces:(NSArray *)places
 {
   _places = places;
   
+  // stop the spinner animation
+  [self.refreshControl endRefreshing];
+  
   // whenever our model is updated, reload the data table
   [self.tableView reloadData];
 }
+
 
 # pragma mark - Lifecycle
 
@@ -66,20 +72,6 @@
     
     // get the NSArray of place NSDictionarys out of the results
     NSArray *places = [propertyListResults valueForKeyPath:@"places.place"];
-    
-//    NSLog(@"places = %@", places);
-    
-//    NSMutableArray *placeIDList = [NSMutableArray array];
-//    for (NSDictionary *place in places) {
-//      
-//      NSString *placeID = [place valueForKeyPath:@"place_id"];
-//      NSURL *placeURL = [FlickrFetcher URLforInformationAboutPlace:placeID];
-//      NSData *placeJsonData = [NSData dataWithContentsOfURL:placeURL];
-//      NSDictionary *placePropertyListResults = [NSJSONSerialization JSONObjectWithData:placeJsonData options:0 error:NULL];
-//
-//      [placeIDList addObject:placePropertyListResults];
-//    }
-    
     
     ///// create set of countries
     NSMutableSet *countrySet = [NSMutableSet set];
@@ -124,19 +116,13 @@
       }];
       
     }
-
-    
     
     // update the Model (and thus our UI), but do so back on the main queue
     dispatch_async(dispatch_get_main_queue(), ^{
       
-      // stop the spinner animation
-      [self.refreshControl endRefreshing];
-      
       // update the photos model
       self.countries = countryOrderedArray;  // update first!
       self.places = placesSorted;
-      
       
     });
   });

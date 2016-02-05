@@ -170,7 +170,7 @@
 
 - (void)setZoom
 {
-# warning - not finished
+# warning Not finished
   // set zoom to show as much of the photo as possible with no extra, unused space
 //  __block CGRect zoomRect = CGRectMake(0,
 //                                       0, //self.scrollView.contentInset.top,
