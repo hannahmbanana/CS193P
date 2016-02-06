@@ -33,6 +33,18 @@
 
 # pragma mark - Lifecycle
 
+- (void)viewDidLoad
+{
+  [super viewDidLoad];
+  
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Clear"
+                                                                            style:UIBarButtonItemStylePlain
+                                                                           target:self
+                                                                           action:@selector(clearRecentPhotos)];
+}
+
+#warning TopPlaces[24540:7584204] Attempting to change the refresh control while it is not idle is strongly discouraged and probably won't work properly.
+
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
@@ -58,6 +70,14 @@
   self.photos = [defaults objectForKey:@"recently viewed photos"];
 }
 
+- (void)clearRecentPhotos
+{
+  self.photos = nil;
+  
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  [defaults removeObjectForKey:@"recently viewed photos"];
+}
+
 
 #pragma mark - UITableViewDataSource
 
@@ -81,9 +101,8 @@
   NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
   NSString *title = [photo valueForKeyPath:@"title"];
   
-  cell.textLabel.text = ([title isEqualToString:@""]) ? @"Unknown" : title;
-  cell.detailTextLabel.text = [photo valueForKeyPath:@"description._content"];
-  
+  #warning - FINISH Thumbnail pic - subclass?
+
   return cell;
 }
 
