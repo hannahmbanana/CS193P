@@ -9,82 +9,62 @@
 #import "PlaceTableViewController.h"
 #import "ImageViewController.h"
 #import "FlickrFetcher.h"
+#import "FlickrFeedObject.h"
+#import "FlickrPhotoObject.h"
 
 @interface PlaceTableViewController ()
-@property (nonatomic, strong, readwrite) NSArray *photos;
+@property (nonatomic, strong, readwrite) FlickrFeedObject *flickrFeed;
 @end
 
 @implementation PlaceTableViewController
 
+
 # pragma mark - Properties
 
-- (void)setFlickrPlaceURL:(NSURL *)flickrPlaceURL
+- (FlickrFeedObject *)flickrFeed
 {
-  _flickrPlaceURL = flickrPlaceURL;
-
-  [self fetchPhotos];
+  if (!_flickrFeed) {
+    
+    _flickrFeed = [[FlickrFeedObject alloc] initWithURL:self.flickrPlaceURL resultsKeyPathString:self.resultsKeyPathString];
+  }
+  return _flickrFeed;
 }
 
-- (void)setPhotos:(NSArray *)photos
-{
-  _photos = photos;
-  
-  // whenever our model is updated, reload the data table
-  [self.tableView reloadData];
-}
 
 # pragma mark - Lifecycle
 
-- (void)viewDidLoad
+- (void)viewWillAppear:(BOOL)animated
 {
-  [super viewDidLoad];
+  [super viewWillAppear:animated];
   
   // add the spinner
   self.refreshControl = [[UIRefreshControl alloc] init];
-  [self.refreshControl addTarget:self action:@selector(fetchPhotos) forControlEvents:UIControlEventValueChanged];
+  [self.refreshControl addTarget:self action:@selector(updateFlickrFeed) forControlEvents:UIControlEventValueChanged];
   
-  // fetchPhotos
-  [self fetchPhotos];    // QUESTION: why is this the best lifecycle method to put this in?
+  // update FlickrFeed
+  [self updateFlickrFeed];
 }
 
 
 #pragma mark - Helper Methods
 
-- (void)fetchPhotos
+- (void)updateFlickrFeed
 {
   // start the spinner animation
   [self.refreshControl beginRefreshing];
   
-  // download off main thread
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+  // update flickrFeed
+  [self.flickrFeed updateFeedWithCompletionBlock:^{
     
-    // FETCH TOP PLACES
+    // reload tableView data
+    [self.tableView reloadData];
     
-    // fetch the JSON data from Flickr
-    NSData *jsonData = [NSData dataWithContentsOfURL:self.flickrPlaceURL];
-    
-    // convert it to a Property List (NSArray and NSDictionary)
-    NSDictionary *propertyListResults = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:NULL];
-    
-    // get the NSArray of place NSDictionarys out of the results
-    NSArray *photos = [propertyListResults valueForKeyPath:@"photos.photo"];
-    
-//    NSLog(@"%@", photos);
-    
-    // update the Model (and thus our UI), but do so back on the main queue
-    dispatch_async(dispatch_get_main_queue(), ^{
-      
-      // stop the spinner animation
-      [self.refreshControl endRefreshing];
-      
-      // update the photos model
-      self.photos = photos;
-      
-    });
-  });
+    // stop the spinner animation
+    [self.refreshControl endRefreshing];
+  }];
 }
 
-- (void)saveRecentlyViewedPhoto:(NSDictionary *)photoDictionary
+- (void)saveRecentlyViewedPhoto:(FlickrPhotoObject *)photo
 {
   // get user defaults
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -96,13 +76,12 @@
   }
   
   // check that photo doesn't already exist in array, if so, remove it
-  if ([recentPhotos containsObject:photoDictionary]) {
-    NSUInteger objectIndex = [recentPhotos indexOfObjectIdenticalTo:photoDictionary];
-    [recentPhotos removeObjectAtIndex:objectIndex];
+  if ([recentPhotos containsObject:photo.dictionaryRepresentation]) {
+    [recentPhotos removeObject:photo.dictionaryRepresentation];
   }
   
   // add photo in chronological order with the most-recently-viewed first and no duplicates
-  [recentPhotos insertObject:photoDictionary atIndex:0];
+  [recentPhotos insertObject:photo.dictionaryRepresentation atIndex:0];
   
   // 20 most recently viewed only
   if ([recentPhotos count] > 20) {
@@ -116,28 +95,30 @@
 
 #pragma mark - UITableViewDataSource
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
   return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return [self.photos count];
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+  return [self.flickrFeed numItemsInFeed];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"topPlaceCell"];
-  
+ 
+  // if no reusable cells available, create a new one
   if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"topPlaceCell"];
   }
   
-  NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-  NSString *title = [photo valueForKeyPath:@"title"];
+  // configure cell using photo's metadata
+  FlickrPhotoObject *photo  = [self.flickrFeed itemAtIndex:indexPath.row];
   
-  cell.textLabel.text = ([title isEqualToString:@""]) ? @"Unknown" : title;
-  cell.detailTextLabel.text = [photo valueForKeyPath:@"description._content"];
+  cell.textLabel.text       = photo.title;
+  cell.detailTextLabel.text = photo.caption;
   
   return cell;
 }
@@ -147,12 +128,13 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-  NSURL *photoURL = [FlickrFetcher URLforPhoto:photo format:FlickrPhotoFormatLarge];
+  FlickrPhotoObject *photo    = [self.flickrFeed itemAtIndex:indexPath.row];
+  NSURL *photoURL             = [FlickrFetcher URLforPhoto:photo.dictionaryRepresentation format:FlickrPhotoFormatLarge];
   
-  ImageViewController *imgVC = [[ImageViewController alloc] init];
-  imgVC.imageURL = photoURL;
-  imgVC.navigationItem.title = [photo valueForKeyPath:@"title"];
+  ImageViewController *imgVC  = [[ImageViewController alloc] init];
+  imgVC.imageURL              = photoURL;
+  imgVC.navigationItem.title  = [photo valueForKeyPath:@"title"];
+  
   [self.navigationController pushViewController:imgVC animated:YES];
   
   // SAVE PHOTO

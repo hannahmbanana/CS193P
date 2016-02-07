@@ -10,6 +10,8 @@
 
 @interface PlaceTableViewController : UITableViewController
 
-@property (nonatomic, strong, readwrite) NSURL *flickrPlaceURL;
+@property (nonatomic, strong, readwrite) NSURL    *flickrPlaceURL;
+@property (nonatomic, strong, readwrite) NSString *resultsKeyPathString;
+
 
 @end

@@ -10,6 +10,12 @@
 
 @interface FlickrPhotoObject : NSObject
 
+@property (nonatomic, strong, readwrite) NSDictionary *dictionaryRepresentation;
+@property (nonatomic, strong, readwrite) NSString     *title;
+@property (nonatomic, strong, readwrite) NSString     *caption;
+@property (nonatomic, strong, readwrite) NSString     *country;
+
+
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithDictionary:(NSDictionary *)photoDictionary NS_DESIGNATED_INITIALIZER;
 

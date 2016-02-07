@@ -10,12 +10,7 @@
 #import "FlickrFetcher.h"
 
 @interface FlickrPhotoObject ()
-
-@property (nonatomic, strong, readwrite) NSString *title;
-@property (nonatomic, strong, readwrite) NSString *description;
-
 @end
-
 
 #pragma mark - Lifecycle
 
@@ -27,15 +22,22 @@
   
   if (self) {
     
+    self.dictionaryRepresentation = photoDictionary;
+    
     // title
     NSString *titleString = [photoDictionary valueForKeyPath:FLICKR_PHOTO_TITLE];
-    self.title            = ( [titleString isEqualToString:@""] ) ? @"Unknown" : self.title;
+    self.title            = ( [titleString isEqualToString:@""] ) ? @"Unknown" : titleString;
     
-    // description
-    self.description      = [photoDictionary valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
+    // caption
+    self.caption = [photoDictionary valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
+  
+    // country
+    self.country = [photoDictionary valueForKeyPath:FLICKR_PLACE_NAME];
+  
   }
   
   return self;
 }
+
 
 @end

@@ -65,6 +65,8 @@
     _scrollView.delegate = self;
     _scrollView.minimumZoomScale = 0.2;
     _scrollView.maximumZoomScale = 1.2;
+    _scrollView.alwaysBounceVertical = YES;
+    _scrollView.alwaysBounceHorizontal = YES;
     
     _scrollView.contentSize = self.image ? self.image.size : CGSizeZero;  // size is a struct! cannot message nil and rely on a structure return value!
   }
@@ -170,22 +172,18 @@
 
 - (void)setZoom
 {
-# warning Not finished
   // set zoom to show as much of the photo as possible with no extra, unused space
-//  __block CGRect zoomRect = CGRectMake(0,
-//                                       0, //self.scrollView.contentInset.top,
-//                                       self.view.bounds.size.width,
-//                                       self.imageView.bounds.size.height);
-//
-//  [_scrollView zoomToRect:zoomRect animated:NO];
-  
-//  [UIView animateWithDuration:3 delay:0 options:UIViewAnimationOptionCurveLinear | UIViewAnimationOptionAllowUserInteraction animations:^{
-//    visibleRectMinusNavBar.origin.x += self.imageView.bounds.size.width - _scrollView.bounds.size.width;
-//    _scrollView.contentOffset = visibleRectMinusNavBar.origin;
-//  } completion:^(BOOL finished) {}];
-  
-//  [_scrollView setContentMode:UIViewContentModeScaleAspectFit];
 
+  UIEdgeInsets contentInset = _scrollView.contentInset;
+  CGFloat visibleHeight = _scrollView.bounds.size.height - contentInset.top - contentInset.bottom;
+  CGFloat zoomScaleToFill = visibleHeight / _imageView.image.size.height;
+  _scrollView.zoomScale = zoomScaleToFill;
+  
+  CGPoint contentOffset = CGPointMake(_imageView.image.size.width * zoomScaleToFill - _scrollView.bounds.size.width, -contentInset.top);
+  
+  [UIView animateWithDuration:3 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+    _scrollView.contentOffset = contentOffset;
+  } completion:^(BOOL finished) {}];
 }
 
 
@@ -194,7 +192,7 @@
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
   // return view to zooom
-  return self.imageView;
+  return _imageView;
 }
 
 

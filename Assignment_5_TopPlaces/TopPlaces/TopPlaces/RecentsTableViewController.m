@@ -9,6 +9,7 @@
 #import "RecentsTableViewController.h"
 #import "ImageViewController.h"
 #import "FlickrFetcher.h"
+#import "FlickrPhotoObject.h"
 
 @interface RecentsTableViewController ()
 @property (nonatomic, strong, readwrite) NSArray *photos;
@@ -43,8 +44,6 @@
                                                                            action:@selector(clearRecentPhotos)];
 }
 
-#warning TopPlaces[24540:7584204] Attempting to change the refresh control while it is not idle is strongly discouraged and probably won't work properly.
-
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
@@ -54,7 +53,8 @@
   [self.refreshControl addTarget:self action:@selector(fetchPhotos) forControlEvents:UIControlEventValueChanged];
   
   // fetchPhotos
-  [self fetchPhotos];    // QUESTION: why is this the best lifecycle method to put this in?
+  [self fetchPhotos];
+#warning Only want to fetchPhotos when pushing the view controller, not when returning from individual picture view
 }
 
 
@@ -62,12 +62,33 @@
 
 - (void)fetchPhotos
 {
+  self.photos = nil;
+  
   // start the spinner animation
   [self.refreshControl beginRefreshing];
   
   // get user defaults
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  self.photos = [defaults objectForKey:@"recently viewed photos"];
+  NSArray *photoDictionaryArray = [defaults objectForKey:@"recently viewed photos"];
+  
+  // download FlickrFeed off main thread
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    
+    // CREATE FLICKR PHOTO OBJECTS
+    NSMutableArray *photos = [NSMutableArray array];
+    
+    for (NSDictionary *photoDictionary in photoDictionaryArray) {
+      
+      // create FlickrPhotoObject from json dictionary
+      FlickrPhotoObject *photoObject = [[FlickrPhotoObject alloc] initWithDictionary:photoDictionary];
+      
+      // add FlickrPhotoObject to array
+      [photos addObject:photoObject];
+    }
+    
+    // set photos property
+    self.photos = photos;
+  });
 }
 
 - (void)clearRecentPhotos
@@ -101,6 +122,8 @@
   NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
   NSString *title = [photo valueForKeyPath:@"title"];
   
+  cell.textLabel.text = title;
+  
   #warning - FINISH Thumbnail pic - subclass?
 
   return cell;
@@ -111,12 +134,13 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-  NSURL *photoURL = [FlickrFetcher URLforPhoto:photo format:FlickrPhotoFormatLarge];
+  FlickrPhotoObject *photo    = [self.photos objectAtIndex:indexPath.row];
+  NSURL *photoURL             = [FlickrFetcher URLforPhoto:photo.dictionaryRepresentation format:FlickrPhotoFormatLarge];
   
-  ImageViewController *imgVC = [[ImageViewController alloc] init];
-  imgVC.imageURL = photoURL;
-  imgVC.navigationItem.title = [photo valueForKeyPath:@"title"];
+  ImageViewController *imgVC  = [[ImageViewController alloc] init];
+  imgVC.imageURL              = photoURL;
+  imgVC.navigationItem.title  = [photo valueForKeyPath:@"title"];
+  
   [self.navigationController pushViewController:imgVC animated:YES];
 }
 

@@ -7,13 +7,12 @@
 //
 
 #import "FlickrFeedObject.h"
-#import "FlickrPhotoObject.h"
 
 @interface FlickrFeedObject ()
 
 @property (nonatomic, strong, readwrite) NSURL    *URL;
 @property (nonatomic, strong, readwrite) NSString *resultsKeyPathString;
-@property (nonatomic, strong, readwrite) NSArray  *flickrPhotos;          // of FlickrPhotoObjects
+@property (nonatomic, strong, readwrite) NSArray  *flickrFeedItems;          // of FlickrPhotoObjects
 
 @end
 
@@ -31,9 +30,7 @@
     // set properties
     self.URL = url;
     self.resultsKeyPathString = keyPath;
-    
-    // Flickr network request
-    [self updateFeed];
+  
   }
   
   return self;
@@ -42,9 +39,9 @@
 
 #pragma mark - Instance Methods
 
-- (void)updateFeed
+- (void)updateFeedWithCompletionBlock:(void (^)(void))blockName
 {
-  self.flickrPhotos = nil;
+  self.flickrFeedItems = nil;
   
   // download FlickrFeed off main thread
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -73,8 +70,47 @@
     }
     
     // set FlickrFeedObject array of photos
-    self.flickrPhotos = photos;
+    self.flickrFeedItems = photos;
+    
+    // completion block
+    dispatch_async(dispatch_get_main_queue(), ^{
+      
+      // call the block argument
+      blockName();
+    });
+    
   });
+}
+
+- (NSUInteger)numItemsInFeed
+{
+  return [self.flickrFeedItems count];
+}
+
+- (FlickrPhotoObject *)itemAtIndex:(NSUInteger)index
+{
+  return [self.flickrFeedItems objectAtIndex:index];
+}
+
+- (NSArray *)orderedCountriesArray
+{
+  ///// create set of countries
+  NSMutableSet *countrySet = [NSMutableSet set];
+  
+  // print country order
+  for (FlickrPhotoObject *photo in self.flickrFeedItems) {
+
+    NSString *country = [[photo.country componentsSeparatedByString:@","] lastObject];
+    [countrySet addObject:country];
+    
+  }
+  
+  // order the countries
+  NSMutableArray *countriesArray = [[countrySet allObjects] mutableCopy];
+  NSArray *countryOrderedArray = [NSArray array];
+  countryOrderedArray = [countriesArray sortedArrayUsingSelector: @selector(localizedCaseInsensitiveCompare:)];
+  
+  return countryOrderedArray;
 }
 
 @end
