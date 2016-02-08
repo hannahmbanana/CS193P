@@ -24,18 +24,18 @@
 
 #pragma mark - UITableViewDataSource
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-  return [self.flickrFeed.countries count];
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return [self.flickrFeed numItemsInFeedAtSection:section];
-}
-
-- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
-{
-  return [self.flickrFeed.countries objectAtIndex:section];
-}
+//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+//  return [self.flickrFeed.countries count];
+//}
+//
+//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+//  return [self.flickrFeed numItemsInFeedAtSection:section];
+//}
+//
+//- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+//{
+//  return [self.flickrFeed.countries objectAtIndex:section];
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {

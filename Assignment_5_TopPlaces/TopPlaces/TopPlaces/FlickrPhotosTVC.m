@@ -135,4 +135,21 @@
   self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
 }
 
+
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+  return [self.flickrFeed numSectionsInFeed];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+  return [self.flickrFeed numItemsInFeedAtSection:section];
+}
+
+- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+{
+  return [self.flickrFeed.countries objectAtIndex:section];
+}
+
+
 @end

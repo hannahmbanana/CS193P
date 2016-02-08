@@ -33,6 +33,9 @@
   
     // country
     self.country = [photoDictionary valueForKeyPath:FLICKR_PLACE_NAME];
+    
+    // country components
+    self.countryComponents = [self.country componentsSeparatedByString:@","];
   
   }
   

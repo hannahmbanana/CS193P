@@ -14,10 +14,11 @@
 
 @interface FlickrPhotosTVC : UITableViewController
 
-@property (nonatomic, strong, readwrite) FlickrFeedObject        *flickrFeed;
+@property (nonatomic, strong, readwrite) FlickrFeedObject *flickrFeed;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 - (instancetype)initWithStyle:(UITableViewStyle)style NS_UNAVAILABLE;
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 - (instancetype)initWithURL:(NSURL *)url resultsKeyPathString:(NSString *)keyPath NS_DESIGNATED_INITIALIZER;
+
 @end

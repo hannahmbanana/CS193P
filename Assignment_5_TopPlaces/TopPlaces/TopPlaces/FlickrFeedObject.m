@@ -83,7 +83,7 @@
       
       ///// create the places ordered list
       NSMutableArray *placesSorted = [NSMutableArray array];
-      for (NSString *country in countryOrderedArray) {
+      for (int i = 0; i < [countryOrderedArray count]; i++) {
         [placesSorted addObject:[NSMutableArray array]];
       }
       
@@ -127,11 +127,18 @@
   });
 }
 
+- (NSUInteger)numSectionsInFeed
+{
+  if ( [self.resultsKeyPathString isEqualToString:FLICKR_RESULTS_PLACES] ) {
+    return [self.countries count];
+  } else {
+    return 1;
+  }
+}
+
 - (NSUInteger)numItemsInFeedAtSection:(NSUInteger)section
 {
-  NSString *keyPath = self.resultsKeyPathString;
-  
-  if ( [keyPath isEqualToString:FLICKR_RESULTS_PLACES] ) {
+  if ( [self.resultsKeyPathString isEqualToString:FLICKR_RESULTS_PLACES] ) {
     return [[self.flickrFeedItems objectAtIndex:section] count];
   } else {
     return [self.flickrFeedItems count];
@@ -140,9 +147,7 @@
 
 - (FlickrPhotoObject *)itemAtIndex:(NSUInteger)index inSection:(NSUInteger)section
 {
-  NSString *keyPath = self.resultsKeyPathString;
-  
-  if ( [keyPath isEqualToString:FLICKR_RESULTS_PLACES] ) {
+  if ( [self.resultsKeyPathString isEqualToString:FLICKR_RESULTS_PLACES] ) {
     return [[self.flickrFeedItems objectAtIndex:section] objectAtIndex:index];
   } else {
     return [self.flickrFeedItems objectAtIndex:index];

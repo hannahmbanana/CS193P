@@ -19,7 +19,9 @@
 - (instancetype)initWithURL:(NSURL *)url resultsKeyPathString:(NSString *)keyPath NS_DESIGNATED_INITIALIZER;
 
 - (void)updateFeedWithCompletionBlock:(void (^)(void))blockName;
-- (FlickrPhotoObject *)itemAtIndex:(NSUInteger)index inSection:(NSUInteger)section;
+
+- (NSUInteger)numSectionsInFeed;
 - (NSUInteger)numItemsInFeedAtSection:(NSUInteger)section;
+- (FlickrPhotoObject *)itemAtIndex:(NSUInteger)index inSection:(NSUInteger)section;
 
 @end

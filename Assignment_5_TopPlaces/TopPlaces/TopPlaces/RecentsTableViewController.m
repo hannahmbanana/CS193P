@@ -14,13 +14,23 @@
 
 
 @interface RecentsTableViewController ()
-@property (nonatomic, strong, readwrite) NSArray *photos;
+@property (nonatomic, strong, readwrite) NSArray             *photos;
+@property (nonatomic, strong, readwrite) ImageViewController *imageVC;
 @end
 
 @implementation RecentsTableViewController
 
 
 #pragma mark - Properties
+
+- (ImageViewController *)imageVC
+{
+  if (!_imageVC) {
+    _imageVC = [[ImageViewController alloc] init];
+    _imageVC.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+  }
+  return _imageVC;
+}
 
 - (void)setPhotos:(NSArray *)photos
 {
@@ -44,12 +54,12 @@
   self.automaticallyAdjustsScrollViewInsets = NO;
   self.tableView.contentInset = UIEdgeInsetsMake(64,0,0,0);
 
-  self.navigationItem.title = @"Recently Viewed Photos";
+  self.navigationItem.title = @"Recently Viewed";
   
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Clear"
                                                                             style:UIBarButtonItemStylePlain
                                                                            target:self
-                                                                           action:@selector(clearRecentPhotos)];
+                                                                           action:@selector(clearRecentlyViewedPhotos)];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -98,7 +108,7 @@
   });
 }
 
-- (void)clearRecentPhotos
+- (void)clearRecentlyViewedPhotos
 {
   self.photos = nil;
   
@@ -118,15 +128,12 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  NSLog(@"ContentOffset = %f", self.tableView.contentInset.top);
-
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"topPlaceCell"];
   
   if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"topPlaceCell"];
   }
   
-#warning Add thumbnail photo
   NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
   NSString *title = [photo valueForKeyPath:@"title"];
   
@@ -140,14 +147,29 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  FlickrPhotoObject *photo    = [self.photos objectAtIndex:indexPath.row];
-  NSURL *photoURL             = [FlickrFetcher URLforPhoto:photo.dictionaryRepresentation format:FlickrPhotoFormatLarge];
+  FlickrPhotoObject *photo = [self.photos objectAtIndex:indexPath.row];
   
-  ImageViewController *imgVC  = [[ImageViewController alloc] init];
-  imgVC.imageURL              = photoURL;
-  imgVC.navigationItem.title  = [photo valueForKeyPath:@"title"];
+  // configure imageViewController
+  ImageViewController *imageVC = self.imageVC;
+  imageVC.imageURL = [FlickrFetcher URLforPhoto:photo.dictionaryRepresentation format:FlickrPhotoFormatLarge];
+  imageVC.navigationItem.title = [photo valueForKeyPath:@"title"];
   
-  [self.navigationController pushViewController:imgVC animated:YES];
+  if (self.splitViewController) {
+    
+    // iPad
+    NSArray *splitViewControllers = self.splitViewController.viewControllers;
+    UINavigationController *navController = splitViewControllers[1];
+    [navController setViewControllers:[NSArray arrayWithObject:imageVC] animated:NO];
+    self.splitViewController.viewControllers = @[splitViewControllers[0], navController];
+    
+  } else {
+    
+    // iPhone
+    [self.navigationController pushViewController:imageVC animated:YES];
+  }
+  
+  // save recently viewed photos
+  [NSUserDefaults addUsersRecentlyViewedPhoto:photo];
 }
 
 @end

@@ -10,21 +10,26 @@
 #import "ImageViewController.h"
 #import "FlickrPhotoObject.h"
 
+@interface PlaceFlickrPhotosTVC ()
+@property (nonatomic, strong, readwrite) ImageViewController *imageVC;
+@end
 
 @implementation PlaceFlickrPhotosTVC
 
 
+#pragma mark - Properties
+
+- (ImageViewController *)imageVC
+{
+  if (!_imageVC) {
+    _imageVC = [[ImageViewController alloc] init];
+    _imageVC.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+  }
+  return _imageVC;
+}
+
 #pragma mark - UITableViewDataSource
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-  return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-  return [self.flickrFeed numItemsInFeedAtSection:section];
-}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -36,9 +41,9 @@
   }
   
   // configure cell using photo's metadata
-  FlickrPhotoObject *photo  = [self.flickrFeed itemAtIndex:indexPath.row inSection:indexPath.section];
+  FlickrPhotoObject *photo = [self.flickrFeed itemAtIndex:indexPath.row inSection:indexPath.section];
   
-  cell.textLabel.text       = photo.title;
+  cell.textLabel.text = photo.title;
   cell.detailTextLabel.text = photo.caption;
   
   return cell;
@@ -49,30 +54,28 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  FlickrPhotoObject *photo    = [self.flickrFeed itemAtIndex:indexPath.row inSection:indexPath.section];
-  NSURL *photoURL             = [FlickrFetcher URLforPhoto:photo.dictionaryRepresentation format:FlickrPhotoFormatLarge];
+  FlickrPhotoObject *photo = [self.flickrFeed itemAtIndex:indexPath.row inSection:indexPath.section];
   
-  ImageViewController *imgVC  = [[ImageViewController alloc] init];
-  imgVC.imageURL              = photoURL;
-  imgVC.navigationItem.title  = [photo valueForKeyPath:@"title"];
-  
+  // configure imageViewController
+  ImageViewController *imageVC = self.imageVC;
+  imageVC.imageURL = [FlickrFetcher URLforPhoto:photo.dictionaryRepresentation format:FlickrPhotoFormatLarge];
+  imageVC.navigationItem.title = [photo valueForKeyPath:@"title"];
+
   if (self.splitViewController) {
     
     // iPad
-    imgVC.navigationItem.leftBarButtonItem    = self.splitViewController.displayModeButtonItem;
-
-    NSArray *splitViewControllers             = self.splitViewController.viewControllers;
-    UINavigationController *navController     = splitViewControllers[1];
-    [navController setViewControllers:[NSArray arrayWithObject:imgVC] animated:NO];
-    self.splitViewController.viewControllers  = @[splitViewControllers[0], navController];
+    NSArray *splitViewControllers = self.splitViewController.viewControllers;
+    UINavigationController *navController = splitViewControllers[1];
+    [navController setViewControllers:[NSArray arrayWithObject:imageVC] animated:NO];
+    self.splitViewController.viewControllers = @[splitViewControllers[0], navController];
     
   } else {
     
     // iPhone
-    [self.navigationController pushViewController:imgVC animated:YES];
+    [self.navigationController pushViewController:imageVC animated:YES];
   }
   
-  // SAVE PHOTO
+  // save recently viewed photos
   [NSUserDefaults addUsersRecentlyViewedPhoto:photo];
 }
 
