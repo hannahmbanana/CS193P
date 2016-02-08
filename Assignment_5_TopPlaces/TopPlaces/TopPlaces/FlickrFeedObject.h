@@ -11,14 +11,15 @@
 
 @interface FlickrFeedObject : NSObject
 
+@property (nonatomic, assign, readonly) BOOL     firstTimeLoadComplete;
+@property (nonatomic, strong, readonly) NSArray  *countries;
+
+
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithURL:(NSURL *)url resultsKeyPathString:(NSString *)keyPath NS_DESIGNATED_INITIALIZER;
 
 - (void)updateFeedWithCompletionBlock:(void (^)(void))blockName;
-- (FlickrPhotoObject *)itemAtIndex:(NSUInteger)index;
-- (NSUInteger)numItemsInFeed;
-
-- (NSArray *)orderedCountriesArray;
-
+- (FlickrPhotoObject *)itemAtIndex:(NSUInteger)index inSection:(NSUInteger)section;
+- (NSUInteger)numItemsInFeedAtSection:(NSUInteger)section;
 
 @end

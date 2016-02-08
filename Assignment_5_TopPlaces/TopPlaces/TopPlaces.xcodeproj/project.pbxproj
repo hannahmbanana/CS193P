@@ -7,20 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		768A51B01C67D16200210D1D /* FlickrPhotosTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 768A51AF1C67D16200210D1D /* FlickrPhotosTVC.m */; };
+		768A51B61C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.m in Sources */ = {isa = PBXBuildFile; fileRef = 768A51B51C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.m */; };
 		76BF7E721C61D68200EC1D71 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E711C61D68200EC1D71 /* main.m */; };
 		76BF7E751C61D68200EC1D71 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E741C61D68200EC1D71 /* AppDelegate.m */; };
 		76BF7E7D1C61D68200EC1D71 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76BF7E7C1C61D68200EC1D71 /* Assets.xcassets */; };
 		76BF7E801C61D68200EC1D71 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76BF7E7E1C61D68200EC1D71 /* LaunchScreen.storyboard */; };
 		76BF7E8C1C62F9D400EC1D71 /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E8B1C62F9D400EC1D71 /* ImageViewController.m */; };
-		76BF7E8F1C6302FB00EC1D71 /* TopPlacesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */; };
+		76BF7E8F1C6302FB00EC1D71 /* TopPlacesFlickrPhotosTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E8E1C6302FB00EC1D71 /* TopPlacesFlickrPhotosTVC.m */; };
 		76BF7E931C63047F00EC1D71 /* FlickrFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E921C63047F00EC1D71 /* FlickrFetcher.m */; };
-		76BF7EA91C6461E400EC1D71 /* PlaceTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7EA81C6461E400EC1D71 /* PlaceTableViewController.m */; };
+		76BF7EA91C6461E400EC1D71 /* PlaceFlickrPhotosTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7EA81C6461E400EC1D71 /* PlaceFlickrPhotosTVC.m */; };
 		76BF7EAC1C6555CC00EC1D71 /* RecentsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7EAB1C6555CC00EC1D71 /* RecentsTableViewController.m */; };
 		76BF7EAF1C656B5500EC1D71 /* FlickrPhotoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7EAE1C656B5500EC1D71 /* FlickrPhotoObject.m */; };
 		76BF7EB21C656FFF00EC1D71 /* FlickrFeedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7EB11C656FFF00EC1D71 /* FlickrFeedObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		768A51AE1C67D16200210D1D /* FlickrPhotosTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrPhotosTVC.h; sourceTree = "<group>"; };
+		768A51AF1C67D16200210D1D /* FlickrPhotosTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrPhotosTVC.m; sourceTree = "<group>"; };
+		768A51B41C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSUserDefaults+RecentlyViewedPhotos.h"; path = "../NSUserDefaults+RecentlyViewedPhotos.h"; sourceTree = "<group>"; };
+		768A51B51C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSUserDefaults+RecentlyViewedPhotos.m"; path = "../NSUserDefaults+RecentlyViewedPhotos.m"; sourceTree = "<group>"; };
 		76BF7E6D1C61D68200EC1D71 /* TopPlaces.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TopPlaces.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76BF7E711C61D68200EC1D71 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		76BF7E731C61D68200EC1D71 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -30,13 +36,13 @@
 		76BF7E811C61D68200EC1D71 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		76BF7E8A1C62F9D400EC1D71 /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewController.h; sourceTree = "<group>"; };
 		76BF7E8B1C62F9D400EC1D71 /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewController.m; sourceTree = "<group>"; };
-		76BF7E8D1C6302FB00EC1D71 /* TopPlacesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopPlacesTableViewController.h; sourceTree = "<group>"; };
-		76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopPlacesTableViewController.m; sourceTree = "<group>"; };
+		76BF7E8D1C6302FB00EC1D71 /* TopPlacesFlickrPhotosTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopPlacesFlickrPhotosTVC.h; sourceTree = "<group>"; };
+		76BF7E8E1C6302FB00EC1D71 /* TopPlacesFlickrPhotosTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopPlacesFlickrPhotosTVC.m; sourceTree = "<group>"; };
 		76BF7E901C63047F00EC1D71 /* FlickrAPIKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrAPIKey.h; sourceTree = "<group>"; };
 		76BF7E911C63047F00EC1D71 /* FlickrFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrFetcher.h; sourceTree = "<group>"; };
 		76BF7E921C63047F00EC1D71 /* FlickrFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrFetcher.m; sourceTree = "<group>"; };
-		76BF7EA71C6461E400EC1D71 /* PlaceTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceTableViewController.h; sourceTree = "<group>"; };
-		76BF7EA81C6461E400EC1D71 /* PlaceTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceTableViewController.m; sourceTree = "<group>"; };
+		76BF7EA71C6461E400EC1D71 /* PlaceFlickrPhotosTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceFlickrPhotosTVC.h; sourceTree = "<group>"; };
+		76BF7EA81C6461E400EC1D71 /* PlaceFlickrPhotosTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceFlickrPhotosTVC.m; sourceTree = "<group>"; };
 		76BF7EAA1C6555CC00EC1D71 /* RecentsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecentsTableViewController.h; sourceTree = "<group>"; };
 		76BF7EAB1C6555CC00EC1D71 /* RecentsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecentsTableViewController.m; sourceTree = "<group>"; };
 		76BF7EAD1C656B5500EC1D71 /* FlickrPhotoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrPhotoObject.h; sourceTree = "<group>"; };
@@ -99,6 +105,8 @@
 		76BF7E871C62F98000EC1D71 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				768A51B41C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.h */,
+				768A51B51C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.m */,
 				76BF7EB01C656FFF00EC1D71 /* FlickrFeedObject.h */,
 				76BF7EB11C656FFF00EC1D71 /* FlickrFeedObject.m */,
 				76BF7EAD1C656B5500EC1D71 /* FlickrPhotoObject.h */,
@@ -122,10 +130,12 @@
 		76BF7E891C62F99200EC1D71 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				76BF7E8D1C6302FB00EC1D71 /* TopPlacesTableViewController.h */,
-				76BF7E8E1C6302FB00EC1D71 /* TopPlacesTableViewController.m */,
-				76BF7EA71C6461E400EC1D71 /* PlaceTableViewController.h */,
-				76BF7EA81C6461E400EC1D71 /* PlaceTableViewController.m */,
+				768A51AE1C67D16200210D1D /* FlickrPhotosTVC.h */,
+				768A51AF1C67D16200210D1D /* FlickrPhotosTVC.m */,
+				76BF7E8D1C6302FB00EC1D71 /* TopPlacesFlickrPhotosTVC.h */,
+				76BF7E8E1C6302FB00EC1D71 /* TopPlacesFlickrPhotosTVC.m */,
+				76BF7EA71C6461E400EC1D71 /* PlaceFlickrPhotosTVC.h */,
+				76BF7EA81C6461E400EC1D71 /* PlaceFlickrPhotosTVC.m */,
 				76BF7EAA1C6555CC00EC1D71 /* RecentsTableViewController.h */,
 				76BF7EAB1C6555CC00EC1D71 /* RecentsTableViewController.m */,
 			);
@@ -203,13 +213,15 @@
 			files = (
 				76BF7E751C61D68200EC1D71 /* AppDelegate.m in Sources */,
 				76BF7EAF1C656B5500EC1D71 /* FlickrPhotoObject.m in Sources */,
-				76BF7EA91C6461E400EC1D71 /* PlaceTableViewController.m in Sources */,
+				76BF7EA91C6461E400EC1D71 /* PlaceFlickrPhotosTVC.m in Sources */,
 				76BF7E8C1C62F9D400EC1D71 /* ImageViewController.m in Sources */,
 				76BF7EAC1C6555CC00EC1D71 /* RecentsTableViewController.m in Sources */,
+				768A51B61C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.m in Sources */,
 				76BF7E721C61D68200EC1D71 /* main.m in Sources */,
 				76BF7E931C63047F00EC1D71 /* FlickrFetcher.m in Sources */,
 				76BF7EB21C656FFF00EC1D71 /* FlickrFeedObject.m in Sources */,
-				76BF7E8F1C6302FB00EC1D71 /* TopPlacesTableViewController.m in Sources */,
+				76BF7E8F1C6302FB00EC1D71 /* TopPlacesFlickrPhotosTVC.m in Sources */,
+				768A51B01C67D16200210D1D /* FlickrPhotosTVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

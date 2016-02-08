@@ -24,6 +24,9 @@
 {
   _imageURL = imageURL;
   
+  // clear the imageView's image when we start downloading a new one
+  self.image = nil;
+  
   // start downloading the image when imageURL is set
   [self startDownloadingImage];
 }
@@ -51,6 +54,8 @@
 {
   if (!_imageView) {
     _imageView = [[UIImageView alloc] init];
+    _imageView.layer.borderWidth = 30;
+    _imageView.layer.borderColor = [[UIColor redColor] CGColor];
   }
   return _imageView;
 }
@@ -64,7 +69,7 @@
     // necessary for zooming
     _scrollView.delegate = self;
     _scrollView.minimumZoomScale = 0.2;
-    _scrollView.maximumZoomScale = 1.2;
+    _scrollView.maximumZoomScale = 2.0;
     _scrollView.alwaysBounceVertical = YES;
     _scrollView.alwaysBounceHorizontal = YES;
     
@@ -101,32 +106,31 @@
 {
   [super viewWillLayoutSubviews];
   
-  CGRect visibleRect   = self.view.bounds;
-  CGFloat navBarBottom = CGRectGetMaxY(self.navigationController.navigationBar.frame);
-  CGFloat tabBarBottom = CGRectGetHeight(self.tabBarController.tabBar.frame);
+  CGRect bounds = self.view.bounds;
   
   // scrollView
-  self.scrollView.frame = visibleRect;
-  self.scrollView.contentInset = UIEdgeInsetsMake(navBarBottom, 0, tabBarBottom, 0);
+  _scrollView.frame = bounds;
   
   // spinner
-  [self.spinner sizeToFit];
+  [_spinner sizeToFit];
   
-  CGSize spinnerSize = self.spinner.frame.size;
-  self.spinner.frame = CGRectMake((visibleRect.size.width - spinnerSize.width)/2,
-                                  (visibleRect.size.height - spinnerSize.height)/2,
-                                  spinnerSize.width,
-                                  spinnerSize.height);
+  CGRect spinnerFrame = _spinner.frame;
+  spinnerFrame.origin = CGPointMake((bounds.size.width - spinnerFrame.size.width) / 2.0,
+                                    (bounds.size.height - spinnerFrame.size.height) / 2.0);
+  _spinner.frame = spinnerFrame;
+  
+  [self setZoom];
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+  // cancel any remaining download tasks
+}
 
 #pragma mark - Helper Methods
 
 - (void)startDownloadingImage
 {
-  // clear the imageView's image when we start downloading a new one
-  self.image = nil;
-  
   // if we have an image URL to download
   if (self.imageURL) {
     
@@ -155,7 +159,7 @@
             self.image = image;
             
             // set zoom to make picture fill the screen
-            [self setZoom];
+            [self.view setNeedsLayout];
           });
         }
         
@@ -172,22 +176,68 @@
 
 - (void)setZoom
 {
+  if (!_imageView.image) {
+    return;
+  }
+  
   // set zoom to show as much of the photo as possible with no extra, unused space
+  
+  // content inset adds buffer to scrollView contentSize
+  // content offset is x,y position of upperleft
+  
+  CGSize imageSize = _imageView.image.size;
+  CGSize boundsSize = _scrollView.bounds.size;
 
   UIEdgeInsets contentInset = _scrollView.contentInset;
-  CGFloat visibleHeight = _scrollView.bounds.size.height - contentInset.top - contentInset.bottom;
-  CGFloat zoomScaleToFill = visibleHeight / _imageView.image.size.height;
+  CGSize visibleSize = CGSizeMake(boundsSize.width, boundsSize.height - contentInset.top - contentInset.bottom);
+  
+  CGFloat imageAspectRatio = imageSize.width / imageSize.height;
+  CGFloat visibleAspectRatio = visibleSize.width / visibleSize.height;
+  BOOL imageIsPortraitRelativeToBounds = (imageAspectRatio < visibleAspectRatio);
+  
+  CGFloat zoomScaleToFill = 1.0;
+  
+  // scrollView zoom auto centers picture in scroll so we need to do contentOffsets to get it to start at (0,0)
+  CGPoint startContentOffset = CGPointZero;
+  CGPoint endContentOffset   = CGPointZero;
+
+  if ( imageIsPortraitRelativeToBounds ) {
+    zoomScaleToFill    = visibleSize.width / imageSize.width;
+    startContentOffset = CGPointMake(0, imageSize.height * zoomScaleToFill - boundsSize.height + contentInset.bottom);
+    endContentOffset   = CGPointMake(0, -contentInset.top);
+  } else {
+    zoomScaleToFill    = visibleSize.height / imageSize.height;
+    startContentOffset = CGPointMake(0, -contentInset.top);
+    endContentOffset   = CGPointMake(imageSize.width * zoomScaleToFill - boundsSize.width, -contentInset.top);
+  }
+  
   _scrollView.zoomScale = zoomScaleToFill;
-  
-  CGPoint contentOffset = CGPointMake(_imageView.image.size.width * zoomScaleToFill - _scrollView.bounds.size.width, -contentInset.top);
-  
+  _scrollView.contentOffset = startContentOffset;
+
   [UIView animateWithDuration:3 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
-    _scrollView.contentOffset = contentOffset;
+    _scrollView.contentOffset = endContentOffset;
   } completion:^(BOOL finished) {}];
 }
 
+- (void)cancelScrollAnimation
+{
+  CALayer *presentationLayer = _scrollView.layer.presentationLayer;
+  CGPoint currentContentOffset = presentationLayer.bounds.origin;
+  [_scrollView.layer removeAllAnimations];
+  _scrollView.contentOffset = currentContentOffset;
+}
 
 #pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+  [self cancelScrollAnimation];
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view
+{
+  [self cancelScrollAnimation];
+}
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {

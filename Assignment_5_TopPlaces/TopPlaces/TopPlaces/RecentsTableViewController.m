@@ -10,6 +10,8 @@
 #import "ImageViewController.h"
 #import "FlickrFetcher.h"
 #import "FlickrPhotoObject.h"
+#import "NSUserDefaults+RecentlyViewedPhotos.h"
+
 
 @interface RecentsTableViewController ()
 @property (nonatomic, strong, readwrite) NSArray *photos;
@@ -37,6 +39,12 @@
 - (void)viewDidLoad
 {
   [super viewDidLoad];
+  
+#warning - why do I need to hack this?
+  self.automaticallyAdjustsScrollViewInsets = NO;
+  self.tableView.contentInset = UIEdgeInsetsMake(64,0,0,0);
+
+  self.navigationItem.title = @"Recently Viewed Photos";
   
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Clear"
                                                                             style:UIBarButtonItemStylePlain
@@ -68,8 +76,7 @@
   [self.refreshControl beginRefreshing];
   
   // get user defaults
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  NSArray *photoDictionaryArray = [defaults objectForKey:@"recently viewed photos"];
+  NSArray *photoDictionaryArray = [NSUserDefaults getUsersRecentlyViewedPhotos];
   
   // download FlickrFeed off main thread
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -95,8 +102,7 @@
 {
   self.photos = nil;
   
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  [defaults removeObjectForKey:@"recently viewed photos"];
+  [NSUserDefaults resetUsersRecentlyViewedPhotos];
 }
 
 
@@ -112,19 +118,19 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  
+  NSLog(@"ContentOffset = %f", self.tableView.contentInset.top);
+
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"topPlaceCell"];
   
   if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"topPlaceCell"];
   }
   
+#warning Add thumbnail photo
   NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
   NSString *title = [photo valueForKeyPath:@"title"];
   
   cell.textLabel.text = title;
-  
-  #warning - FINISH Thumbnail pic - subclass?
 
   return cell;
 }

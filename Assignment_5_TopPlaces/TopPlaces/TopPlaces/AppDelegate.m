@@ -7,8 +7,9 @@
 //
 
 #import "AppDelegate.h"
-#import "TopPlacesTableViewController.h"
+#import "TopPlacesFlickrPhotosTVC.h"
 #import "RecentsTableViewController.h"
+#import "FlickrFetcher.h"
 
 @interface AppDelegate ()
 
@@ -16,13 +17,15 @@
 
 @implementation AppDelegate
 
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
   
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
   // create "Top Places" tableViewController, wrap in a navController and add a tabBarItem
-  TopPlacesTableViewController *topPlacesTVC      = [[TopPlacesTableViewController alloc] init];
+  NSURL *flickrTopPlacesURL = [FlickrFetcher URLforTopPlaces];
+  TopPlacesFlickrPhotosTVC *topPlacesTVC          = [[TopPlacesFlickrPhotosTVC alloc] initWithURL:flickrTopPlacesURL
+                                                                             resultsKeyPathString:FLICKR_RESULTS_PLACES];
   UINavigationController *topPlacesNavController  = [[UINavigationController alloc] initWithRootViewController:topPlacesTVC];
   UITabBarItem *topPlacesTabBarItem               = [[UITabBarItem alloc] initWithTitle:@"Top Places" image:nil tag:0];
   topPlacesNavController.tabBarItem               = topPlacesTabBarItem;
@@ -45,8 +48,12 @@
     // create a splitViewController
     UISplitViewController *svc = [[UISplitViewController alloc] init];
     
+#warning - start out with master view controller visible
+//    svc.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+    
     // create a detailViewController
     UIViewController *detailVC                  = [[UIViewController alloc] init];
+    detailVC.view.backgroundColor               = [UIColor whiteColor];
     detailVC.navigationItem.leftBarButtonItem   = svc.displayModeButtonItem;
     UINavigationController *detailNavController = [[UINavigationController alloc] initWithRootViewController:detailVC];
     

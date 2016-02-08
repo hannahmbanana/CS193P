@@ -7,12 +7,15 @@
 //
 
 #import "FlickrFeedObject.h"
+#import "FlickrFetcher.h"
 
 @interface FlickrFeedObject ()
 
 @property (nonatomic, strong, readwrite) NSURL    *URL;
 @property (nonatomic, strong, readwrite) NSString *resultsKeyPathString;
 @property (nonatomic, strong, readwrite) NSArray  *flickrFeedItems;          // of FlickrPhotoObjects
+@property (nonatomic, strong, readwrite) NSArray  *countries;
+@property (nonatomic, assign, readwrite) BOOL     firstTimeLoadComplete;
 
 @end
 
@@ -42,6 +45,7 @@
 - (void)updateFeedWithCompletionBlock:(void (^)(void))blockName
 {
   self.flickrFeedItems = nil;
+  self.countries = nil;
   
   // download FlickrFeed off main thread
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -69,8 +73,49 @@
       [photos addObject:photoObject];
     }
     
-    // set FlickrFeedObject array of photos
-    self.flickrFeedItems = photos;
+    NSString *keyPath = self.resultsKeyPathString;
+    
+    if ( [keyPath isEqualToString:FLICKR_RESULTS_PLACES] ) {
+      
+      // get orderedCountriesArray
+      NSArray *countryOrderedArray = [FlickrFeedObject orderedCountriesFromPlaces:photos];
+      self.countries = countryOrderedArray;
+      
+      ///// create the places ordered list
+      NSMutableArray *placesSorted = [NSMutableArray array];
+      for (NSString *country in countryOrderedArray) {
+        [placesSorted addObject:[NSMutableArray array]];
+      }
+      
+      // add places to country sublists
+      for (FlickrPhotoObject *place in photos) {
+        NSString *country = [[place.country componentsSeparatedByString:@","] lastObject];
+        country = [[country componentsSeparatedByString:@","] lastObject];
+        NSUInteger countryIndex = [countryOrderedArray indexOfObject:country];
+        
+        NSMutableArray *subArray = [placesSorted objectAtIndex:countryIndex];
+        [subArray insertObject:place atIndex:0];
+      }
+      
+      // sort country sublists
+      for (NSMutableArray *array in placesSorted) {
+        
+        [array sortUsingComparator:^NSComparisonResult(FlickrPhotoObject *obj1, FlickrPhotoObject *obj2) {
+          NSString *country1 = [[obj1.country componentsSeparatedByString:@","] lastObject];
+          NSString *country2 = [[obj2.country componentsSeparatedByString:@","] lastObject];
+          return [country1 localizedCaseInsensitiveCompare:country2];
+        }];
+        
+      }
+      
+      // set FlickrFeedObject array of photos
+      self.flickrFeedItems = placesSorted;
+      
+    } else {
+      self.flickrFeedItems = photos;
+    }
+    
+    self.firstTimeLoadComplete = YES;
     
     // completion block
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -82,23 +127,35 @@
   });
 }
 
-- (NSUInteger)numItemsInFeed
+- (NSUInteger)numItemsInFeedAtSection:(NSUInteger)section
 {
-  return [self.flickrFeedItems count];
+  NSString *keyPath = self.resultsKeyPathString;
+  
+  if ( [keyPath isEqualToString:FLICKR_RESULTS_PLACES] ) {
+    return [[self.flickrFeedItems objectAtIndex:section] count];
+  } else {
+    return [self.flickrFeedItems count];
+  }
 }
 
-- (FlickrPhotoObject *)itemAtIndex:(NSUInteger)index
+- (FlickrPhotoObject *)itemAtIndex:(NSUInteger)index inSection:(NSUInteger)section
 {
-  return [self.flickrFeedItems objectAtIndex:index];
+  NSString *keyPath = self.resultsKeyPathString;
+  
+  if ( [keyPath isEqualToString:FLICKR_RESULTS_PLACES] ) {
+    return [[self.flickrFeedItems objectAtIndex:section] objectAtIndex:index];
+  } else {
+    return [self.flickrFeedItems objectAtIndex:index];
+  }
 }
 
-- (NSArray *)orderedCountriesArray
++ (NSArray *)orderedCountriesFromPlaces:(NSArray *)places
 {
   ///// create set of countries
   NSMutableSet *countrySet = [NSMutableSet set];
   
   // print country order
-  for (FlickrPhotoObject *photo in self.flickrFeedItems) {
+  for (FlickrPhotoObject *photo in places) {
 
     NSString *country = [[photo.country componentsSeparatedByString:@","] lastObject];
     [countrySet addObject:country];
