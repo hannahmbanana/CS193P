@@ -9,6 +9,7 @@
 #import "PlaceFlickrPhotosTVC.h"
 #import "ImageViewController.h"
 #import "FlickrPhotoObject.h"
+#import "FlickrPhotoTVCell.h"
 
 @interface PlaceFlickrPhotosTVC ()
 @property (nonatomic, strong, readwrite) ImageViewController *imageVC;
@@ -33,18 +34,15 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"topPlaceCell"];
- 
+  FlickrPhotoObject *photo = [self.flickrFeed itemAtIndex:indexPath.row inSection:indexPath.section];
+
+  FlickrPhotoTVCell *cell = [tableView dequeueReusableCellWithIdentifier:[FlickrPhotoTVCell reuseIdentifier]];
   // if no reusable cells available, create a new one
   if (cell == nil) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"topPlaceCell"];
+    cell = [[FlickrPhotoTVCell alloc] initWithPhoto:photo];
+  } else {
+    [cell updateCellWithPhoto:photo];
   }
-  
-  // configure cell using photo's metadata
-  FlickrPhotoObject *photo = [self.flickrFeed itemAtIndex:indexPath.row inSection:indexPath.section];
-  
-  cell.textLabel.text = photo.title;
-  cell.detailTextLabel.text = photo.caption;
   
   return cell;
 }

@@ -1,15 +1,15 @@
 //
-//  FlickrPhotoTVCell.h
+//  FlickrTopPlaceTVCell.h
 //  TopPlaces
 //
-//  Created by Hannah Troisi on 2/7/16.
+//  Created by Hannah Troisi on 2/8/16.
 //  Copyright © 2016 Hannah Troisi. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #import "FlickrPhotoObject.h"
 
-@interface FlickrPhotoTVCell : UITableViewCell
+@interface FlickrTopPlaceTVCell : UITableViewCell
 
 + (NSString *)reuseIdentifier;
 

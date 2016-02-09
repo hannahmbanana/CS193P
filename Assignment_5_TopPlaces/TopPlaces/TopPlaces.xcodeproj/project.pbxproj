@@ -10,6 +10,7 @@
 		768A51B01C67D16200210D1D /* FlickrPhotosTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 768A51AF1C67D16200210D1D /* FlickrPhotosTVC.m */; };
 		768A51B61C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.m in Sources */ = {isa = PBXBuildFile; fileRef = 768A51B51C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.m */; };
 		768A51B91C687C5800210D1D /* FlickrPhotoTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 768A51B81C687C5800210D1D /* FlickrPhotoTVCell.m */; };
+		768A51BC1C69AA1A00210D1D /* FlickrTopPlaceTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 768A51BB1C69AA1A00210D1D /* FlickrTopPlaceTVCell.m */; };
 		76BF7E721C61D68200EC1D71 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E711C61D68200EC1D71 /* main.m */; };
 		76BF7E751C61D68200EC1D71 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF7E741C61D68200EC1D71 /* AppDelegate.m */; };
 		76BF7E7D1C61D68200EC1D71 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76BF7E7C1C61D68200EC1D71 /* Assets.xcassets */; };
@@ -30,6 +31,8 @@
 		768A51B51C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSUserDefaults+RecentlyViewedPhotos.m"; path = "../NSUserDefaults+RecentlyViewedPhotos.m"; sourceTree = "<group>"; };
 		768A51B71C687C5800210D1D /* FlickrPhotoTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrPhotoTVCell.h; sourceTree = "<group>"; };
 		768A51B81C687C5800210D1D /* FlickrPhotoTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrPhotoTVCell.m; sourceTree = "<group>"; };
+		768A51BA1C69AA1A00210D1D /* FlickrTopPlaceTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrTopPlaceTVCell.h; sourceTree = "<group>"; };
+		768A51BB1C69AA1A00210D1D /* FlickrTopPlaceTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrTopPlaceTVCell.m; sourceTree = "<group>"; };
 		76BF7E6D1C61D68200EC1D71 /* TopPlaces.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TopPlaces.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76BF7E711C61D68200EC1D71 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		76BF7E731C61D68200EC1D71 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -124,6 +127,8 @@
 		76BF7E881C62F98700EC1D71 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				768A51BA1C69AA1A00210D1D /* FlickrTopPlaceTVCell.h */,
+				768A51BB1C69AA1A00210D1D /* FlickrTopPlaceTVCell.m */,
 				768A51B71C687C5800210D1D /* FlickrPhotoTVCell.h */,
 				768A51B81C687C5800210D1D /* FlickrPhotoTVCell.m */,
 				76BF7E8A1C62F9D400EC1D71 /* ImageViewController.h */,
@@ -222,6 +227,7 @@
 				76BF7E8C1C62F9D400EC1D71 /* ImageViewController.m in Sources */,
 				76BF7EAC1C6555CC00EC1D71 /* RecentsTableViewController.m in Sources */,
 				768A51B61C67EBB700210D1D /* NSUserDefaults+RecentlyViewedPhotos.m in Sources */,
+				768A51BC1C69AA1A00210D1D /* FlickrTopPlaceTVCell.m in Sources */,
 				76BF7E721C61D68200EC1D71 /* main.m in Sources */,
 				76BF7E931C63047F00EC1D71 /* FlickrFetcher.m in Sources */,
 				76BF7EB21C656FFF00EC1D71 /* FlickrFeedObject.m in Sources */,
@@ -331,7 +337,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = TopPlaces/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HMT.TopPlaces;
@@ -343,7 +349,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = TopPlaces/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = HMT.TopPlaces;

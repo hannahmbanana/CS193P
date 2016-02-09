@@ -8,6 +8,8 @@
 
 #import "TopPlacesFlickrPhotosTVC.h"
 #import "PlaceFlickrPhotosTVC.h"
+#import "FlickrTopPlaceTVCell.h"
+
 
 @implementation TopPlacesFlickrPhotosTVC
 
@@ -24,37 +26,19 @@
 
 #pragma mark - UITableViewDataSource
 
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-//  return [self.flickrFeed.countries count];
-//}
-//
-//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//  return [self.flickrFeed numItemsInFeedAtSection:section];
-//}
-//
-//- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
-//{
-//  return [self.flickrFeed.countries objectAtIndex:section];
-//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+  FlickrPhotoObject *photo = [self.flickrFeed itemAtIndex:indexPath.row inSection:indexPath.section];
   
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reusableCell"];
-    
+  FlickrTopPlaceTVCell *cell = [tableView dequeueReusableCellWithIdentifier:[FlickrTopPlaceTVCell reuseIdentifier]];
+  // if no reusable cells available, create a new one
   if (cell == nil) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"reusableCell"];
+    cell = [[FlickrTopPlaceTVCell alloc] initWithPhoto:photo];
+  } else {
+    [cell updateCellWithPhoto:photo];
   }
   
-  FlickrPhotoObject *photo  = [self.flickrFeed itemAtIndex:indexPath.row inSection:indexPath.section];
-
-  NSArray *components = [photo.country componentsSeparatedByString:@","];
-  NSString *locality  = [components firstObject];
-  NSString *location  = [components componentsJoinedByString:@" "];
-  
-  cell.textLabel.text = locality;
-  cell.detailTextLabel.text = location;
-
   return cell;
 }
 

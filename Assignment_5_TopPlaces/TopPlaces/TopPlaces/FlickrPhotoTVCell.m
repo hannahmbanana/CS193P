@@ -11,31 +11,30 @@
 @implementation FlickrPhotoTVCell
 
 
+#pragma mark - Class Methods
+
++ (NSString *)reuseIdentifier
+{
+  return @"flickrPhotoTVCell";
+}
+
+
 #pragma mark - Lifecycle
-//
-//- (instancetype)initWithPhoto:(FlickrPhotoObject *)photo;
-//{
-//  self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"reusableCell"];
-//  
-//  if (self) {
-//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reusableCell"];
-//    
-//    if (cell == nil) {
-//      cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"reusableCell"];
-//    }
-//    
-//    FlickrPhotoObject *photo  = [self.flickrFeed itemAtIndex:indexPath.row inSection:indexPath.section];
-//    
-//    NSArray *components = [photo.country componentsSeparatedByString:@","];
-//    NSString *locality  = [components firstObject];
-//    NSString *location  = [components componentsJoinedByString:@" "];
-//    
-//    cell.textLabel.text = locality;
-//    cell.detailTextLabel.text = location;
-//    
-//    return cell;
-//  }
-//  return cell;
-//}
+
+- (instancetype)initWithPhoto:(FlickrPhotoObject *)photo;
+{
+  self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"flickrPhotoTVCell"];
+  
+  if (self) {
+    [self updateCellWithPhoto:photo];
+  }
+  return self;
+}
+
+- (void)updateCellWithPhoto:(FlickrPhotoObject *)photo;
+{
+  self.textLabel.text       = photo.title;
+  self.detailTextLabel.text = photo.caption;
+}
 
 @end

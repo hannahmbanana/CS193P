@@ -11,6 +11,7 @@
 #import "FlickrFetcher.h"
 #import "FlickrPhotoObject.h"
 #import "NSUserDefaults+RecentlyViewedPhotos.h"
+#import "FlickrPhotoTVCell.h"
 
 
 @interface RecentsTableViewController ()
@@ -36,9 +37,6 @@
 {
   _photos = photos;
   
-  // stop the spinner
-  [self.refreshControl endRefreshing];
-  
   // whenever our model is updated, reload the data table
   [self.tableView reloadData];
 }
@@ -50,7 +48,6 @@
 {
   [super viewDidLoad];
   
-#warning - why do I need to hack this?
   self.automaticallyAdjustsScrollViewInsets = NO;
   self.tableView.contentInset = UIEdgeInsetsMake(64,0,0,0);
 
@@ -66,13 +63,8 @@
 {
   [super viewWillAppear:animated];
   
-  // add the spinner
-  self.refreshControl = [[UIRefreshControl alloc] init];
-  [self.refreshControl addTarget:self action:@selector(fetchPhotos) forControlEvents:UIControlEventValueChanged];
-  
   // fetchPhotos
   [self fetchPhotos];
-#warning Only want to fetchPhotos when pushing the view controller, not when returning from individual picture view
 }
 
 
@@ -81,9 +73,6 @@
 - (void)fetchPhotos
 {
   self.photos = nil;
-  
-  // start the spinner animation
-  [self.refreshControl beginRefreshing];
   
   // get user defaults
   NSArray *photoDictionaryArray = [NSUserDefaults getUsersRecentlyViewedPhotos];
@@ -101,6 +90,10 @@
       
       // add FlickrPhotoObject to array
       [photos addObject:photoObject];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [self.view setNeedsLayout];
+      });
     }
     
     // set photos property
@@ -128,17 +121,16 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"topPlaceCell"];
+  FlickrPhotoObject *photo = [self.photos objectAtIndex:indexPath.row];
   
+  FlickrPhotoTVCell *cell = [tableView dequeueReusableCellWithIdentifier:[FlickrPhotoTVCell reuseIdentifier]];
+  // if no reusable cells available, create a new one
   if (cell == nil) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"topPlaceCell"];
+    cell = [[FlickrPhotoTVCell alloc] initWithPhoto:photo];
+  } else {
+    [cell updateCellWithPhoto:photo];
   }
   
-  NSDictionary *photo = [self.photos objectAtIndex:indexPath.row];
-  NSString *title = [photo valueForKeyPath:@"title"];
-  
-  cell.textLabel.text = title;
-
   return cell;
 }
 
