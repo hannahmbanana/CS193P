@@ -67,7 +67,11 @@
     svc.viewControllers = @[masterTabBarController, detailNavController];
     
     // open app with masterViewController overlaid over detailViewController (detailViewController is empty on startup)
-    svc.preferredDisplayMode = UISplitViewControllerDisplayModePrimaryOverlay;
+    // Hack: must wrap display code in dispatch_async. Otherwise iOS seems to get confused with other animations running
+    // at the same time - "Unbalanced calls to begin/end appearance transitions for UITabBarController"
+    dispatch_async(dispatch_get_main_queue(), ^{
+      svc.preferredDisplayMode = UISplitViewControllerDisplayModePrimaryOverlay;
+    });
     
     // set the detailViewController's back button to get to the masterViewController when it's closed
     detailVC.navigationItem.leftBarButtonItem   = svc.displayModeButtonItem;

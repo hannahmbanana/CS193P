@@ -33,8 +33,20 @@
 
 - (void)updateCellWithPhoto:(FlickrPhotoObject *)photo;
 {
-  self.textLabel.text       = photo.title;
-  self.detailTextLabel.text = photo.caption;
+  NSString *title   = photo.title;
+  NSString *caption = photo.caption;
+  
+  if ( [title isEqualToString:@""] ) {
+    if ( [caption isEqualToString:@""] ) {
+      title = @"Unknown";
+    } else {
+      title   = photo.caption;
+      caption = nil;
+    }
+  }
+  self.textLabel.text       = title;
+  self.detailTextLabel.text = caption;
+
 }
 
 @end

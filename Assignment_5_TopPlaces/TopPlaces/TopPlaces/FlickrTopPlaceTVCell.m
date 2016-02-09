@@ -36,8 +36,9 @@
 
 - (void)updateCellWithPhoto:(FlickrPhotoObject *)photo;
 {
-  self.textLabel.text       = [photo.countryComponents firstObject];
-  self.detailTextLabel.text = [photo.countryComponents componentsJoinedByString:@" "];
+  self.textLabel.text                 = [photo.countryComponents firstObject];
+  NSArray *countryComponentsSubArray  = [photo.countryComponents subarrayWithRange:NSMakeRange(1, [photo.countryComponents count] - 2)];
+  self.detailTextLabel.text           = [countryComponentsSubArray componentsJoinedByString:@" "];
 }
 
 

@@ -25,8 +25,7 @@
     self.dictionaryRepresentation = photoDictionary;
     
     // title
-    NSString *titleString = [photoDictionary valueForKeyPath:FLICKR_PHOTO_TITLE];
-    self.title            = ( [titleString isEqualToString:@""] ) ? @"Unknown" : titleString;
+    self.title   = [photoDictionary valueForKeyPath:FLICKR_PHOTO_TITLE];
     
     // caption
     self.caption = [photoDictionary valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];

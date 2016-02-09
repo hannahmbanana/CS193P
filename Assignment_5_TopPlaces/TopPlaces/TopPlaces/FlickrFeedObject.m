@@ -89,8 +89,7 @@
       
       // add places to country sublists
       for (FlickrPhotoObject *place in photos) {
-        NSString *country = [[place.country componentsSeparatedByString:@","] lastObject];
-        country = [[country componentsSeparatedByString:@","] lastObject];
+        NSString *country = [place.countryComponents lastObject];
         NSUInteger countryIndex = [countryOrderedArray indexOfObject:country];
         
         NSMutableArray *subArray = [placesSorted objectAtIndex:countryIndex];
@@ -101,8 +100,8 @@
       for (NSMutableArray *array in placesSorted) {
         
         [array sortUsingComparator:^NSComparisonResult(FlickrPhotoObject *obj1, FlickrPhotoObject *obj2) {
-          NSString *country1 = [[obj1.country componentsSeparatedByString:@","] lastObject];
-          NSString *country2 = [[obj2.country componentsSeparatedByString:@","] lastObject];
+          NSString *country1 = [obj1.countryComponents firstObject];
+          NSString *country2 = [obj2.countryComponents firstObject];
           return [country1 localizedCaseInsensitiveCompare:country2];
         }];
         
@@ -162,7 +161,7 @@
   // print country order
   for (FlickrPhotoObject *photo in places) {
 
-    NSString *country = [[photo.country componentsSeparatedByString:@","] lastObject];
+    NSString *country = [photo.countryComponents lastObject];
     [countrySet addObject:country];
     
   }
