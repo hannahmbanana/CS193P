@@ -13,6 +13,7 @@
 @property (nonatomic, strong, readwrite) UIImageView              *imageView;
 @property (nonatomic, strong, readwrite) UIScrollView             *scrollView;
 @property (nonatomic, strong, readwrite) UIActivityIndicatorView  *spinner;
+@property (nonatomic, strong, readwrite) NSURLSessionDataTask     *task;
 @end
 
 @implementation ImageViewController
@@ -22,9 +23,16 @@
 
 - (void)setImageURL:(NSURL *)imageURL
 {
+  // check that our imageURL is the same, an image has been loaded (presumably for that URL)
+  if ( _imageURL && [imageURL isEqual:_imageURL] && self.image ) {
+    return;
+  }
+  
   _imageURL = imageURL;
   
-  // start downloading the image when imageURL is set
+  // clear the imageView's image
+  self.image = nil;
+  
   [self startDownloadingImage];
 }
 
@@ -32,14 +40,7 @@
 {
   self.imageView.image = image;
   
-  // resize the imageView to fit its new image
-  [_imageView sizeToFit];
-  
-  // set scrollView's contentSize
-  self.scrollView.contentSize = self.image ? self.image.size : CGSizeZero;
-  
-  // stop spinner animation
-  [self.spinner stopAnimating];
+  [self.view setNeedsLayout];
 }
 
 - (UIImage *)image
@@ -51,22 +52,25 @@
 {
   if (!_imageView) {
     _imageView = [[UIImageView alloc] init];
+    
+    // debug
+    //_imageView.layer.borderWidth = 30;
+    //_imageView.layer.borderColor = [[UIColor redColor] CGColor];
   }
   return _imageView;
 }
 
 - (UIScrollView *)scrollView
 {
-  // lazy instantiation
   if (!_scrollView) {
     _scrollView = [[UIScrollView alloc] init];
-    
+
     // necessary for zooming
     _scrollView.delegate = self;
     _scrollView.minimumZoomScale = 0.2;
-    _scrollView.maximumZoomScale = 1.2;
-    
-    _scrollView.contentSize = self.image ? self.image.size : CGSizeZero;  // size is a struct! cannot message nil and rely on a structure return value!
+    _scrollView.maximumZoomScale = 2.0;
+    _scrollView.alwaysBounceVertical = YES;
+    _scrollView.alwaysBounceHorizontal = YES;
   }
   return _scrollView;
 }
@@ -99,22 +103,38 @@
 {
   [super viewWillLayoutSubviews];
   
-  CGRect visibleRect   = self.view.bounds;
-  CGFloat navBarBottom = CGRectGetMaxY(self.navigationController.navigationBar.frame);
-  CGFloat tabBarBottom = CGRectGetHeight(self.tabBarController.tabBar.frame);
+  CGRect bounds = self.view.bounds;
   
-  // scrollView
-  self.scrollView.frame = visibleRect;
-  self.scrollView.contentInset = UIEdgeInsetsMake(navBarBottom, 0, tabBarBottom, 0);
+  // resize the imageView to fit its new image
+  _imageView.frame = (CGRect) {CGPointZero, self.image.size};
   
-  // spinner
-  [self.spinner sizeToFit];
+  // scrollView layout
+  _scrollView.frame = bounds;
   
-  CGSize spinnerSize = self.spinner.frame.size;
-  self.spinner.frame = CGRectMake((visibleRect.size.width - spinnerSize.width)/2,
-                                  (visibleRect.size.height - spinnerSize.height)/2,
-                                  spinnerSize.width,
-                                  spinnerSize.height);
+  // must reset zoomScale before updating scrollView's contentSize - zoomScale affects the contentSize!!!
+  self.scrollView.zoomScale = 1.0;
+
+  // set scrollView's contentSize
+  // this is the best practice for structures - cannot message nil and rely on a structure to return a good value!
+  self.scrollView.contentSize = self.image ? self.image.size : CGSizeZero;
+  
+  // spinner layout
+  [_spinner sizeToFit];
+  CGRect spinnerFrame = _spinner.frame;
+  spinnerFrame.origin = CGPointMake((bounds.size.width - spinnerFrame.size.width) / 2.0,
+                                    (bounds.size.height - spinnerFrame.size.height) / 2.0);
+  _spinner.frame = spinnerFrame;
+  
+  // set zoomScale to show as much of the photo as possible in the scrollView
+  [self setZoomScale];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+  
+  // cancel any download tasks
+  [self.task cancel];
 }
 
 
@@ -122,9 +142,6 @@
 
 - (void)startDownloadingImage
 {
-  // clear the imageView's image when we start downloading a new one
-  self.image = nil;
-  
   // if we have an image URL to download
   if (self.imageURL) {
     
@@ -135,7 +152,7 @@
     NSURLRequest *request                    = [NSURLRequest requestWithURL:self.imageURL];
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     NSURLSession *session                    = [NSURLSession sessionWithConfiguration:sessionConfig];
-    NSURLSessionDataTask *task               = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    self.task                                = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
       
       // check for errors downloading
       if (!error) {
@@ -149,11 +166,14 @@
           // updated self.image on main thread (kicks off UI stuff)
           dispatch_async(dispatch_get_main_queue(), ^{
             
+            // stop spinner animation
+            [self.spinner stopAnimating];
+            
             // set self.image to be newly downloaded picture
             self.image = image;
             
             // set zoom to make picture fill the screen
-            [self setZoom];
+            [self.view setNeedsLayout];
           });
         }
         
@@ -164,37 +184,98 @@
     }];  // end of completion handler
     
     // start the NSURLSessionDownloadTask (starts out suspended)
-    [task resume];
+    [self.task resume];
   }
 }
 
-- (void)setZoom
+// set scrollView's zoomScale to show as much of the photo as possible with no extra, unused space
+- (void)setZoomScale
 {
-# warning Not finished
-  // set zoom to show as much of the photo as possible with no extra, unused space
-//  __block CGRect zoomRect = CGRectMake(0,
-//                                       0, //self.scrollView.contentInset.top,
-//                                       self.view.bounds.size.width,
-//                                       self.imageView.bounds.size.height);
-//
-//  [_scrollView zoomToRect:zoomRect animated:NO];
+  // okay stylistically to early return if at top of method
+  if (!_imageView.image) {
+    return;
+  }
   
-//  [UIView animateWithDuration:3 delay:0 options:UIViewAnimationOptionCurveLinear | UIViewAnimationOptionAllowUserInteraction animations:^{
-//    visibleRectMinusNavBar.origin.x += self.imageView.bounds.size.width - _scrollView.bounds.size.width;
-//    _scrollView.contentOffset = visibleRectMinusNavBar.origin;
-//  } completion:^(BOOL finished) {}];
+  CGSize imageSize          = _imageView.image.size;
+  CGSize boundsSize         = _scrollView.bounds.size;
   
-//  [_scrollView setContentMode:UIViewContentModeScaleAspectFit];
+  // contentInset adds buffer to scrollView contentSize
+  UIEdgeInsets contentInset = _scrollView.contentInset;
+  CGSize visibleSize        = CGSizeMake(boundsSize.width, boundsSize.height - contentInset.top - contentInset.bottom);
+  
+  CGFloat imageAspectRatio              = imageSize.width / imageSize.height;
+  CGFloat visibleAspectRatio            = visibleSize.width / visibleSize.height;
+  BOOL imageIsPortraitRelativeToBounds  = (imageAspectRatio < visibleAspectRatio);
+  
+  CGFloat zoomScaleToFill = 1.0;
+  
+  // scrollView auto centers scrollView content vertically (if vertical scroll only) - so we need to use
+  // contentOffsets to get it to start at (0,0). Content offset is x,y position of upper left corner of image
+  CGPoint startContentOffset = CGPointZero;
+  CGPoint endContentOffset   = CGPointZero;
 
+  // set zoomScale depending on image aspect ratio & visible screen aspect ratio
+  if ( imageIsPortraitRelativeToBounds ) {
+    
+    // portrait
+    zoomScaleToFill    = visibleSize.width / imageSize.width;
+
+    // animate a slow pan left to right
+    startContentOffset = CGPointMake(0, imageSize.height * zoomScaleToFill - boundsSize.height + contentInset.bottom);
+    endContentOffset   = CGPointMake(0, -contentInset.top);
+    
+  } else {
+    
+    // landscape
+    zoomScaleToFill    = visibleSize.height / imageSize.height;
+    
+    // animate a slow pan bottom to top
+    startContentOffset = CGPointMake(0, -contentInset.top);
+    endContentOffset   = CGPointMake(imageSize.width * zoomScaleToFill - boundsSize.width, -contentInset.top);
+  }
+  
+  // set scrollView's zoomScale & contentOffset
+  _scrollView.zoomScale     = zoomScaleToFill;
+  _scrollView.contentOffset = startContentOffset;
+
+  // animate a slow pan with parameters set above
+  [UIView animateWithDuration:3 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+    _scrollView.contentOffset = endContentOffset;
+  } completion:^(BOOL finished) {}];
+}
+
+- (void)cancelScrollAnimation
+{
+  // presentation layer has actual contentOffset values of animation
+  CALayer *presentationLayer    = _scrollView.layer.presentationLayer;
+  CGPoint currentContentOffset  = presentationLayer.bounds.origin;
+  
+  // remove all animations in process
+  [_scrollView.layer removeAllAnimations];
+  
+  // set scrollView's contentOffset to animation's currentOffset
+  _scrollView.contentOffset = currentContentOffset;
 }
 
 
 #pragma mark - UIScrollViewDelegate
 
+// cancel animation when user begins to pan
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+  [self cancelScrollAnimation];
+}
+
+// cancel animation when user begins to zoom
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view
+{
+  [self cancelScrollAnimation];
+}
+
+// return view to zooom
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
-  // return view to zooom
-  return self.imageView;
+  return _imageView;
 }
 
 

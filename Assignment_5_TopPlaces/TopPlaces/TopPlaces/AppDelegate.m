@@ -7,8 +7,9 @@
 //
 
 #import "AppDelegate.h"
-#import "TopPlacesTableViewController.h"
+#import "TopPlacesFlickrPhotosTVC.h"
 #import "RecentsTableViewController.h"
+#import "FlickrFetcher.h"
 
 @interface AppDelegate ()
 
@@ -16,57 +17,74 @@
 
 @implementation AppDelegate
 
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
   
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
-  // create "Top Places" tableViewController, wrap in a navController and add a tabBarItem
-  TopPlacesTableViewController *topPlacesTVC      = [[TopPlacesTableViewController alloc] init];
-  UINavigationController *topPlacesNavController  = [[UINavigationController alloc] initWithRootViewController:topPlacesTVC];
-  UITabBarItem *topPlacesTabBarItem               = [[UITabBarItem alloc] initWithTitle:@"Top Places" image:nil tag:0];
-  topPlacesNavController.tabBarItem               = topPlacesTabBarItem;
-
-  // create "Recently Viewed" tableViewController, wrap in a navController and add a tabBarItem
-  RecentsTableViewController *recentlyViewedTVC       = [[RecentsTableViewController alloc] init];
-  UINavigationController *recentlyViewedNavController = [[UINavigationController alloc] initWithRootViewController:recentlyViewedTVC];
-  UITabBarItem *recentlyViewedTabBarItem              = [[UITabBarItem alloc] initWithTitle:@"Recents" image:nil tag:1];
-  recentlyViewedNavController.tabBarItem              = recentlyViewedTabBarItem;
-
-  // create the tabBarController
-  UITabBarController *tabBarController = [[UITabBarController alloc] init];
-  tabBarController.viewControllers     = @[topPlacesNavController, recentlyViewedNavController];
+  // "Top Places" tableViewController
+  TopPlacesFlickrPhotosTVC *topPlacesTVC = [[TopPlacesFlickrPhotosTVC alloc] initWithURL:[FlickrFetcher URLforTopPlaces]
+                                                                                 resultsKeyPathString:FLICKR_RESULTS_PLACES];
   
-  // set the rootViewController to be the tabBarController (iPhone) or the splitViewController (iPad)
+  // "Top Places" tabBarItem
+  UITabBarItem *topPlacesTabBarItem = [[UITabBarItem alloc] initWithTitle:@"Top Places"
+                                                                    image:[UIImage imageNamed:@"globe"]
+                                                                      tag:0];
+  
+  // "Top Places" navigationController
+  UINavigationController *topPlacesNavController = [[UINavigationController alloc] initWithRootViewController:topPlacesTVC];
+  topPlacesNavController.tabBarItem = topPlacesTabBarItem;
+
+  // "Recently Viewed" tableViewController
+  RecentsTableViewController *recentlyViewedTVC = [[RecentsTableViewController alloc] initWithNibName:nil bundle:nil];
+  
+  // "Recently Viewed" tabBarItem
+  UITabBarItem *recentlyViewedTabBarItem = [[UITabBarItem alloc] initWithTitle:@"Recents"
+                                                                         image:[UIImage imageNamed:@"recents"]
+                                                                           tag:1];
+  
+  // "Recently Viewed" navigationController
+  UINavigationController *recentlyViewedNavController = [[UINavigationController alloc] initWithRootViewController:recentlyViewedTVC];
+  recentlyViewedNavController.tabBarItem = recentlyViewedTabBarItem;
+
+  // tabBarController
+  UITabBarController *masterTabBarController = [[UITabBarController alloc] initWithNibName:nil bundle:nil];
+  masterTabBarController.viewControllers = @[topPlacesNavController, recentlyViewedNavController];
+  
+  // set the tabBarController's rootViewController to be the tabBarController (iPhone) or the splitViewController (iPad)
   UIUserInterfaceIdiom device = [[UIDevice currentDevice] userInterfaceIdiom];
   if (device == UIUserInterfaceIdiomPad) {
+
+    // create a detailViewController
+    UIViewController *detailVC                  = [[UIViewController alloc] initWithNibName:nil bundle:nil];
+    detailVC.view.backgroundColor               = [UIColor whiteColor];
+    UINavigationController *detailNavController = [[UINavigationController alloc] initWithRootViewController:detailVC];
     
-    // iPad
     // create a splitViewController
     UISplitViewController *svc = [[UISplitViewController alloc] init];
     
-    // create a detailViewController
-    UIViewController *detailVC                  = [[UIViewController alloc] init];
-    detailVC.navigationItem.leftBarButtonItem   = svc.displayModeButtonItem;
-    UINavigationController *detailNavController = [[UINavigationController alloc] initWithRootViewController:detailVC];
-    
     // assign the splitViewController's master (0) and detail (1) viewControllers
-    svc.viewControllers = @[tabBarController, detailNavController];
+    svc.viewControllers = @[masterTabBarController, detailNavController];
+    
+    // open app with masterViewController overlaid over detailViewController (detailViewController is empty on startup)
+    // Hack: must wrap display code in dispatch_async. Otherwise iOS seems to get confused with other animations running
+    // at the same time - "Unbalanced calls to begin/end appearance transitions for UITabBarController"
+    dispatch_async(dispatch_get_main_queue(), ^{
+      svc.preferredDisplayMode = UISplitViewControllerDisplayModePrimaryOverlay;
+    });
+    
+    // set the detailViewController's back button to get to the masterViewController when it's closed
+    detailVC.navigationItem.leftBarButtonItem   = svc.displayModeButtonItem;
     
     // set the splitViewController to be the window's rootViewController
     self.window.rootViewController = svc;
     
   } else if (device == UIUserInterfaceIdiomPhone) {
     
-    // iPhone
     // set the tabBarController to be the window's rootViewController
-    self.window.rootViewController = tabBarController;
+    self.window.rootViewController = masterTabBarController;
     
-  } else {
-    
-    // unsupported device
-    NSLog(@"ERROR: do not recognizer UIUserInterfaceIdiom %lu", (long)device);
-  }
+  } 
   
   // show main window
   [self.window makeKeyAndVisible];
