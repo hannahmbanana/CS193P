@@ -23,8 +23,8 @@
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
   // "Top Places" tableViewController
-  TopPlacesFlickrPhotosTVC *topPlacesTVC = [[TopPlacesFlickrPhotosTVC alloc] initWithURL:[FlickrFetcher URLforTopPlaces]
-                                                                                 resultsKeyPathString:FLICKR_RESULTS_PLACES];
+  TopPlacesFlickrPhotosTVC *topPlacesTVC = [[TopPlacesFlickrPhotosTVC alloc] initWithURL:[FlickrFetcher URLforRecentGeoreferencedPhotos]
+                                                                    resultsKeyPathString:FLICKR_RESULTS_PHOTOS];
   
   // "Top Places" tabBarItem
   UITabBarItem *topPlacesTabBarItem = [[UITabBarItem alloc] initWithTitle:@"Top Places"

@@ -127,10 +127,10 @@
 		768A520A1C6B0BB000210D1D /* View */ = {
 			isa = PBXGroup;
 			children = (
-				768A51F31C6B0B8F00210D1D /* FlickrPhotoTVCell.h */,
-				768A51F41C6B0B8F00210D1D /* FlickrPhotoTVCell.m */,
 				768A51F51C6B0B8F00210D1D /* FlickrTopPlaceTVCell.h */,
 				768A51F61C6B0B8F00210D1D /* FlickrTopPlaceTVCell.m */,
+				768A51F31C6B0B8F00210D1D /* FlickrPhotoTVCell.h */,
+				768A51F41C6B0B8F00210D1D /* FlickrPhotoTVCell.m */,
 				768A51F71C6B0B8F00210D1D /* ImageViewController.h */,
 				768A51F81C6B0B8F00210D1D /* ImageViewController.m */,
 			);

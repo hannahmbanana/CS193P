@@ -58,6 +58,8 @@
     // convert it to a Property List (NSArray and NSDictionary)
     NSDictionary *propertyListResults = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:NULL];
     
+    NSLog(@"%@", propertyListResults);
+    
     // get the NSArray of item NSDictionaries out of the results
     NSArray *items = [propertyListResults valueForKeyPath:self.resultsKeyPathString];
     

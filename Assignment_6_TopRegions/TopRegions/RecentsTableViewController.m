@@ -21,6 +21,7 @@
 
 @implementation RecentsTableViewController
 
+#define CELL_HEIGHT 90
 
 #pragma mark - Properties
 
@@ -110,6 +111,11 @@
 
 
 #pragma mark - UITableViewDataSource
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+  return CELL_HEIGHT;
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
   return 1;

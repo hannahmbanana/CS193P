@@ -11,6 +11,8 @@
 #import "FlickrPhotoObject.h"
 #import "FlickrPhotoTVCell.h"
 
+#define CELL_HEIGHT 90
+
 @interface PlaceFlickrPhotosTVC ()
 @property (nonatomic, strong, readwrite) ImageViewController *imageVC;
 @end
@@ -29,8 +31,13 @@
   return _imageVC;
 }
 
+
 #pragma mark - UITableViewDataSource
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+  return CELL_HEIGHT;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
