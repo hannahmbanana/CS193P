@@ -1,6 +1,6 @@
-Assignment IV: Graphical Set
+Assignment V: Top Places
 
-Objective
+Objective 
 
 In this assignment, you will create an application that presents a list of popular Flickr photo spots and then allow the user to see some photos taken in those spots.
 
@@ -12,7 +12,7 @@ All the data you need will be downloaded from Flickr.com using Flickr’s API. C
 
 Be sure to review the Hints section below!
 
-Required Tasks
+Required Tasks 
 
 1. Download the data at the URL provided by the FlickrFetcher class method URLforTopPlaces to get an array of the most popular Flickr photo spots in the last day or so. See the Hints for how to interpret data returned by Flickr.
 
